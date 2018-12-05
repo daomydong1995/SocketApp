@@ -1,0 +1,40 @@
+{
+  "headerTable": [
+    "STT",
+    "Ten",
+    "Tuoi",
+    "Nghe Nghiep"
+  ],
+  "dataTable": [
+    {
+      "stt": 1,
+      "ten": "dong",
+      "tuoi": 12,
+      "nghe": "ddddddd"
+    },
+    {
+      "stt": 2,
+      "ten": "dong",
+      "tuoi": 12,
+      "nghe": "ddddddd"
+    },
+    {
+      "stt": 3,
+      "ten": "dong",
+      "tuoi": 12,
+      "nghe": "ddddddd"
+    },
+    {
+      "stt": 4,
+      "ten": "dong",
+      "tuoi": 12,
+      "nghe": "ddddddd"
+    },
+    {
+      "stt": 5,
+      "ten": "dong",
+      "tuoi": 12,
+      "nghe": "ddddddd"
+    }
+  ]
+}

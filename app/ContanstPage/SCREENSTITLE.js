@@ -1,0 +1,8 @@
+const SCREENSTITLE = {
+  SIGN_WALLETS_SUBMIT: 'Đăng ký',
+  SIGNSUBMIT_PAGE: 'SIGNSUBMIT_PAGE',
+  DASHBOARD_STACK: 'Trang chủ',
+  SETTING_PAGE: 'Cài đặt'
+}
+
+export default SCREENSTITLE

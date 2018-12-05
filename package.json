@@ -1,0 +1,58 @@
+{
+  "name": "SocketApp",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node node_modules/react-native/local-cli/cli.js start -- --reset-cache",
+    "lint": "./node_modules/.bin/eslint src",
+    "test": "jest",
+    "ios": "react-native run-ios --simulator 'iPad Air 2'"
+  },
+  "dependencies": {
+    "@terrylinla/react-native-sketch-canvas": "^0.8.0",
+    "express": "^4.14.0",
+    "json-loader": "^0.5.7",
+    "mongojs": "^2.4.0",
+    "nodemon": "^1.11.0",
+    "react": "16.6.1",
+    "react-native": "0.57.7",
+    "react-native-datepicker": "^1.7.2",
+    "react-native-elements": "^0.19.1",
+    "react-native-fs": "^2.12.1",
+    "react-native-gesture-handler": "^1.0.9",
+    "react-native-gifted-chat": "0.0.10",
+    "react-native-loading-spinner-overlay": "^1.0.1",
+    "react-native-permissions": "^1.1.1",
+    "react-native-picker-select": "^5.1.0",
+    "react-native-router-flux": "^4.0.6",
+    "react-native-table-component": "^1.1.8",
+    "react-native-vector-icons": "^6.1.0",
+    "react-navigation": "^3.0.5",
+    "react-redux": "^5.1.1",
+    "redux": "^4.0.1",
+    "socket.io": "^2.2.0",
+    "socket.io-client": "^2.2.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
+    "babel-eslint": "^8.2.2",
+    "babel-jest": "23.6.0",
+    "babel-preset-react-native": "1.9.1",
+    "eslint": "^5.9.0",
+    "eslint-config-google": "^0.11.0",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-node": "^8.0.0",
+    "eslint-plugin-promise": "^4.0.1",
+    "eslint-plugin-react": "^7.11.1",
+    "eslint-plugin-react-native": "^3.5.0",
+    "eslint-plugin-standard": "^4.0.0",
+    "jest": "23.6.0",
+    "metro-react-native-babel-preset": "0.50.0",
+    "react-test-renderer": "16.6.1"
+  },
+  "jest": {
+    "preset": "react-native"
+  }
+}

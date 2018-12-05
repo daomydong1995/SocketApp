@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Page Title</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+   <script src="css/styles.css"></script>
+  <link rel="stylesheet" href="./css/styles.css">
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+</head>
+
+<body>
+  <div class="container">
+    <div id="contact" action="" method="">
+      <h3>Colorlib Contact Form</h3>
+      <h4>Contact us for custom quote</h4>
+      <fieldset>
+        <input onchange="onChangeText()" id="name" placeholder="Tên của bạn" type="text" tabindex="1" required autofocus>
+      </fieldset>
+      <fieldset>
+        <input onchange="onChangeText()" id="homeId" placeholder="Địa chỉ nhà" type="text" tabindex="2" required>
+      </fieldset>
+      <fieldset>
+        <input onchange="onChangeText()" id="phone" placeholder="Số điện thoại" type="text" tabindex="3" required>
+      </fieldset>
+      <fieldset>
+        <input onchange="onChangeText()" id="insurance" placeholder="Số thẻ bảo hiểm" type="text" tabindex="4" required>
+      </fieldset>
+      <fieldset>
+        <input onchange="onChangeText()" id="job" placeholder="Nghề nghiệp" type="text" tabindex="5" required>
+      </fieldset>
+      <fieldset>
+        <input onchange="onChangeText()" id="cmtId" placeholder="Số CMT" type="text" tabindex="6" required>
+      </fieldset>
+      <fieldset>
+        <p>Date: <input data-provide="datepicker" type="text" id="date" onchange="onChangeText()"/>
+      </fieldset>
+      <fieldset>
+        <img id="imageSign" hidden="true" style="width: 50%; height: 100%;" src="#" alt="Red dot" />
+      </fieldset>
+      <fieldset style="width: 100%">
+        <button id="btnCommit" hidden="true" style="width: 80px; height: 35px; background: #8b6edc; justify-content: center" onclick="onCommit()">Commit</button>
+      </fieldset>
+    </div>
+  </div>
+</body>
+<script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+<script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script>
+    const socket = io()
+    function onChangeText () {
+        const userName = $('#name').val()
+        const userAddress = $('#homeId').val()
+        const userDistrict = $('#phone').val()
+        const userBHY = $('#insurance').val()
+        const userJob = $('#job').val()
+        const userIssuedDay = $('#date').val()
+        const userIssuedPlace = $('#cmtId').val()
+        const userGender = Boolean(Math.round(Math.random()))
+        const userInfo = { userName, userAddress, userDistrict, userBHY, userJob, userIssuedDay, userIssuedPlace, userGender }
+        socket.emit('sign_wallet', userInfo)
+    }
+    function onCommit () {
+        alert('commit')
+    }
+    $(function () {
+        $('#date').datepicker({
+            dateFormat: 'dd/mm/yy'
+        }).val()
+        // socket.on('sign_wallet', function (dataContact) {
+        //   document.getElementById('name').value = dataContact.name
+        //   document.getElementById('homeId').value = dataContact.homeId
+        //   document.getElementById('phone').value = dataContact.phone
+        //   document.getElementById('insurance').value = dataContact.insurance
+        //   document.getElementById('job').value = dataContact.job
+        //   document.getElementById('date').value = dataContact.date
+        //   document.getElementById('cmtId').value = dataContact.cmtId
+        // })
+        socket.on('image', function (imageBase64) {
+            if (imageBase64.image === true) {
+                document.getElementById('imageSign').src = imageBase64.buffer
+                document.getElementById('imageSign').hidden = false
+                document.getElementById('btnCommit').hidden = false
+            }
+        })
+        socket.on('init', function (data) {
+            if (data.init) {
+                onChangeText()
+            }
+        })
+    })
+</script>
+</html>
