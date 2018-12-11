@@ -31,7 +31,7 @@ class UserInfoComponent extends Component<Props, State> {
 
   render () {
     return (
-      <View style={styles.container} >
+      <View style={styles.container} pointerEvents={'none'} >
         <Text style={styles.textTileStyle}>
           Thông tin khách
         </Text>

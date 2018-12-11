@@ -4,8 +4,8 @@ import {
   ERROR_EVENT,
   SHOW_LOADING,
   UPDATE_ACCES_RULES,
-  UPDATE_SIGNATURE,
-  UPDATE_IP, UPDATE_SOCKET, CONNECTION_STATUS
+  UPDATE_SIGNATURE_EXIST,
+  UPDATE_IP, UPDATE_SOCKET, CONNECTION_STATUS, UPDATE_SIGNATURE, UPDATE_AVATAR
 } from './Constants'
 
 // UserInfo
@@ -23,13 +23,25 @@ export const updateAccessRules = (isAcces) => {
   }
 }
 
-export const updateSignature = (isAcces) => {
+export const updateSignatureExits = (isAcces) => {
   return {
-    type: UPDATE_SIGNATURE,
+    type: UPDATE_SIGNATURE_EXIST,
     payload: isAcces
   }
 }
+export const updateSignature = (image64) => {
+  return {
+    type: UPDATE_SIGNATURE,
+    payload: image64
+  }
+}
 
+export const updateAvatarBase64 = (image) => {
+  return {
+    type: UPDATE_AVATAR,
+    payload: image
+  }
+}
 export const syncSuccess = () => {
   const token = 5
   return {

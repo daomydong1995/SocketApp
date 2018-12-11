@@ -6,6 +6,7 @@ const INITIAL_STATE = {
   socket: io('http://localhost:3000', {
     transports: ['websocket']
   }),
+  socketsAddress: undefined,
   connected: false
 }
 

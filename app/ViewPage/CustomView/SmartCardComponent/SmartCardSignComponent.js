@@ -8,8 +8,12 @@ import { updateAccessRules } from '../../../reducer/action/index'
 import { connect } from 'react-redux'
 import Icon from 'react-native-vector-icons/FontAwesome5'
 
-type Props = {}
-type State = {}
+type Props = {
+  navigate: Function
+}
+type State = {
+  enabled:true
+}
 
 class SmartCardSignComponent extends Component<Props, State> {
   constructor (props) {
@@ -19,26 +23,21 @@ class SmartCardSignComponent extends Component<Props, State> {
 
   change (name) {
   }
-
-  takePhoto () {
-
-  }
-
   render () {
     return (
       <View style={styles.container}>
         <View style={styles.cartAndCashStyle}>
           <View style={styles.takeAPhoto}>
             <View>
+              <TouchableOpacity onPress={ this.props.navigate}>
               <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20}}>
                 <Text style={styles.textTileStyle}>Ảnh cá nhân</Text>
                 <Icon name='camera' size={26}/>
               </View>
-              <TouchableOpacity>
-                <Image
-                  source={require('../../../../assets/images/userplaceholder.png')}
-                  style={{width: '35%', height: 239 * 0.8, borderWidth: 2}}/>
               </TouchableOpacity>
+                <Image
+                  source={this.props.imageAvatarBase64 === '' ? require('../../../../assets/images/userplaceholder.png') : { uri: this.props.imageAvatarBase64}}
+                  style={{width: '35%', height: 239 * 0.8, borderWidth: 2}}/>
             </View>
           </View>
           <View style={{width: 2, height: '100%', backgroundColor: '#000'}}/>
@@ -51,10 +50,8 @@ class SmartCardSignComponent extends Component<Props, State> {
           <TextInput
             multiline={true}
             placeholder='Enter description...'
-            underlineColorAndroid={'transparent'}
-            editable={false}
-            style={styles.textInputStyle}
-            onChangeText={(name) => {this.change(name)}}>{rules.rule}
+            style={styles.textInputStyle}>
+            {rules.rule}
           </TextInput>
         </ScrollView>
         <CheckBox
@@ -115,7 +112,8 @@ const styles = StyleSheet.create({
     borderColor: '#9c9c9c',
     borderRadius: 2,
     margin: 10,
-    padding: 5
+    padding: 5,
+    flex: 1
   },
   signWritingStyle: {
     alignItems: 'flex-end',

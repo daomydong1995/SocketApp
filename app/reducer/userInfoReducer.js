@@ -1,6 +1,6 @@
 import {
   SYN_DATA, SUCSSES_EVENT, ERROR_EVENT, SHOW_LOADING, UPDATE_ACCES_RULES,
-  UPDATE_SIGNATURE
+  UPDATE_SIGNATURE_EXIST, UPDATE_SIGNATURE, UPDATE_AVATAR
 } from './action/Constants'
 
 const INITIAL_STATE = {
@@ -14,14 +14,16 @@ const INITIAL_STATE = {
   userID: '',
   userJob: '',
   userCountry: '',
-  userBirthday: '01/01/2010',
+  userBirth: '01/01/2010',
   userBHY: '',
   userPhone: '',
   userIssuedDay: '01/01/2005',
   userIssuedPlace: '',
   loading: false,
   isAccessRules: false,
-  existSignature: false
+  existSignature: false,
+  signatureBase64: '',
+  imageAvatarBase64: ''
 }
 
 export default function reducer (state = INITIAL_STATE, action) {
@@ -40,8 +42,12 @@ export default function reducer (state = INITIAL_STATE, action) {
       return { ...state, loading: action.payload }
     case UPDATE_ACCES_RULES:
       return { ...state, isAccessRules: action.payload }
-    case UPDATE_SIGNATURE:
+    case UPDATE_SIGNATURE_EXIST:
       return { ...state, existSignature: action.payload }
+    case UPDATE_SIGNATURE:
+      return { ...state, signatureBase64: action.payload }
+    case UPDATE_AVATAR:
+      return { ...state, imageAvatarBase64: action.payload }
     default:
       return state
   }

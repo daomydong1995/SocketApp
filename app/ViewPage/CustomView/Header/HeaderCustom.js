@@ -1,9 +1,8 @@
 import React, { Component } from 'react'
 import {
   View,
-  Text, Platform, TouchableOpacity, SafeAreaView
+  Text, TouchableOpacity
 } from 'react-native'
-import Header from 'react-native-elements/src/header/Header'
 
 type Props = {
   title: string,
@@ -19,7 +18,7 @@ type State = {}
 class HeaderCustom extends Component<Props, State> {
   renderLeftView () {
     return (
-      <TouchableOpacity onPress={this.props.handleLeftButton}>
+      <TouchableOpacity style={style.leftViewStyle} onPress={this.props.handleLeftButton}>
         {this.props.leftView}
       </TouchableOpacity>
     )
@@ -27,24 +26,21 @@ class HeaderCustom extends Component<Props, State> {
 
   renderRightView () {
     return (
-      <TouchableOpacity onPress={this.props.handleRightButton}>
+      <TouchableOpacity style={style.rightViewStyle} onPress={this.props.handleRightButton}>
         {this.props.rightView}
       </TouchableOpacity>)
   }
 
   render () {
     const {headerStyle} = this.props
-    const {containerBackStyle, leftViewStyle, titleStyle, rightViewStyle} = style
+    const {containerBackStyle, titleStyle} = style
     return (
       <View style={[containerBackStyle, headerStyle]}>
-        <View style={leftViewStyle}>
-          {this.renderLeftView()}
-        </View>
+        {this.renderLeftView()}
         <Text style={[titleStyle, this.props.titleStyle]}>
-          {this.props.title}</Text>
-        <View style={rightViewStyle}>
+          {this.props.title}
+        </Text>
           {this.renderRightView()}
-        </View>
       </View>
     )
   }
@@ -56,14 +52,14 @@ const style = {
     width: '100%',
     flexDirection: 'row',
     alignSelf: 'stretch',
-    marginTop: 25,
     marginBottom: 5,
     justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor: '#476190',
     shadowOffset: {
       width: 0,
-      height: 0},
+      height: 0
+    },
     shadowColor: 'black',
     shadowOpacity: 1,
   },
@@ -76,14 +72,18 @@ const style = {
     shadowOpacity: 1.0,
   },
   leftViewStyle: {
-    width: 30,
-    alignItems: 'flex-end',
+    width: 50,
+    alignItems: 'center',
     shadowOffset: {width: 2, height: 2},
     shadowColor: 'black',
     shadowOpacity: 1.0,
   },
   rightViewStyle: {
-    width: 30
+    width: 50,
+    alignItems: 'center',
+    shadowOffset: {width: 2, height: 2},
+    shadowColor: 'black',
+    shadowOpacity: 1.0,
   }
 }
 

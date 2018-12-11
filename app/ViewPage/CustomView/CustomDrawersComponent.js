@@ -16,7 +16,6 @@ const CustomDrawerMenu = (props) => (
     </SafeAreaView>
 )
 const renderDrawerItem = (data) => {
-    console.log(data)
     return (
         <TouchableOpacity onPress={transformClicked(data)}>
             <View>
