@@ -1,8 +1,10 @@
 const http = require('http')
 const fs = require('fs')
 const path = require('path')
+const express = require('express')()
 const port = process.env.PORT || 3000
-const sev = http.createServer(function (request, response) {
+
+const app = express.use(function (request, response) {
   let filePath = '.' + request.url
   if (filePath === './') { filePath = './index.html' }
   const extName = path.extname(filePath)
@@ -45,6 +47,7 @@ const sev = http.createServer(function (request, response) {
     }
   })
 })
+const sev = http.createServer(app)
 sev.listen(port, function () {
   console.log('listening on *:' + port)
 })
