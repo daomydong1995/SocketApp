@@ -4,17 +4,16 @@ import React from 'react'
 import HeaderCustom from './CustomView/Header/HeaderCustom'
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import SCREENSTITLE from '../ContanstPage/SCREENSTITLE'
-import connect from 'react-redux/es/connect/connect'
-import { updateSocket, updateSocketStatus } from '../reducer/action'
 import io from 'socket.io-client'
-import DefaultPreference from 'react-native-default-preference'
 import { Row, Table, TableWrapper } from 'react-native-table-component'
 import Cell from 'react-native-table-component/components/cell'
+import { connect } from 'react-redux'
 
 type Props = {}
 type State = {
   address: string, //ip address of server
   port: number //port of socket server
+
 }
 
 class SettingPage extends Component<Props, State> {
@@ -25,7 +24,8 @@ class SettingPage extends Component<Props, State> {
     this.eventScanQRCode = this.eventScanQRCode.bind(this)
     this.state = {
       address: '',
-      port: 3000
+      port: 4000,
+      tableHead: ['Địa chỉ IP', 'Trạng thái']
     }
   }
 
@@ -38,6 +38,7 @@ class SettingPage extends Component<Props, State> {
     const {socket} = this.props
     socket.disconnect()
     let ip = 'http://' + address + ':' + port
+    console.log(ip)
     socket.io = io(ip, {
       transports: ['websocket']
     }).io
@@ -49,6 +50,7 @@ class SettingPage extends Component<Props, State> {
   }
 
   render () {
+    const {socketsAddress, connected} = this.props
     return (
       <View style={{flex: 1}}>
         <HeaderCustom title={SCREENSTITLE[this.props.navigation.state.routeName]}
@@ -72,29 +74,29 @@ class SettingPage extends Component<Props, State> {
               <TouchableOpacity style={styles.buttonStyle} onPress={this.updateSocketGlobal}>
                 <Text style={{fontSize: 22, color: '#fff', textAlign: 'center'}}>Kết nối</Text>
               </TouchableOpacity>
-
-              <Table borderStyle={{borderWidth: 2, borderColor: '#000', borderRadius: 5}}>
-                <Row data={state.tableHead} style={styles.head} textStyle={styles.text}/>
+              <Row data={this.state.tableHead} style={styles.head} textStyle={styles.text}/>
+              <View style={styles.table}>
                 {
-                  state.tableData.map((rowData, index) => (
-                    <TableWrapper key={index} style={[styles.row,{backgroundColor: index%2 === 0? '#fff':'#e0e0e0'}]}>
-                      {
-                        rowData.map((cellData, cellIndex) => (
-                          <Cell key={cellIndex} data={cellData} textStyle={styles.text}/>
-                        ))
-                      }
+                  socketsAddress.map((sk, index) => (
+                    <TableWrapper key={index}
+                                  style={[styles.row, {backgroundColor: index % 2 === 0 ? '#fff' : '#e0e0e0'}]}>
+                      <Cell data={sk.hostname} textStyle={styles.text}/>
+                      <Cell data={(
+                        <View style={{marginLeft: 10, flexDirection: 'row', flex: 1, alignItems: 'center'}}>
+                          <View
+                            style={{
+                              width: 10,
+                              height: 10,
+                              borderRadius: 20,
+                              backgroundColor: (this.props.socket.io.engine.hostname === sk.hostname && connected) ? '#4eff35' : '#ff0c16'
+                            }}/>
+                          <Text style={styles.text}>{(this.props.socket.io.engine.hostname === sk.hostname && connected)  ? 'Đang kết nối...' : 'Không kết nối!'}</Text>
+                        </View>
+                      )}/>
                     </TableWrapper>
                   ))
                 }
-              </Table>
-              {
-                this.props.connected &&
-                <View style={{width: 100, height: 50, backgroundColor: '#4eff35'}}></View>
-              }
-              {
-                !this.props.connected &&
-                <View style={{width: 100, height: 50, backgroundColor: '#ff0c16'}}></View>
-              }
+              </View>
             </View>
           </ScrollView>
         </ScrollView>
@@ -125,7 +127,7 @@ const styles = StyleSheet.create({
   },
   buttonStyle: {
     marginTop: 20,
-    marginBottom: 100,
+    marginBottom: 70,
     width: 350,
     borderStyle: 'solid',
     borderWidth: 2,
@@ -134,7 +136,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#597eaa',
     alignItems: 'center',
     justifyContent: 'center'
-  }
+  },
+  head: {height: 45, backgroundColor: '#a7b6c6', borderTopWidth: 2, borderLeftWidth: 2, borderRightWidth: 2},
+  text: {fontSize: 18, marginLeft: 10},
+  table: {borderBottomWidth: 2, borderLeftWidth: 2, borderRightWidth: 2, marginBottom: 50},
+  row: {flexDirection: 'row', backgroundColor: '#FFF1C1', height: 45, justifyContent: 'center'},
 })
 
 const mapStateToProps = state => ({
@@ -142,9 +148,6 @@ const mapStateToProps = state => ({
 })
 
 export default connect(
-  mapStateToProps, {
-    updateSocket,
-    updateSocketStatus
-  }
+  mapStateToProps, {}
 )(SettingPage)
 

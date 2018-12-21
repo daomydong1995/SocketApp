@@ -48,7 +48,7 @@ class UserInfoComponent extends Component<Props, State> {
             <Text style={styles.textLabelStyle}>Ngày sinh</Text>
             <DatePicker
               style={styles.datePickerStyle}
-              date={this.props.userBirthday}
+              date={this.props.userBirth}
               mode="date"
               format="DD/MM/YYYY"
               minDate="01/01/1995"

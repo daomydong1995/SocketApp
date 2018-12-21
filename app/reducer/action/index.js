@@ -1,17 +1,16 @@
 import {
-  SYN_DATA,
+  SYN_U_DATA,
   SUCSSES_EVENT,
   ERROR_EVENT,
   SHOW_LOADING,
   UPDATE_ACCES_RULES,
-  UPDATE_SIGNATURE_EXIST,
-  UPDATE_IP, UPDATE_SOCKET, CONNECTION_STATUS, UPDATE_SIGNATURE, UPDATE_AVATAR
+  UPDATE_SIGNATURE_EXIST, UPDATE_SOCKETS_ADDRESS, CONNECTION_STATUS, UPDATE_SIGNATURE, UPDATE_AVATAR
 } from './Constants'
 
 // UserInfo
 export const syncData = (props) => {
   return {
-    type: SYN_DATA,
+    type: SYN_U_DATA,
     payload: props
   }
 }
@@ -66,10 +65,10 @@ export const showLoading = (isShow) => {
 }
 
 // SettingAction
-export const updateSocket = (socket) => {
+export const updateSocketsAddress = (socketAddress) => {
   return {
-    type: UPDATE_SOCKET,
-    payload: socket
+    type: UPDATE_SOCKETS_ADDRESS,
+    payload: socketAddress
   }
 }
 export const updateSocketStatus = (connect) => {

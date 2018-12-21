@@ -4,19 +4,21 @@ import { createStore } from 'redux'
 import combineReducers from './app/reducer/index'
 import DrawerMenu from './app/ContanstPage/flows'
 import { View, StatusBar } from 'react-native'
+import SocketEmitPage from './app/ViewPage/SocketEmitPage'
+
 
 type Props = {};
 type State = {}
 console.disableYellowBox = true
-
+const store = createStore(combineReducers)
 class App extends Component<Props, State> {
   render () {
     return (
-      <Provider store={createStore(combineReducers)}>
+      <Provider store={store}>
         <View style={{flex: 1}}>
-          {/*<StatusBar barStyle = "dark-content" hidden = {false} backgroundColor = "#00BCD4" translucent = {true}/>*/}
           <StatusBar hidden={true} />
           <DrawerMenu/>
+          <SocketEmitPage/>
         </View>
       </Provider>
     )

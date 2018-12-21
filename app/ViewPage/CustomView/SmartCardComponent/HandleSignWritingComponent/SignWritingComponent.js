@@ -20,7 +20,7 @@ class SignWritingComponent extends Component<Props, State> {
     }
     this.clearWriting = this.clearWriting.bind(this)
     this.updateSignatureComponent = this.updateSignatureComponent.bind(this)
-    this.socket = io('http://localhost:3000', {
+    this.socket = io('http://localhost:4000', {
       transports: ['websocket']
     })
   }
@@ -47,8 +47,9 @@ class SignWritingComponent extends Component<Props, State> {
     const isValid = (this.props.isAccessRules && this.props.existSignature)
     return (
     <View
-      style={isValid ? styles.functionButtonAccessible : styles.functionButtonUnAccessible}><Text
-      style={{fontSize: 18, color: '#151515'}}>Xác nhận</Text></View>
+      style={isValid ? styles.functionButtonAccessible : styles.functionButtonUnAccessible}>
+      <Text style={{fontSize: 18, color: '#151515'}}>Xác nhận</Text>
+    </View>
     )
   }
 
@@ -60,11 +61,11 @@ class SignWritingComponent extends Component<Props, State> {
           fontSize: 18,
         }}>Ngày {today.getDate()} tháng {today.getMonth()} năm {today.getFullYear()} </Text>
         <RNSketchCanvas
-          containerStyle={{width: 400, height: 350, backgroundColor: 'transparent', alignItems: 'center'}}
+          containerStyle={{width: 400, height: 400,flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center'}}
           canvasStyle={{
             backgroundColor: 'transparent',
             width: '100%',
-            height: '90%',
+            height: '70%',
             borderWidth: 1
           }}
           defaultStrokeIndex={0}
@@ -124,6 +125,7 @@ const styles = StyleSheet.create({
     flex: 1
   },
   functionButtonAccessible: {
+    width: 100,
     marginHorizontal: 2.5, marginVertical: 8, height: 42, padding: 5, paddingLeft: 10, paddingRight: 10,
     backgroundColor: '#51e066', justifyContent: 'center', alignItems: 'center', borderRadius: 3,
     borderWidth: 2,
@@ -133,6 +135,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 1.0
   },
   functionButtonUnAccessible: {
+    width: 100,
     marginHorizontal: 2.5, marginVertical: 8, height: 42, padding: 5, paddingLeft: 10, paddingRight: 10,
     backgroundColor: '#e01d2d', justifyContent: 'center', alignItems: 'center', borderRadius: 3,
     borderWidth: 2,

@@ -1,25 +1,26 @@
 import {
-  SYN_DATA, SUCSSES_EVENT, ERROR_EVENT, SHOW_LOADING, UPDATE_ACCES_RULES,
+  SYN_U_DATA, SUCSSES_EVENT, ERROR_EVENT, SHOW_LOADING, UPDATE_ACCES_RULES,
   UPDATE_SIGNATURE_EXIST, UPDATE_SIGNATURE, UPDATE_AVATAR
 } from './action/Constants'
 
 const INITIAL_STATE = {
+  userID: '',
   userName: '',
-  userGender: undefined,
+  userGender: false,
   userAddress: '',
   userDistrict: '',
-  userWards: '',
-  userProvince: '',
   userNation: '',
-  userID: '',
-  userJob: '',
-  userCountry: '',
+  userCMT: '',
+  walletId: '',
   userBirth: '01/01/2010',
-  userBHY: '',
-  userPhone: '',
+  userJob: '',
+  userWards: '',
+  userCountry: '',
   userIssuedDay: '01/01/2005',
+  userPhone: '',
+  userProvince: '',
+  userBHY: '',
   userIssuedPlace: '',
-  loading: false,
   isAccessRules: false,
   existSignature: false,
   signatureBase64: '',
@@ -28,7 +29,7 @@ const INITIAL_STATE = {
 
 export default function reducer (state = INITIAL_STATE, action) {
   switch (action.type) {
-    case SYN_DATA:
+    case SYN_U_DATA:
       return { ...state, ...action.payload }
     case SUCSSES_EVENT:
       return { ...state, loading: false }
