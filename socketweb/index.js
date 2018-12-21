@@ -2,8 +2,7 @@ const http = require('http')
 const fs = require('fs')
 const path = require('path')
 const express = require('express')()
-const port = process.env.PORT || 4000
-
+const port = process.env.PORT || 8080
 const app = express.use(function (request, response) {
   let filePath = '.' + request.url
   if (filePath === './') { filePath = './index.html' }
@@ -51,18 +50,18 @@ const sev = http.createServer(app)
 sev.listen(port, function () {
   console.log('listening on *:' + port)
 })
-const io = require('socket.io')(sev)
-io.on('connection', function (socket) {
-  socket.on('sign_wallet', function (msg) {
-    console.log(msg)
-    io.emit('sign_wallet', msg)
-  })
-  socket.on('image', function (msg) {
-    console.log(msg)
-    io.emit('image', msg)
-  })
-  socket.on('init', function (msg) {
-    console.log(msg)
-    io.emit('init', msg)
-  })
-})
+// const io = require('socket.io')(sev)
+// io.on('connection', function (socket) {
+//   socket.on('sign_wallet', function (msg) {
+//     console.log(msg)
+//     io.emit('sign_wallet', msg)
+//   })
+//   socket.on('image', function (msg) {
+//     console.log(msg)
+//     io.emit('image', msg)
+//   })
+//   socket.on('init', function (msg) {
+//     console.log(msg)
+//     io.emit('init', msg)
+//   })
+// })

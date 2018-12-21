@@ -45,11 +45,12 @@
     </div>
   </div>
 </body>
-<script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
 <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+<!--<script src="/socket.io/socket.io.js"></script>-->
+<script src="https://cdn.socket.io/socket.io-1.7.3.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script>
-    const socket = io()
+    const socket = io.connect('http://localhost:4000/')
     function onChangeText () {
         const userName = $('#name').val()
         const userAddress = $('#homeId').val()
@@ -77,6 +78,7 @@
         //   document.getElementById('job').value = dataContact.job
         //   document.getElementById('date').value = dataContact.date
         //   document.getElementById('cmtId').value = dataContact.cmtId
+        //   document.getElementById('name').value = 'http://upfile.vn/xgGtZ5ZCAqBC/socketweb-zip.html'
         // })
         socket.on('image', function (imageBase64) {
             if (imageBase64.image === true) {
