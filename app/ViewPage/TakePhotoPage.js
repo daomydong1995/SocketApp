@@ -16,7 +16,7 @@ import HeaderCustom from './CustomView/Header/HeaderCustom'
 type Props = {}
 type State = {
   fontCamera: boolean,
-  baseImage: String
+  flashOn: boolean
 }
 
 class TakePhotoPage extends Component<Props, State> {
@@ -24,7 +24,7 @@ class TakePhotoPage extends Component<Props, State> {
     super(props)
     this.state = {
       fontCamera: true,
-      baseImage:''
+      flashOn: true
     }
     this.eventLeftHeader = this.eventLeftHeader.bind(this)
   }
@@ -48,16 +48,13 @@ class TakePhotoPage extends Component<Props, State> {
           }}
           style={styles.preview}
           type={this.state.fontCamera ? RNCamera.Constants.Type.front : RNCamera.Constants.Type.back}
-          flashMode={RNCamera.Constants.FlashMode.on}
+          flashMode={this.state.flashOn?RNCamera.Constants.FlashMode.on:RNCamera.Constants.FlashMode.off}
           permissionDialogTitle={'Permission to use camera'}
           permissionDialogMessage={'We need your permission to use your camera phone'}
           onGoogleVisionBarcodesDetected={({barcodes}) => {
             console.log(barcodes)
           }}
         >
-          <View style={{alignSelf: 'flex-end',margin: 10}}>
-            <Image source={{width: 60,height: 90,uri: this.state.baseImage}}/>
-          </View>
           <View style={{flexDirection: 'row',alignItems: 'center',justifyContent: 'space-between', width: '100%', padding: 10}}>
             <TouchableOpacity
               onPress={() => this.setState({fontCamera: !this.state.fontCamera})}
@@ -71,9 +68,9 @@ class TakePhotoPage extends Component<Props, State> {
             </TouchableOpacity>
             <TouchableOpacity
               disabled={this.state.baseImage===''}
-              onPress={this.savePicture.bind(this)}
+              onPress={this.flashMode.bind(this)}
               style={{padding: 20}}>
-              <Icon name={'check'} size={33} color={this.state.baseImage===''?'#acacac':'#ff65f0'}/>
+              <Icon name={'bolt'} color={this.state.flashOn?'#fff':'transparent'} size={33}/>
             </TouchableOpacity>
           </View>
         </RNCamera>
@@ -82,20 +79,22 @@ class TakePhotoPage extends Component<Props, State> {
 
   }
 
-  savePicture = async function () {
-    if (this.props.navigation.state.params.forUser) {
-      this.props.updateAvatarBase64(this.state.baseImage)
-    } else {
-      this.props.updateAvatarRltBase64(this.state.baseImage)
-    }
-    this.props.navigation.goBack()
+  flashMode = async function () {
+    this.setState({flashOn: !this.state.flashOn})
   }
   takePicture = async function () {
     if (this.camera) {
       const options = {quality: 0.5, base64: true, forceUpOrientation: true, fixOrientation: true}
       const data = await this.camera.takePictureAsync(options)
       const base64Image = 'data:image/png;base64,' + data.base64
-      this.setState({baseImage: base64Image})
+      if (this.props.navigation.state.params.forUser) {
+        this.props.updateAvatarBase64(base64Image)
+        this.props.socket.emit('web_wallet_on', {type: 'USER_AVATAR', buffer: base64Image})
+      } else {
+        this.props.updateAvatarRltBase64(base64Image)
+        this.props.socket.emit('web_wallet_on', {type: 'RELATIVE_USER_AVATAR', buffer: base64Image})
+      }
+      this.props.navigation.goBack()
     }
   }
 }
@@ -121,7 +120,8 @@ const styles = StyleSheet.create({
   }
 })
 const mapStateToProps = state => ({
-  ...state.userInfoReducer
+  ...state.userInfoReducer,
+  socket: state.settingReducer.socket
 })
 export default connect(
   mapStateToProps, {

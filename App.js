@@ -17,8 +17,8 @@ class App extends Component<Props, State> {
       <Provider store={store}>
         <View style={{flex: 1}}>
           <StatusBar hidden={true} />
-          <DrawerMenu/>
           <SocketEmitPage/>
+          <DrawerMenu/>
         </View>
       </Provider>
     )

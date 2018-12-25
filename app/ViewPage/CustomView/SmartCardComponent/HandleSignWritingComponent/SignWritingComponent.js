@@ -1,33 +1,51 @@
 import { Component } from 'react'
-import { Image, StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 import RNSketchCanvas from 'react-native-sketch-canvas'
 import React from 'react'
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import { updateSignatureExits } from '../../../../reducer/action/index'
 import { connect } from 'react-redux'
 import { updateSignature } from '../../../../reducer/action'
-import userRelativeInfoReducer from '../../../../reducer/userRelativeInfoReducer'
 
-const io = require('socket.io-client/dist/socket.io')
 const RNFS = require('react-native-fs')
 type Props = {}
-type State = {}
+type State = {
+  touchCanvasEnable: boolean,
+  timeOut: boolean
+}
 
 class SignWritingComponent extends Component<Props, State> {
   constructor (props) {
     super(props)
-    this.state = {}
-    this.clearWriting = this.clearWriting.bind(this)
-    this.updateSignatureComponent = this.updateSignatureComponent.bind(this)
+    this.state = {
+      touchCanvasEnable: true
+    }
   }
 
   clearWriting () {
+    this.props.updateSignatureExits(false)
+    this.setState({
+      touchCanvasEnable: true
+    })
   }
 
-  updateSignatureComponent (value) {
-    this.props.updateSignatureExits(value)
+  onStrokeEnd () {
     this.setState({
-      requiredString: ''
+      timeOut: true
+    })
+    this.props.updateSignatureExits(true)
+    setTimeout(()=> {
+      if (this.state.timeOut) {
+        this.setState({
+          touchCanvasEnable: false
+        })
+      }
+    },3000)
+  }
+
+  onStrokeStart () {
+    this.setState({
+      timeOut: false
     })
   }
 
@@ -71,12 +89,15 @@ class SignWritingComponent extends Component<Props, State> {
             height: '70%',
             borderWidth: 1
           }}
+          enableSaveBtn={(this.props.isAccessRules && this.props.existSignature)}
+          touchEnabled={this.state.touchCanvasEnable}
           defaultStrokeIndex={0}
           defaultStrokeWidth={5}
           clearComponent={this.renderViewClear()}
           saveComponent={this.renderViewSave()}
-          onClearPressed={() => this.updateSignatureComponent(false)}
-          onStrokeEnd={() => this.updateSignatureComponent(true)}
+          onClearPressed={this.clearWriting.bind(this)}
+          onStrokeEnd={this.onStrokeEnd.bind(this)}
+          onStrokeStart={this.onStrokeStart.bind(this)}
           savePreference={() => {
             return {
               filename: 'signature',
@@ -90,13 +111,7 @@ class SignWritingComponent extends Component<Props, State> {
               RNFS.readFile(path, 'base64').then(data => {
                 const base64Image = 'data:image/png;base64,' + data
                 this.props.updateSignature(base64Image)
-                const imageData = [
-                  {type: 'USER_SIGNATURE', buffer: base64Image},
-                  {type: 'USER_AVARTAR', buffer: this.props.imageAvatarBase64},
-                  {type: 'RELATIVE_USER_AVARTAR', buffer: this.props.imageRltAvatarBase64}
-                ]
-                console.log(imageData)
-                this.props.socket.emit('web_wallet_on', imageData)
+                this.props.socket.emit('web_wallet_on', {type: 'USER_SIGNATURE', buffer: base64Image})
               }).then(() => {
                 RNFS.exists(path).then((result) => {
                   if (result) {

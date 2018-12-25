@@ -176,13 +176,12 @@
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script>
   const socket = io.connect('http://localhost:4000/')
-  socket.on('web_wallet_on', function (data) {
-    data.forEach((item) => {
+  socket.on('web_wallet_on', function (item) {
       switch (item.type) {
-        case 'RELATIVE_USER_AVARTAR':
+        case 'RELATIVE_USER_AVATAR':
           document.getElementById('imageRltAvatarBase64').src = item.buffer
           break
-        case 'USER_AVARTAR':
+        case 'USER_AVATAR':
           document.getElementById('imageAvatarBase64').src = item.buffer
           break
         case 'USER_SIGNATURE':
@@ -191,8 +190,6 @@
         default:
           break
       }
-    })
-
   })
   socket.on('init', function (data) {
     if (data.init) {

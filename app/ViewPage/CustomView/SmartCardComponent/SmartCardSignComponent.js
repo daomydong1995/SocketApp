@@ -42,7 +42,7 @@ class SmartCardSignComponent extends Component<Props, State> {
               <Image
                 source={this.props.userInfo.imageAvatarBase64 === '' ? require('../../../../assets/images/userplaceholder.png') : {uri: this.props.userInfo.imageAvatarBase64}}
                 style={{width: 160, height: 239 * 0.8, borderWidth: 1}}/>
-              <TouchableOpacity style={{width: 180, alignItems: 'center', marginTop: 10}} onPress={() => this.navigateScreenCamera(true)}>
+              <TouchableOpacity style={{width: 160, alignItems: 'center', marginTop: 10}} onPress={() => this.navigateScreenCamera(true)}>
                 <Text style={{textAlign: 'center', padding: 4, fontSize: 18, borderRadius: 2, borderWidth: 3}}>Chụp
                   ảnh <Icon name={'camera'} size={18}/></Text>
               </TouchableOpacity>
@@ -54,7 +54,7 @@ class SmartCardSignComponent extends Component<Props, State> {
               <Image
                 source={this.props.rltInfo.imageRltAvatarBase64 === '' ? require('../../../../assets/images/userplaceholder.png') : {uri: this.props.rltInfo.imageRltAvatarBase64}}
                 style={{width: 160, height: 239 * 0.8, borderWidth: 1}}/>
-              <TouchableOpacity style={{width: 180, alignItems: 'center', marginTop: 10}} onPress={() => this.navigateScreenCamera(false)}>
+              <TouchableOpacity style={{width: 160, alignItems: 'center', marginTop: 10}} onPress={() => this.navigateScreenCamera(false)}>
                 <Text style={{textAlign: 'center', padding: 4, fontSize: 18, borderRadius: 2, borderWidth: 3}}>Chụp
                   ảnh <Icon name={'camera'} size={18}/></Text>
               </TouchableOpacity>
