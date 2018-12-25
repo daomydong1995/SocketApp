@@ -11,7 +11,7 @@ import SCREENSTITLE from './SCREENSTITLE'
 import TakePhotoPage from '../ViewPage/TakePhotoPage'
 const DashboardFlow = createStackNavigator({
   [SCREENS.SIGN_WALLETS_SUBMIT]: { screen: SignWalletPage, navigationOptions: () => ({ title: SCREENSTITLE.SIGN_WALLETS_SUBMIT }) },
-  [SCREENS.SIGNSUBMIT_PAGE]: { screen: TakePhotoPage, navigationOptions: () => ({ title: SCREENSTITLE.SIGNSUBMIT_PAGE }) }
+  [SCREENS.TAKE_PHOTO_PAGE]: { screen: TakePhotoPage, navigationOptions: () => ({ title: SCREENSTITLE.TAKE_PHOTO_PAGE }) }
 },
 {
   headerMode: 'none'

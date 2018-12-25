@@ -8,7 +8,8 @@ export const UPDATE_SIGNATURE_EXIST = 'UPDATE_SIGNATURE_EXIST'
 export const UPDATE_SIGNATURE = 'UPDATE_SIGNATURE'
 export const UPDATE_AVATAR = 'UPDATE_AVATAR'
 // UserRelativeInfoAction
-export const SYS_REU_DATA = 'SYS_REU_DATA'
+export const SYS_RLT_DATA = 'SYS_RLT_DATA'
+export const UPDATE_RLT_AVATAR = 'UPDATE_RLT_AVATAR'
 // historyTransaction
 export const SYS_HIS_DATA = 'SYS_HIS_DATA'
 // penddingTransaction

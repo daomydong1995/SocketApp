@@ -66,6 +66,7 @@ class SettingPage extends Component<Props, State> {
               </View>
               <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20}}>
                 <TextInput style={styles.textInputStyle} placeholder={'192.168.1.1'} keyboardType={'numeric'}
+                           value={this.state.address}
                            onChangeText={(address) => {this.setState({address})}}/>
                 <TouchableOpacity onPress={this.eventScanQRCode}>
                   <Icon name={'qrcode'} size={45}/>
@@ -80,7 +81,16 @@ class SettingPage extends Component<Props, State> {
                   socketsAddress.map((sk, index) => (
                     <TableWrapper key={index}
                                   style={[styles.row, {backgroundColor: index % 2 === 0 ? '#fff' : '#e0e0e0'}]}>
-                      <Cell data={sk.hostname} textStyle={styles.text}/>
+                      <Cell data={(
+                        <View style={{flex: 1, flexDirection:'row', alignItems: 'center'}}>
+                        <TouchableOpacity style={{margin: 5}} onPress={() => this.setState({address:sk.hostname})}>
+                          <View style={{borderWidth: 2, padding: 4,backgroundColor: '#6affa1'}}>
+                            <Text style={{fontWeight: 'bold'}}>Chọn</Text>
+                          </View>
+                        </TouchableOpacity>
+                          <Text style={styles.text}>{sk.hostname}</Text>
+                        </View>
+                      )} textStyle={styles.text}/>
                       <Cell data={(
                         <View style={{marginLeft: 10, flexDirection: 'row', flex: 1, alignItems: 'center'}}>
                           <View
@@ -140,7 +150,7 @@ const styles = StyleSheet.create({
   head: {height: 45, backgroundColor: '#a7b6c6', borderTopWidth: 2, borderLeftWidth: 2, borderRightWidth: 2},
   text: {fontSize: 18, marginLeft: 10},
   table: {borderBottomWidth: 2, borderLeftWidth: 2, borderRightWidth: 2, marginBottom: 50},
-  row: {flexDirection: 'row', backgroundColor: '#FFF1C1', height: 45, justifyContent: 'center'},
+  row: {flexDirection: 'row', backgroundColor: '#FFF1C1', height: 50, justifyContent: 'center'},
 })
 
 const mapStateToProps = state => ({

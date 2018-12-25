@@ -6,23 +6,19 @@ import Icon from 'react-native-vector-icons/FontAwesome5'
 import { updateSignatureExits } from '../../../../reducer/action/index'
 import { connect } from 'react-redux'
 import { updateSignature } from '../../../../reducer/action'
+import userRelativeInfoReducer from '../../../../reducer/userRelativeInfoReducer'
 
 const io = require('socket.io-client/dist/socket.io')
 const RNFS = require('react-native-fs')
 type Props = {}
-type State = {
-}
+type State = {}
 
 class SignWritingComponent extends Component<Props, State> {
   constructor (props) {
     super(props)
-    this.state = {
-    }
+    this.state = {}
     this.clearWriting = this.clearWriting.bind(this)
     this.updateSignatureComponent = this.updateSignatureComponent.bind(this)
-    this.socket = io('http://localhost:4000', {
-      transports: ['websocket']
-    })
   }
 
   clearWriting () {
@@ -46,10 +42,10 @@ class SignWritingComponent extends Component<Props, State> {
   renderViewSave () {
     const isValid = (this.props.isAccessRules && this.props.existSignature)
     return (
-    <View
-      style={isValid ? styles.functionButtonAccessible : styles.functionButtonUnAccessible}>
-      <Text style={{fontSize: 18, color: '#151515'}}>Xác nhận</Text>
-    </View>
+      <View
+        style={isValid ? styles.functionButtonAccessible : styles.functionButtonUnAccessible}>
+        <Text style={{fontSize: 18, color: '#151515'}}>Xác nhận</Text>
+      </View>
     )
   }
 
@@ -59,9 +55,16 @@ class SignWritingComponent extends Component<Props, State> {
       <View style={styles.container}>
         <Text style={{
           fontSize: 18,
+          marginBottom: 20
         }}>Ngày {today.getDate()} tháng {today.getMonth()} năm {today.getFullYear()} </Text>
         <RNSketchCanvas
-          containerStyle={{width: 400, height: 400,flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center'}}
+          containerStyle={{
+            width: 400,
+            height: 400,
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+            alignItems: 'center'
+          }}
           canvasStyle={{
             backgroundColor: 'transparent',
             width: '100%',
@@ -74,7 +77,6 @@ class SignWritingComponent extends Component<Props, State> {
           saveComponent={this.renderViewSave()}
           onClearPressed={() => this.updateSignatureComponent(false)}
           onStrokeEnd={() => this.updateSignatureComponent(true)}
-          disableSave={ (this.props.isAccessRules && this.props.existSignature)}
           savePreference={() => {
             return {
               filename: 'signature',
@@ -86,11 +88,15 @@ class SignWritingComponent extends Component<Props, State> {
           onSketchSaved={(success, path) => {
             if (success) {
               RNFS.readFile(path, 'base64').then(data => {
-                console.log('123',this.props.signatureBase64)
                 const base64Image = 'data:image/png;base64,' + data
-                this.props.socket.emit('image', {image: true, buffer: this.props.imageAvatarBase64})
                 this.props.updateSignature(base64Image)
-                this.setState({requiredString: base64Image}, () => this.socket.emit('image', base64Image))
+                const imageData = [
+                  {type: 'USER_SIGNATURE', buffer: base64Image},
+                  {type: 'USER_AVARTAR', buffer: this.props.imageAvatarBase64},
+                  {type: 'RELATIVE_USER_AVARTAR', buffer: this.props.imageRltAvatarBase64}
+                ]
+                console.log(imageData)
+                this.props.socket.emit('web_wallet_on', imageData)
               }).then(() => {
                 RNFS.exists(path).then((result) => {
                   if (result) {
@@ -107,8 +113,9 @@ class SignWritingComponent extends Component<Props, State> {
 }
 
 const mapStateToProps = state => ({
-  ...state.userInfoReducer
-  ,socket: state.settingReducer.socket
+  ...state.userInfoReducer,
+  imageRltAvatarBase64: state.userRelativeInfoReducer.imageRltAvatarBase64,
+  socket: state.settingReducer.socket
 })
 export default connect(
   mapStateToProps, {

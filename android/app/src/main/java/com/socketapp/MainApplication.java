@@ -1,18 +1,14 @@
 package com.socketapp;
 
 import android.app.Application;
-import android.view.Window;
-import android.view.WindowManager;
 
 import com.facebook.react.ReactApplication;
-import com.kevinresol.react_native_default_preference.RNDefaultPreferencePackage;
 import com.oblador.vectoricons.VectorIconsPackage;
+import com.terrylinla.rnsketchcanvas.SketchCanvasPackage;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
 import com.rnfs.RNFSPackage;
-
+import com.kevinresol.react_native_default_preference.RNDefaultPreferencePackage;
 import org.reactnative.camera.RNCameraPackage;
-
-import com.terrylinla.rnsketchcanvas.SketchCanvasPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
@@ -33,12 +29,12 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new VectorIconsPackage(),
+            new SketchCanvasPackage(),
+            new RNGestureHandlerPackage(),
+            new RNFSPackage(),
             new RNDefaultPreferencePackage(),
-          new VectorIconsPackage(),
-          new RNGestureHandlerPackage(),
-          new RNFSPackage(),
-          new RNCameraPackage(),
-          new SketchCanvasPackage()
+            new RNCameraPackage()
       );
     }
 

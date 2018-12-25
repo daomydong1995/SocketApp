@@ -4,23 +4,34 @@ import {
 } from './action/Constants'
 
 const INITIAL_STATE = {
-  userID: '',
   userName: '',
+  userBirth: '01/01/2019',
+  userOld: '1',
+  //
   userGender: false,
-  userAddress: '',
-  userDistrict: '',
-  userNation: '',
-  userCMT: '',
-  walletId: '',
-  userBirth: '01/01/2010',
   userJob: '',
-  userWards: '',
-  userCountry: '',
-  userIssuedDay: '01/01/2005',
+  //
+  userEmail: '',
   userPhone: '',
+  //
+  userCMT: '',
+  userCMTDay: '01/01/2005',
+  userCMTPlace: '',
+  //
+  userPassport: '',
+  userPassportDate: '01/01/2005',
+  userPassportPlace: '',
+  //
+  userCountry: '',
+  userNation: '',
+  userTBH: '',
+  //
+  userAddress: '',
+  //
+  userDistrict: '',
+  userWards: '',
   userProvince: '',
-  userBHY: '',
-  userIssuedPlace: '',
+  //
   isAccessRules: false,
   existSignature: false,
   signatureBase64: '',

@@ -4,7 +4,13 @@ import {
   ERROR_EVENT,
   SHOW_LOADING,
   UPDATE_ACCES_RULES,
-  UPDATE_SIGNATURE_EXIST, UPDATE_SOCKETS_ADDRESS, CONNECTION_STATUS, UPDATE_SIGNATURE, UPDATE_AVATAR
+  UPDATE_SIGNATURE_EXIST,
+  UPDATE_SOCKETS_ADDRESS,
+  CONNECTION_STATUS,
+  UPDATE_SIGNATURE,
+  UPDATE_AVATAR,
+  SYS_RLT_DATA,
+  UPDATE_RLT_AVATAR
 } from './Constants'
 
 // UserInfo
@@ -63,7 +69,20 @@ export const showLoading = (isShow) => {
     payload: isShow
   }
 }
+// RelativeUser
+export const syncRltData = (props) => {
+  return {
+    type: SYS_RLT_DATA,
+    payload: props
+  }
+}
 
+export const updateAvatarRltBase64 = (image) => {
+  return {
+    type: UPDATE_RLT_AVATAR,
+    payload: image
+  }
+}
 // SettingAction
 export const updateSocketsAddress = (socketAddress) => {
   return {

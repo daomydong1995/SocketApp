@@ -9,6 +9,7 @@ import SmartCardSignComponent from './CustomView/SmartCardComponent/SmartCardSig
 import SmartCartTable from './CustomView/SmartCardComponent/SmartCartTable'
 import SCREENSTITLE from '../ContanstPage/SCREENSTITLE'
 import SCREENS from '../ContanstPage/SCREENS'
+import UserRelativeInfoComponent from './CustomView/UserInfo/UserRelativeInfoComponent'
 
 type Props = {}
 type State = {}
@@ -17,13 +18,7 @@ class SignWalletPage extends Component<Props, State> {
   constructor (props: Props) {
     super(props)
     this.eventLeftHeader = this.eventLeftHeader.bind(this)
-    this.navigateScreenCamera = this.navigateScreenCamera.bind(this)
   }
-
-  navigateScreenCamera () {
-    this.props.navigation.navigate(SCREENS.SIGNSUBMIT_PAGE)
-  }
-
   onReceivedMessage (state) {
     this.props.syncData(state)
   }
@@ -47,8 +42,10 @@ class SignWalletPage extends Component<Props, State> {
             <ScrollView style={{flex: 1, width: 1024, paddingBottom: 0}}
                         contentContainerStyle={{paddingBottom: 300}}>
               <UserInfoComponent/>
-              <SmartCardSignComponent navigate={this.navigateScreenCamera}/>
-              <SmartCartTable/>
+              <View style={{width: '100%', height: 1, backgroundColor: '#000', margin: 10}}/>
+              <UserRelativeInfoComponent/>
+              <SmartCardSignComponent navigate={this.props.navigation.navigate}/>
+              {/*<SmartCartTable/>*/}
             </ScrollView>
           </ScrollView>
         </View>
