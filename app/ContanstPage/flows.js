@@ -9,8 +9,10 @@ import CustomDrawerMenu from '../ViewPage/CustomView/CustomDrawersComponent'
 import React from 'react'
 import SCREENSTITLE from './SCREENSTITLE'
 import TakePhotoPage from '../ViewPage/TakePhotoPage'
+import InfoUserWalletPage from '../ViewPage/InfoUserWalletPage'
+import SelectPage from '../ViewPage/SelectPage'
 const DashboardFlow = createStackNavigator({
-  [SCREENS.SIGN_WALLETS_SUBMIT]: { screen: SignWalletPage, navigationOptions: () => ({ title: SCREENSTITLE.SIGN_WALLETS_SUBMIT }) },
+  [SCREENS.SELECT_SCREEN_PAGE]: { screen: SelectPage, navigationOptions: () => ({ title: '' }) },
   [SCREENS.TAKE_PHOTO_PAGE]: { screen: TakePhotoPage, navigationOptions: () => ({ title: SCREENSTITLE.TAKE_PHOTO_PAGE }) }
 },
 {

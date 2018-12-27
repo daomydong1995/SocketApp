@@ -6,7 +6,7 @@ import Icon from 'react-native-vector-icons/FontAwesome5'
 import SCREENSTITLE from '../ContanstPage/SCREENSTITLE'
 import io from 'socket.io-client'
 import { Row, Table, TableWrapper } from 'react-native-table-component'
-import Cell from 'react-native-table-component/components/cell'
+import { Cell } from 'react-native-table-component/components/cell'
 import { connect } from 'react-redux'
 
 type Props = {}

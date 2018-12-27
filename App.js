@@ -5,7 +5,7 @@ import combineReducers from './app/reducer/index'
 import DrawerMenu from './app/ContanstPage/flows'
 import { View, StatusBar } from 'react-native'
 import SocketEmitPage from './app/ViewPage/SocketEmitPage'
-
+import {Text} from 'react-native';
 
 type Props = {};
 type State = {}
@@ -13,6 +13,7 @@ console.disableYellowBox = true
 const store = createStore(combineReducers)
 class App extends Component<Props, State> {
   render () {
+    // Text.defaultProps.style = {fontFamily: 'Roboto-Regular'}
     return (
       <Provider store={store}>
         <View style={{flex: 1}}>

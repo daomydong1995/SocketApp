@@ -66,7 +66,6 @@ class SignWritingComponent extends Component<Props, State> {
       </View>
     )
   }
-
   render () {
     const today = new Date()
     return (
@@ -89,8 +88,8 @@ class SignWritingComponent extends Component<Props, State> {
             height: '70%',
             borderWidth: 1
           }}
-          enableSaveBtn={(this.props.isAccessRules && this.props.existSignature)}
-          touchEnabled={this.state.touchCanvasEnable}
+          enableSaveBtn={(this.props.isAccessRules && this.props.existSignature) === undefined ? false : (this.props.isAccessRules && this.props.existSignature)}
+          touchEnabled={((this.state.touchCanvasEnable) === undefined ? false : (this.state.touchCanvasEnable))}
           defaultStrokeIndex={0}
           defaultStrokeWidth={5}
           clearComponent={this.renderViewClear()}

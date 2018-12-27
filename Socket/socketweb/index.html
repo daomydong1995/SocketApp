@@ -223,7 +223,7 @@
       userCMT, userCMTDay, userCMTPlace, userPassport, userPassportDate, userPassportPlace, userCountry,
       userNation, userTBH, userAddress, userDistrict, userWards, userProvince
     }
-    socket.emit('web_wallet_emit', {screen: 'SIGN_WALLET_USER_INFO', userInfo: userInfo})
+    socket.emit('web_wallet_emit', {screen: 'SIGN_WALLETS_SUBMIT', userInfo: userInfo})
   }
 
   function onChangeRltValue () {
@@ -251,7 +251,7 @@
       rltPassportPlace,
       rltAddress
     }
-    socket.emit('web_wallet_emit', {screen: 'SIGN_WALLET_RLT_INFO', rltInfo: rltInfos})
+    socket.emit('web_wallet_emit', {screen: 'USER_INFO_PAGE', rltInfo: rltInfos})
   }
 
   $(function () {

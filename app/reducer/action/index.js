@@ -10,7 +10,7 @@ import {
   UPDATE_SIGNATURE,
   UPDATE_AVATAR,
   SYS_RLT_DATA,
-  UPDATE_RLT_AVATAR
+  UPDATE_RLT_AVATAR, UPDATE_MOMMENT_SCREEN, UPDATE_PENDING_TRANSACTION, UPDATE_HISTORY_TRANSACTION
 } from './Constants'
 
 // UserInfo
@@ -93,6 +93,28 @@ export const updateSocketsAddress = (socketAddress) => {
 export const updateSocketStatus = (connect) => {
   return {
     type: CONNECTION_STATUS,
+    payload: connect
+  }
+}
+
+export const updateScreenApp = (connect) => {
+  return {
+    type: UPDATE_MOMMENT_SCREEN,
+    payload: connect
+  }
+}
+
+// Table
+
+export const updatePendingTransaction = (connect) => {
+  return {
+    type: UPDATE_PENDING_TRANSACTION,
+    payload: connect
+  }
+}
+export const updateHistoryTransaction = (connect) => {
+  return {
+    type: UPDATE_HISTORY_TRANSACTION,
     payload: connect
   }
 }

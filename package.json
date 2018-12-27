@@ -10,7 +10,6 @@
     "android": "react-native run-android"
   },
   "dependencies": {
-    "@terrylinla/react-native-sketch-canvas": "https://github.com/daomydong1995/react-native-sketch-canvas.git",
     "json-loader": "^0.5.7",
     "mongojs": "^2.4.0",
     "nodemon": "^1.11.0",

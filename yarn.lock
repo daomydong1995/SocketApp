@@ -754,10 +754,6 @@
     react-native-safe-area-view "^0.11.0"
     react-native-screens "^1.0.0 || ^1.0.0-alpha"
 
-"@terrylinla/react-native-sketch-canvas@https://github.com/daomydong1995/react-native-sketch-canvas.git", "react-native-sketch-canvas@https://github.com/daomydong1995/react-native-sketch-canvas.git":
-  version "0.8.0"
-  resolved "https://github.com/daomydong1995/react-native-sketch-canvas.git#f45fce8a74e62cbffa40c363867a69b0cf581e24"
-
 abab@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/abab/-/abab-2.0.0.tgz#aba0ab4c5eee2d4c79d3487d85450fb2376ebb0f"
@@ -6142,6 +6138,10 @@ react-native-safe-area-view@0.11.0, react-native-safe-area-view@^0.11.0:
   resolved "https://registry.yarnpkg.com/react-native-screens/-/react-native-screens-1.0.0-alpha.19.tgz#ecf3c9023e169b7013266d40b9c5599f37667f6d"
   integrity sha512-+a7GdwzLWYWYVUJMg+XuyBoRFGD8GdGyBfebuTNBY+xwUZpTXCaK/GlLGL6EE3h0iBHZu83do7zViEailWRNyA==
 
+"react-native-sketch-canvas@https://github.com/daomydong1995/react-native-sketch-canvas.git":
+  version "0.8.0"
+  resolved "https://github.com/daomydong1995/react-native-sketch-canvas.git#b7d64c80e417809e408d605e4249598ff9175a88"
+
 react-native-tab-view@^0.0.77:
   version "0.0.77"
   resolved "https://registry.yarnpkg.com/react-native-tab-view/-/react-native-tab-view-0.0.77.tgz#11ceb8e7c23100d07e628dc151b57797524d00d4"
@@ -6157,9 +6157,9 @@ react-native-tab-view@^1.0.0, react-native-tab-view@^1.2.0:
     prop-types "^15.6.1"
 
 react-native-table-component@^1.1.8:
-  version "1.1.8"
-  resolved "https://registry.yarnpkg.com/react-native-table-component/-/react-native-table-component-1.1.8.tgz#4d0846d077914e1c608769e55a1a9e76ea32a90f"
-  integrity sha512-OBvcqF/LgcmFjcOFZ13a7xc2XvkaVCb91TQCtGD0WPLx0og9meLXOOYHuZHlGArlkV8pfoHDMeNY4QTlrdnK7g==
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/react-native-table-component/-/react-native-table-component-1.2.0.tgz#d4dff88abb58648086ba52a801ba9a1ab1825c03"
+  integrity sha512-j9AEryfGSStJ9vbcfj63uaMxL8Ek+Xn0+rIA4o2Dvovo7C9fAGMEJxJiL57jmNIX65jRtWNwko9GqeaXXzjJVw==
 
 react-native-vector-icons@^6.1.0:
   version "6.1.0"

@@ -32,6 +32,14 @@ const INITIAL_STATE = {
   userWards: '',
   userProvince: '',
   //
+  userId: '',
+  userWalletId: '',
+  userCardId: '',
+  userHospital: '',
+  userMoneyTotal: '0',
+  userNameCard: 'Dao my dong',
+  userCodeCard: '0000-0000-0000-0000',
+  //
   isAccessRules: false,
   existSignature: false,
   signatureBase64: '',

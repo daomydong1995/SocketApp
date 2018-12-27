@@ -15,7 +15,7 @@ class SmartCardLogoComponent extends Component<Props, State> {
       <View style={styles.container}>
         <Text style={styles.textTileStyle}>Thông tin thẻ SmartCard</Text>
           <ImageBackground style={styles.imageStyle} source={require('../../../../assets/images/smartCard.png')}>
-            <View style={{marginBottom: 40,marginRight: 10,alignItems: 'flex-end'}}>
+            <View style={{marginBottom: 30,marginRight: 10,alignItems: 'flex-end'}}>
               <Text style={styles.textNameStyle}>{userName.toUpperCase().trim()}</Text>
               <Text style={styles.textCodeStyle}>{userCode.toUpperCase().trim()}</Text>
             </View>
@@ -38,12 +38,12 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end'
   },
   textNameStyle: {
-    fontSize: 20,
+    fontSize: 14,
     fontWeight: 'bold',
     color: '#C8AC56'
   },
   textCodeStyle: {
-    fontSize: 22,
+    fontSize: 16,
     fontWeight: 'bold',
     color: '#C8AC56'
   },

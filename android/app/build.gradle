@@ -137,6 +137,7 @@ android {
 }
 
 dependencies {
+    compile project(':@terrylinla_react-native-sketch-canvas')
     compile project(':react-native-vector-icons')
     compile project(':react-native-sketch-canvas')
     compile project(':react-native-gesture-handler')

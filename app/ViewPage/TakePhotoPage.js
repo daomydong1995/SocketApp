@@ -53,8 +53,7 @@ class TakePhotoPage extends Component<Props, State> {
           permissionDialogMessage={'We need your permission to use your camera phone'}
           onGoogleVisionBarcodesDetected={({barcodes}) => {
             console.log(barcodes)
-          }}
-        >
+          }}>
           <View style={{flexDirection: 'row',alignItems: 'center',justifyContent: 'space-between', width: '100%', padding: 10}}>
             <TouchableOpacity
               onPress={() => this.setState({fontCamera: !this.state.fontCamera})}

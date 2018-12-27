@@ -1,9 +1,17 @@
 import { Component } from 'react'
 import DefaultPreference from 'react-native-default-preference'
-import { syncData, syncRltData, updateSocketsAddress, updateSocketStatus } from '../reducer/action'
+import {
+  syncData,
+  syncRltData, updateHistoryTransaction,
+  updatePendingTransaction,
+  updateScreenApp,
+  updateSocketsAddress,
+  updateSocketStatus
+} from '../reducer/action'
 import { connect } from 'react-redux'
 import { View } from 'react-native'
 import React from 'react'
+import SCREENS from '../ContanstPage/SCREENS'
 
 type Props = {}
 type State = {}
@@ -49,17 +57,35 @@ class SocketEmitPage extends Component<Props, State> {
   }
 
   onReceivedMessage (state) {
-    if (state.screen === 'SIGN_WALLET_USER_INFO' && (state.userInfo !== null || state.userInfo !== undefined)) {
-      this.props.syncData(state.userInfo)
+    if (state.screen === undefined || state.screen === null){
+      return
     }
-    if (state.screen === 'SIGN_WALLET_RLT_INFO' && (state.rltInfo !== null || state.rltInfo !== undefined)) {
-      this.props.syncRltData(state.rltInfo)
+    this.props.updateScreenApp(state.screen)
+    if (state.screen === SCREENS.SIGN_WALLETS_SUBMIT) {
+      if (state.userInfo !== null || state.userInfo !== undefined) {
+        this.props.syncData(state.userInfo)
+      }
+      if (state.rltInfo !== null || state.rltInfo !== undefined) {
+        this.props.syncRltData(state.rltInfo)
+      }
+    } else if (state.screen === SCREENS.USER_INFO_PAGE) {
+      if (state.pendingTransactions !== null || state.pendingTransactions !== undefined) {
+        this.props.updatePendingTransaction(state.pendingTransactions)
+      }
+      if (state.historyTransactions !== null || state.historyTransactions !== undefined) {
+        this.props.updateHistoryTransaction(state.historyTransactions)
+      }
+      if (state.userInfo !== null || state.userInfo !== undefined) {
+        this.props.syncData(state.userInfo)
+      }
     }
   }
+
   render () {
     return (<View/>)
   }
 }
+
 const mapStateToProps = state => ({
   socket: state.settingReducer.socket
 })
@@ -69,6 +95,9 @@ export default connect(
     syncData,
     syncRltData,
     updateSocketStatus,
-    updateSocketsAddress
+    updateSocketsAddress,
+    updateScreenApp,
+    updatePendingTransaction,
+    updateHistoryTransaction
   }
 )(SocketEmitPage)
