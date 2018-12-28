@@ -50,7 +50,7 @@ const sev = http.createServer(app)
 sev.listen(port, function () {
   console.log('listening on *:' + port)
 })
-// const io = require('socket.io')(sev)
+const io = require('socket.io')(sev)
 // io.on('connection', function (socket) {
 //   socket.on('sign_wallet', function (msg) {
 //     console.log(msg)

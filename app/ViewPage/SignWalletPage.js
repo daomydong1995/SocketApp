@@ -45,7 +45,6 @@ class SignWalletPage extends Component<Props, State> {
               <View style={{width: '100%', height: 1, backgroundColor: '#000', margin: 10}}/>
               <UserRelativeInfoComponent/>
               <SmartCardSignComponent navigate={this.props.navigation.navigate}/>
-              <SmartCartTable/>
             </ScrollView>
           </ScrollView>
         </View>
