@@ -10,7 +10,6 @@ import { RNCamera } from 'react-native-camera'
 import connect from 'react-redux/es/connect/connect'
 import { updateAvatarBase64, updateAvatarRltBase64 } from '../reducer/action'
 import Icon from 'react-native-vector-icons/FontAwesome5'
-import SCREENSTITLE from '../ContanstPage/SCREENSTITLE'
 import HeaderCustom from './CustomView/Header/HeaderCustom'
 // import BackgroundTask from 'react-native-background-task'
 type Props = {}
@@ -18,10 +17,6 @@ type State = {
   fontCamera: boolean,
   flashOn: boolean
 }
-// BackgroundTask.define(() => {
-//   console.log('Hello from a background task')
-//   BackgroundTask.finish()
-// })
 class TakePhotoPage extends Component<Props, State> {
   constructor (props) {
     super(props)

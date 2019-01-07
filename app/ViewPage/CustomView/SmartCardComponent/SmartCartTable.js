@@ -35,7 +35,6 @@ class SmartCartTable extends Component<Props, State> {
     return (
       <View style={styles.container}>
         <Text style={styles.titleTable}>Giao dịch đang chờ</Text>
-        {console.log(this.props.pendingTransactions)}
         <View style={styles.tableStyle}>
           <Table borderStyle={{borderWidth: 1, borderColor: '#000', borderRadius: 5}}>
             <Row data={state.transactionPending} flexArr={state.flexArrPending} style={styles.head} textStyle={styles.text}/>
@@ -49,7 +48,6 @@ class SmartCartTable extends Component<Props, State> {
           </Table>
         </View>
         <Text style={styles.titleTable}>Lịch sử giao dịch</Text>
-        {console.log(this.props.pendingTransactions)}
         <View style={styles.tableStyle}>
           <Table borderStyle={{borderWidth: 1, borderColor: '#000', borderRadius: 5}}>
             <Row data={state.transactionHistory} flexArr={state.flexArrHistory} style={styles.head} textStyle={styles.text}/>

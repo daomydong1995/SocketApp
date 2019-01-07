@@ -2,14 +2,12 @@ import {
   createAppContainer, createDrawerNavigator,
   createStackNavigator
 } from 'react-navigation'
-import SignWalletPage from '../ViewPage/SignWalletPage'
 import SCREENS from './SCREENS'
 import SettingPage from '../ViewPage/SettingPage'
 import CustomDrawerMenu from '../ViewPage/CustomView/CustomDrawersComponent'
 import React from 'react'
 import SCREENSTITLE from './SCREENSTITLE'
 import TakePhotoPage from '../ViewPage/TakePhotoPage'
-import InfoUserWalletPage from '../ViewPage/InfoUserWalletPage'
 import SelectPage from '../ViewPage/SelectPage'
 const DashboardFlow = createStackNavigator({
   [SCREENS.SELECT_SCREEN_PAGE]: { screen: SelectPage, navigationOptions: () => ({ title: '' }) },

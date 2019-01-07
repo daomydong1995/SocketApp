@@ -4,12 +4,13 @@ import SmartCardLogoComponent from './SmartCardLogoComponent'
 import rules from '../../../../assets/json/rules'
 import { CheckBox } from 'react-native-elements'
 import SignWritingComponent from './HandleSignWritingComponent/SignWritingComponent'
-import { updateAccessRules } from '../../../reducer/action/index'
+import { updateAccessRules, updateAvatarBase64, updateAvatarRltBase64 } from '../../../reducer/action/index'
 import { connect } from 'react-redux'
-import Icon from 'react-native-vector-icons/FontAwesome5'
 import SCREENS from '../../../ContanstPage/SCREENS'
-import userRelativeInfoReducer from '../../../reducer/userRelativeInfoReducer'
+import CameraStream from '../../TestStreamCamera/CameraStream'
+import ViewShot from 'react-native-view-shot'
 
+const RNFS = require('react-native-fs')
 type Props = {
   navigate: any
 }
@@ -20,14 +21,45 @@ type State = {
 class SmartCardSignComponent extends Component<Props, State> {
   constructor (props) {
     super(props)
-    this.change = this.change.bind(this)
     this.navigateScreenCamera = this.navigateScreenCamera.bind(this)
   }
+
   navigateScreenCamera (forUser) {
-    this.props.navigate(SCREENS.TAKE_PHOTO_PAGE, {forUser:forUser})
+    this.props.navigate(SCREENS.TAKE_PHOTO_PAGE, {forUser: forUser})
     // console.log(forUser)
   }
-  change (name) {
+
+  componentDidMount () {
+    let self = this
+    console.log('dong')
+    this.props.socket.on('takePicture', function (msg) {
+      let viewShot
+      console.log(msg)
+      if (msg === 'USER_AVATAR') {
+        viewShot = self.refs.userAvatar
+      } else if (msg === 'RELATIVE_USER_AVATAR') {
+        viewShot = self.refs.rltUserAvatar
+      } else {
+        return
+      }
+      viewShot.capture().then(uri => {
+        RNFS.readFile(uri, 'base64').then(data => {
+          const base64Image = 'data:image/png;base64,' + data
+          if (msg === 'USER_AVATAR') {
+            self.props.updateAvatarBase64(base64Image)
+          } else if (msg === 'RELATIVE_USER_AVATAR') {
+            self.props.updateAvatarRltBase64(base64Image)
+          }
+          self.props.socket.emit('web_wallet_on', {type: msg, buffer: base64Image})
+        }).then(() => {
+          RNFS.exists(path).then((result) => {
+            if (result) {
+              return RNFS.unlink(path)
+            }
+          })
+        })
+      })
+    })
   }
 
   render () {
@@ -39,25 +71,41 @@ class SmartCardSignComponent extends Component<Props, State> {
               <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20}}>
                 <Text style={styles.textTileStyle}>Ảnh cá nhân</Text>
               </View>
-              <Image
-                source={this.props.userInfo.imageAvatarBase64 === '' ? require('../../../../assets/images/userplaceholder.png') : {uri: this.props.userInfo.imageAvatarBase64}}
-                style={{width: 160, height: 239 * 0.8, borderWidth: 1}}/>
-              <TouchableOpacity style={{width: 160, alignItems: 'center', marginTop: 10}} onPress={() => this.navigateScreenCamera(true)}>
-                <Text style={{textAlign: 'center', padding: 4, fontSize: 18, borderRadius: 2, borderWidth: 3}}>Chụp
-                  ảnh <Icon name={'camera'} size={18}/></Text>
-              </TouchableOpacity>
+              <View style={styles.stylePhoto}>
+                <ViewShot ref="userAvatar" options={{format: 'jpg', quality: 1.0}}>
+                  {
+                    this.props.control !== 'USER_AVATAR' &&
+                    <Image
+                      source={this.props.userInfo.imageAvatarBase64 === '' ? require('../../../../assets/images/userplaceholder.png') : {uri: this.props.userInfo.imageAvatarBase64}}
+                      style={{width: '100%', height: '100%'}}/>
+                  }
+                  {
+                    this.props.control === 'USER_AVATAR' &&
+
+                    <CameraStream/>
+                  }
+                </ViewShot>
+              </View>
             </View>
             <View>
               <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 20}}>
                 <Text style={styles.textTileStyle}>Ảnh người thân</Text>
               </View>
-              <Image
-                source={this.props.rltInfo.imageRltAvatarBase64 === '' ? require('../../../../assets/images/userplaceholder.png') : {uri: this.props.rltInfo.imageRltAvatarBase64}}
-                style={{width: 160, height: 239 * 0.8, borderWidth: 1}}/>
-              <TouchableOpacity style={{width: 160, alignItems: 'center', marginTop: 10}} onPress={() => this.navigateScreenCamera(false)}>
-                <Text style={{textAlign: 'center', padding: 4, fontSize: 18, borderRadius: 2, borderWidth: 3}}>Chụp
-                  ảnh <Icon name={'camera'} size={18}/></Text>
-              </TouchableOpacity>
+              <View style={styles.stylePhoto}>
+                <ViewShot ref="rltUserAvatar" options={{format: 'jpg', quality: 1.0}}>
+                  {
+                    this.props.control !== 'RELATIVE_USER_AVATAR'
+                    && <Image
+                      source={this.props.rltInfo.imageRltAvatarBase64 === '' ? require('../../../../assets/images/userplaceholder.png') : {uri: this.props.rltInfo.imageRltAvatarBase64}}
+                      style={{width: '100%', height: '100%'}}/>
+                  }
+                  {
+                    this.props.control === 'RELATIVE_USER_AVATAR'
+                    && <CameraStream/>
+
+                  }
+                </ViewShot>
+              </View>
             </View>
           </View>
           <View style={styles.smartCartStyle}>
@@ -136,14 +184,19 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     width: '100%',
     justifyContent: 'center'
-  }
+  },
+  stylePhoto: {width: 160, height: 239 * 0.8, borderWidth: 1}
 })
 const mapStateToProps = state => ({
   userInfo: state.userInfoReducer,
-  rltInfo: state.userRelativeInfoReducer
+  rltInfo: state.userRelativeInfoReducer,
+  control: state.settingReducer.control,
+  socket: state.settingReducer.socket
 })
 export default connect(
   mapStateToProps, {
-    updateAccessRules
+    updateAccessRules,
+    updateAvatarBase64,
+    updateAvatarRltBase64
   }
 )(SmartCardSignComponent)

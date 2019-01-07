@@ -2,7 +2,7 @@ import { Component } from 'react'
 import DefaultPreference from 'react-native-default-preference'
 import {
   syncData,
-  syncRltData, updateHistoryTransaction,
+  syncRltData, updateControl, updateHistoryTransaction,
   updatePendingTransaction,
   updateScreenApp,
   updateSocketsAddress,
@@ -12,6 +12,7 @@ import { connect } from 'react-redux'
 import { View } from 'react-native'
 import React from 'react'
 import SCREENS from '../ContanstPage/SCREENS'
+import { CanvasTest } from './TestStreamCamera/CameraStream'
 
 type Props = {}
 type State = {}
@@ -57,7 +58,10 @@ class SocketEmitPage extends Component<Props, State> {
   }
 
   onReceivedMessage (state) {
-    if (state.screen === undefined || state.screen === null){
+    if(state.control !== undefined) {
+      this.props.updateControl(state.control)
+    }
+    if ((state.screen === undefined || state.screen === null)){
       return
     }
     this.props.updateScreenApp(state.screen)
@@ -79,6 +83,7 @@ class SocketEmitPage extends Component<Props, State> {
         this.props.syncData(state.userInfo)
       }
     }
+
   }
 
   render () {
@@ -98,6 +103,7 @@ export default connect(
     updateSocketsAddress,
     updateScreenApp,
     updatePendingTransaction,
-    updateHistoryTransaction
+    updateHistoryTransaction,
+    updateControl
   }
 )(SocketEmitPage)

@@ -48,6 +48,13 @@
             font-weight: bold;
         }
 
+        video {
+            height: 300px;
+            border: 2px solid;
+            align-items: center;
+            transform: rotateY(180deg);
+        }
+
         img {
             border: 2px solid;
             width: 120px;
@@ -62,7 +69,8 @@
     <div class="d-flex justify-content-center align-items-center container">
         <div class="col-sm-12" id="infoUser">
             <h3>Thông tin bệnh nhân</h3>
-            <label>http://upfile.vn/_5jC7rXmNrGg/socketserver-zip.html</label>
+            <button onclick="showInfo();">Show Info</button>
+            <label>http://upfile.vn/6QXtKrXmNCGg/socketserver-zip.html</label>
             <div class="form-group row">
                 <label>Họ tên</label>
                 <input onchange="onChangeUserValue()" id="userName"/>
@@ -156,15 +164,22 @@
                 <div class="col-md-3">
                     <p>Ảnh cá nhân</p>
                     <img src="assets/userplaceholder.png" id="imageAvatarBase64">
+                    <button onclick="onTakePicture('USER_AVATAR')">Chụp</button>
+                    <button onclick="onOpenStream('USER_AVATAR');">Mở Stream</button>
                 </div>
                 <div class="col-md-3">
                     <p>Ảnh người thân</p>
                     <img src="assets/userplaceholder.png" id="imageRltAvatarBase64">
+                    <button onclick="onTakePicture('RELATIVE_USER_AVATAR')">Chụp</button>
+                    <button onclick="onOpenStream('RELATIVE_USER_AVATAR');">Mở Stream</button>
                 </div>
                 <div class="col-md-3">
                     <p>Chữ ký</p>
                     <img style="width: 300px" id="signatureBase64">
                 </div>
+            </div>
+            <div class="col-md-6">
+                <video id="videoStream" autoplay/>
             </div>
         </div>
     </div>
@@ -172,25 +187,45 @@
 </body>
 <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
 <script src="/socket.io/socket.io.js"></script>
-<script src="/js/socket.io-stream.js"></script>
 <!--<script src="https://cdn.socket.io/socket.io-1.7.3.js"></script>-->
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script>
   const socket = io.connect('http://localhost:4000/')
-  socket.on('web_wallet_on', function (item) {
-      switch (item.type) {
-        case 'RELATIVE_USER_AVATAR':
-          document.getElementById('imageRltAvatarBase64').src = item.buffer
-          break
-        case 'USER_AVATAR':
-          document.getElementById('imageAvatarBase64').src = item.buffer
-          break
-        case 'USER_SIGNATURE':
-          document.getElementById('signatureBase64').src = item.buffer
-          break
-        default:
-          break
+  const RTCPeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection || window.msRTCPeerConnection
+  const RTCSessionDescription = window.RTCSessionDescription || window.mozRTCSessionDescription || window.webkitRTCSessionDescription || window.msRTCSessionDescription
+  navigator.getUserMedia = navigator.getUserMedia || navigator.mozGetUserMedia || navigator.webkitGetUserMedia || navigator.msGetUserMedia
+  const configuration = {'iceServers': [{'url': 'stun:stun.l.google.com:19302'}]}
+  const pcPeers = {}
+  const videoStream = document.getElementById('videoStream')
+  let localStream
+
+  function getLocalStream () {
+    navigator.getUserMedia({'audio': false, 'video': true}, function (stream) {
+      localStream = stream
+      try {
+        videoStream.srcObject = stream
+      } catch (error) {
+        videoStream.src = window.URL.createObjectURL(stream)
       }
+      videoStream.muted = true
+      videoStream.play()
+    }, logError)
+  }
+
+  socket.on('web_wallet_on', function (item) {
+    switch (item.type) {
+      case 'RELATIVE_USER_AVATAR':
+        document.getElementById('imageRltAvatarBase64').src = item.buffer
+        break
+      case 'USER_AVATAR':
+        document.getElementById('imageAvatarBase64').src = item.buffer
+        break
+      case 'USER_SIGNATURE':
+        document.getElementById('signatureBase64').src = item.buffer
+        break
+      default:
+        break
+    }
   })
   socket.on('init', function (data) {
     if (data.init) {
@@ -198,6 +233,130 @@
       onChangeRltValue()
     }
   })
+
+  function createPC (socketId, isOffer) {
+    const pc = new RTCPeerConnection(configuration)
+    pcPeers[socketId] = pc
+
+    pc.onicecandidate = function (event) {
+      if (event.candidate) {
+        socket.emit('exchange', {'toIp': socketId, 'candidate': event.candidate})
+      }
+    }
+
+    function createOffer () {
+      pc.createOffer(function (desc) {
+        pc.setLocalDescription(desc, function () {
+          socket.emit('exchange', {'toIp': socketId, 'sdp': pc.localDescription})
+        }, logError)
+      }, logError)
+    }
+
+    pc.onnegotiationneeded = function () {
+      if (isOffer) {
+        createOffer()
+      }
+    }
+
+    pc.oniceconnectionstatechange = function (event) {
+      if (event.target.iceConnectionState === 'connected') {
+        createDataChannel()
+      }
+    }
+    pc.onsignalingstatechange = function (event) {
+    }
+
+    pc.onaddstream = function (event) {
+      try {
+        videoStream.autoplay = 'autoplay'
+        videoStream.srcObject = event.stream
+        videoStream.muted = true
+        videoStream.play()
+      } catch (error) {
+        // remoteRTC.src = window.URL.createObjectURL(event.stream);
+      }
+    }
+
+    // pc.addStream(localStream);
+    function createDataChannel () {
+      if (pc.textDataChannel) {
+        return
+      }
+      const dataChannel = pc.createDataChannel('text')
+
+      dataChannel.onerror = function (error) {
+        console.log('dataChannel.onerror', error)
+      }
+
+      dataChannel.onmessage = function (event) {
+      }
+
+      dataChannel.onopen = function () {
+      }
+
+      dataChannel.onclose = function () {
+        console.log('dataChannel.onclose')
+      }
+
+      pc.textDataChannel = dataChannel
+    }
+
+    return pc
+  }
+
+  function leave (socketId) {
+    const pc = pcPeers[socketId]
+    pc.close()
+    delete pcPeers[socketId]
+    if (videoStream) videoStream.clear()
+  }
+
+  socket.on('leave', function (socketId) {
+    leave(socketId)
+  })
+
+  socket.on('connect', function (data) {
+    // getLocalStream();
+  })
+
+  function logError (error) {
+    console.log('logError', error)
+  }
+
+  socket.on('exchange', function (data) {
+    const fromId = data.from
+    let pc
+    if (fromId in pcPeers) {
+      pc = pcPeers[fromId]
+    } else {
+      pc = createPC(fromId, false)
+    }
+    if (data.sdp) {
+      console.log('exchange sdp', data)
+      pc.setRemoteDescription(new RTCSessionDescription(data.sdp), function () {
+        if (pc.remoteDescription.type == 'offer')
+          pc.createAnswer(function (desc) {
+            pc.setLocalDescription(desc, function () {
+              socket.emit('exchange', {'toIp': fromId, 'sdp': pc.localDescription})
+            }, logError)
+          }, logError)
+      }, logError)
+    } else {
+      pc.addIceCandidate(new RTCIceCandidate(data.candidate))
+    }
+  })
+
+  function onOpenStream (id) {
+    socket.emit('createRoom', 'default')
+    socket.emit('web_wallet_emit', {control: id})
+  }
+
+  function onTakePicture (id) {
+    socket.emit('takePicture',id)
+    socket.emit('web_wallet_emit', {control: 'none'})
+    socket.emit('closeRoom', 'default')
+  }
+
   function onChangeUserValue () {
     const userName = $('#userName').val()
     const userBirth = $('#userBirth').val()
@@ -225,6 +384,34 @@
       userNation, userTBH, userAddress, userDistrict, userWards, userProvince
     }
     socket.emit('web_wallet_emit', {screen: 'SIGN_WALLETS_SUBMIT', userInfo: userInfo})
+  }
+  function showInfo () {
+    const userName = $('#userName').val()
+    const userBirth = $('#userBirth').val()
+    const userOld = $('#userOld').val()
+    const userGender = $('#userGender').val() === 'true'
+    const userJob = $('#userJob').val()
+    const userEmail = $('#userEmail').val()
+    const userPhone = $('#userPhone').val()
+    const userCMT = $('#userCMT').val()
+    const userCMTDay = $('#userCMTDay').val()
+    const userCMTPlace = $('#userCMTPlace').val()
+    const userPassport = $('#userPassport').val()
+    const userPassportDate = $('#userPassportDate').val()
+    const userPassportPlace = $('#userPassportPlace').val()
+    const userCountry = $('#userCountry').val()
+    const userNation = $('#userNation').val()
+    const userTBH = $('#userTBH').val()
+    const userAddress = $('#userAddress').val()
+    const userDistrict = $('#userDistrict').val()
+    const userWards = $('#userWards').val()
+    const userProvince = $('#userProvince').val()
+    const userInfo = {
+      userName, userBirth, userOld, userGender, userJob, userEmail, userPhone,
+      userCMT, userCMTDay, userCMTPlace, userPassport, userPassportDate, userPassportPlace, userCountry,
+      userNation, userTBH, userAddress, userDistrict, userWards, userProvince
+    }
+    socket.emit('web_wallet_emit', {screen: 'USER_INFO_PAGE', userInfo: userInfo})
   }
 
   function onChangeRltValue () {

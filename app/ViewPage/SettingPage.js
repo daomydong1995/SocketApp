@@ -8,6 +8,7 @@ import io from 'socket.io-client'
 import { Row, Table, TableWrapper } from 'react-native-table-component'
 import { Cell } from 'react-native-table-component/components/cell'
 import { connect } from 'react-redux'
+import { updateSocket } from '../reducer/action'
 
 type Props = {}
 type State = {
@@ -38,10 +39,9 @@ class SettingPage extends Component<Props, State> {
     const {socket} = this.props
     socket.disconnect()
     let ip = 'http://' + address + ':' + port
-    console.log(ip)
-    socket.io = io(ip, {
+    socket.io = new io(ip, {
       transports: ['websocket']
-    }).io
+    }).io;
     socket.connect()
   }
 
@@ -82,12 +82,12 @@ class SettingPage extends Component<Props, State> {
                     <TableWrapper key={index}
                                   style={[styles.row, {backgroundColor: index % 2 === 0 ? '#fff' : '#e0e0e0'}]}>
                       <Cell data={(
-                        <View style={{flex: 1, flexDirection:'row', alignItems: 'center'}}>
-                        <TouchableOpacity style={{margin: 5}} onPress={() => this.setState({address:sk.hostname})}>
-                          <View style={{borderWidth: 2, padding: 4,backgroundColor: '#6affa1'}}>
-                            <Text style={{fontWeight: 'bold'}}>Chọn</Text>
-                          </View>
-                        </TouchableOpacity>
+                        <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
+                          <TouchableOpacity style={{margin: 5}} onPress={() => this.setState({address: sk.hostname})}>
+                            <View style={{borderWidth: 2, padding: 4, backgroundColor: '#6affa1'}}>
+                              <Text style={{fontWeight: 'bold'}}>Chọn</Text>
+                            </View>
+                          </TouchableOpacity>
                           <Text style={styles.text}>{sk.hostname}</Text>
                         </View>
                       )} textStyle={styles.text}/>
@@ -100,7 +100,8 @@ class SettingPage extends Component<Props, State> {
                               borderRadius: 20,
                               backgroundColor: (this.props.socket.io.engine.hostname === sk.hostname && connected) ? '#4eff35' : '#ff0c16'
                             }}/>
-                          <Text style={styles.text}>{(this.props.socket.io.engine.hostname === sk.hostname && connected)  ? 'Đang kết nối...' : 'Không kết nối!'}</Text>
+                          <Text
+                            style={styles.text}>{(this.props.socket.io.engine.hostname === sk.hostname && connected) ? 'Đang kết nối...' : 'Không kết nối!'}</Text>
                         </View>
                       )}/>
                     </TableWrapper>
@@ -158,6 +159,8 @@ const mapStateToProps = state => ({
 })
 
 export default connect(
-  mapStateToProps, {}
+  mapStateToProps, {
+    updateSocket
+  }
 )(SettingPage)
 

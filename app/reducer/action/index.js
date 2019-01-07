@@ -10,7 +10,12 @@ import {
   UPDATE_SIGNATURE,
   UPDATE_AVATAR,
   SYS_RLT_DATA,
-  UPDATE_RLT_AVATAR, UPDATE_MOMMENT_SCREEN, UPDATE_PENDING_TRANSACTION, UPDATE_HISTORY_TRANSACTION
+  UPDATE_RLT_AVATAR,
+  UPDATE_MOMMENT_SCREEN,
+  UPDATE_PENDING_TRANSACTION,
+  UPDATE_HISTORY_TRANSACTION,
+  UPDATE_SOCKETS,
+  UPDATE_CONTROL
 } from './Constants'
 
 // UserInfo
@@ -101,6 +106,20 @@ export const updateScreenApp = (connect) => {
   return {
     type: UPDATE_MOMMENT_SCREEN,
     payload: connect
+  }
+}
+
+export const updateSocket = (socket) => {
+  return {
+    type: UPDATE_SOCKETS,
+    payload: socket
+  }
+}
+
+export const updateControl = (socket) => {
+  return {
+    type: UPDATE_CONTROL,
+    payload: socket
   }
 }
 
