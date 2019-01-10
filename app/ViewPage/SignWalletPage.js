@@ -6,8 +6,7 @@ import HeaderCustom from './CustomView/Header/HeaderCustom'
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import UserSignComponent from './CustomView/UserInfo/UserSignComponent'
 import SmartCardSignComponent from './CustomView/SmartCardComponent/SmartCardSignComponent'
-import SmartCartTable from './CustomView/SmartCardComponent/SmartCartTable'
-import UserRelativeInfoComponent from './CustomView/UserInfo/UserRelativeInfoComponent'
+import UserRelativeSignComponent from './CustomView/UserInfo/UserRelativeSignComponent'
 
 type Props = {
   navigation: any
@@ -19,10 +18,6 @@ class SignWalletPage extends Component<Props, State> {
     super(props)
     this.eventLeftHeader = this.eventLeftHeader.bind(this)
   }
-  onReceivedMessage (state) {
-    this.props.syncData(state)
-  }
-
   eventLeftHeader () {
     this.props.navigation.openDrawer()
   }
@@ -38,13 +33,15 @@ class SignWalletPage extends Component<Props, State> {
                       leftView={(<Icon name='bars' color='#fff' size={28}/>)}
                       handleLeftButton={this.eventLeftHeader}/>
         <View style={styles.content}>
-          <ScrollView style={{flex: 1}} horizontal={true}>
+          <ScrollView style={{flex: 1}} horizontal={true}
+                      bounces={false}>
             <ScrollView style={{flex: 1, width: 1024, paddingBottom: 0}}
-                        contentContainerStyle={{paddingBottom: 300}}>
+                        contentContainerStyle={{paddingBottom: 300}}
+                        bounces={false}>
               <UserSignComponent/>
-              <View style={{width: '100%', height: 1, backgroundColor: '#000', margin: 10}}/>
-              <UserRelativeInfoComponent/>
-              <SmartCardSignComponent navigate={this.props.navigation.navigate}/>
+              <View style={{width: '100%', height: 1, backgroundColor: '#000'}}/>
+              <UserRelativeSignComponent/>
+              <SmartCardSignComponent/>
             </ScrollView>
           </ScrollView>
         </View>

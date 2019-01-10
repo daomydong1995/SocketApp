@@ -5,7 +5,7 @@ import {
 
 const INITIAL_STATE = {
   userName: '',
-  userBirth: '01/01/2019',
+  userBirth: '',
   userOld: '',
   //
   userGender: false,
@@ -15,11 +15,11 @@ const INITIAL_STATE = {
   userPhone: '',
   //
   userCMT: '',
-  userCMTDay: '01/01/2005',
+  userCMTDay: '',
   userCMTPlace: '',
   //
   userPassport: '',
-  userPassportDate: '01/01/2005',
+  userPassportDate: '',
   userPassportPlace: '',
   //
   userCountry: '',

@@ -14,7 +14,6 @@ type State = {
 class UserSignComponent extends Component<Props, State> {
   constructor (props) {
     super(props)
-    this.inputRefs = {}
     this.state = {
       genderList: [
         {

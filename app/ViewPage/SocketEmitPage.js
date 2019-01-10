@@ -12,7 +12,7 @@ import { connect } from 'react-redux'
 import { View } from 'react-native'
 import React from 'react'
 import SCREENS from '../ContanstPage/SCREENS'
-import { CanvasTest } from './TestStreamCamera/CameraStream'
+import { CanvasTest } from './StreamCamera/CameraStream'
 
 type Props = {}
 type State = {}

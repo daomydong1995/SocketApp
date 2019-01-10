@@ -39,9 +39,7 @@ class SettingPage extends Component<Props, State> {
     const {socket} = this.props
     socket.disconnect()
     let ip = 'http://' + address + ':' + port
-    socket.io = new io(ip, {
-      transports: ['websocket']
-    }).io;
+    socket.io = new io.connect(ip).io;
     socket.connect()
   }
 
@@ -56,8 +54,10 @@ class SettingPage extends Component<Props, State> {
         <HeaderCustom title={SCREENSTITLE[this.props.navigation.state.routeName]}
                       leftView={(<Icon name='bars' color='#fff' size={24}/>)}
                       handleLeftButton={this.eventLeftHeader}/>
-        <ScrollView style={{flex: 1}} horizontal={true}>
-          <ScrollView style={{flex: 1, width: 1024}}>
+        <ScrollView style={{flex: 1}}
+                    bounces={false}
+                    horizontal={true}>
+          <ScrollView bounces={false} style={{flex: 1, width: 1024}}>
             <View style={styles.container}>
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <Text style={{fontSize: 20, marginBottom: 20}}>Nhập hoặc scan địa chỉ IP máy tính của nhân viên để thực
@@ -119,7 +119,7 @@ class SettingPage extends Component<Props, State> {
 
 const styles = StyleSheet.create({
   container: {
-    borderWidth: 3,
+    borderWidth: 2,
     borderRadius: 5,
     margin: 20,
     padding: 20,

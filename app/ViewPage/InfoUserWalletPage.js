@@ -7,6 +7,7 @@ import Icon from 'react-native-vector-icons/FontAwesome5'
 import SmartCartTable from './CustomView/SmartCardComponent/SmartCartTable'
 import UserInfoComponent from './CustomView/UserInfo/UserInfoComponent'
 import SmartCardLogoComponent from './CustomView/SmartCardComponent/SmartCardLogoComponent'
+import UserRelativeInfoComponent from './CustomView/UserInfo/UserRelativeInfoComponent'
 
 type Props = {
   navigation: any
@@ -19,9 +20,6 @@ class InfoUserWalletPage extends Component<Props, State> {
     this.eventLeftHeader = this.eventLeftHeader.bind(this)
   }
 
-  onReceivedMessage (state) {
-    this.props.syncData(state)
-  }
 
   eventLeftHeader () {
     this.props.navigation.openDrawer()
@@ -38,15 +36,20 @@ class InfoUserWalletPage extends Component<Props, State> {
                       leftView={(<Icon name='bars' color='#fff' size={28}/>)}
                       handleLeftButton={this.eventLeftHeader}/>
         <View style={styles.content}>
-          <ScrollView style={{flex: 1}} horizontal={true}>
-            <ScrollView style={{flex: 1, width: 1024, paddingBottom: 0}}
+          <ScrollView style={{flex: 1}}
+                      bounces={false}
+                      horizontal={true}>
+            <ScrollView style={{flex: 1, width: 1024}}
+                        bounces={false}
                         contentContainerStyle={{paddingBottom: 300}}>
               <UserInfoComponent/>
-              <View style={{width: '100%', height: 1,backgroundColor: 'black', margin: 10}}/>
-              <View style={{width: '100%', alignItems: 'center'}}>
+              <View style={{width: '100%', height: 1, backgroundColor: '#000'}}/>
+              <UserRelativeInfoComponent/>
+              <View style={{width: '100%', height: 1,backgroundColor: 'black'}}/>
+              <View style={{width: '100%', alignItems: 'center', marginTop: 15}}>
                 <View style={styles.infoSmartCard}>
                   <SmartCardLogoComponent userCode={this.props.userInfo.userCodeCard} userName={this.props.userInfo.userNameCard}/>
-                  <View style={{height: '90%', width: 1, backgroundColor: '#000'}}/>
+                  <View style={{height: '100%', width: 1, backgroundColor: '#000'}}/>
                   <View style={{ width: 406 * 0.8, height: 239 *0.8, justifyContent:'center', alignItems: 'center', flexDirection: 'column'}}>
                     <Text style={styles.textTileStyle}>Số dư tài khoản</Text>
                     <View style={{flexDirection: 'row',alignItems: 'flex-end'}}>

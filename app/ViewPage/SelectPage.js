@@ -15,10 +15,6 @@ class SelectPage extends Component<Props, State> {
     this.eventLeftHeader = this.eventLeftHeader.bind(this)
   }
 
-  onReceivedMessage (state) {
-    this.props.syncData(state)
-  }
-
   eventLeftHeader () {
     this.props.navigation.openDrawer()
   }

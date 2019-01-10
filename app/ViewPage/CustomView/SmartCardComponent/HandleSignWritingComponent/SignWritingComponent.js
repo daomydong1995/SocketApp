@@ -142,7 +142,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     flexDirection: 'column',
     alignItems: 'center',
-    padding: 10,
     flex: 1
   },
   functionButtonAccessible: {

@@ -69,7 +69,7 @@ const style = {
     fontWeight: 'bold',
     shadowOffset: {width: 2, height: 2},
     shadowColor: 'black',
-    shadowOpacity: 1.0,
+    shadowOpacity: 3,
   },
   leftViewStyle: {
     width: 50,

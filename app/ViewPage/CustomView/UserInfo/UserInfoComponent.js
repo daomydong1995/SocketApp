@@ -1,10 +1,7 @@
 import { Component } from 'react'
 import { connect } from 'react-redux'
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, Text, View, Image } from 'react-native'
 import React from 'react'
-import DatePicker from 'react-native-datepicker'
-import RNPickerSelect from 'react-native-picker-select'
-
 type Props = {}
 type State = {
   gender: undefined,
@@ -14,7 +11,6 @@ type State = {
 class UserInfoComponent extends Component<Props, State> {
   constructor (props) {
     super(props)
-    this.inputRefs = {}
     this.state = {
       genderList: [
         {
@@ -36,8 +32,12 @@ class UserInfoComponent extends Component<Props, State> {
           Thông tin bệnh nhân
         </Text>
         <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-          <View style={{width: 160, height: 200,marginRight: 40, backgroundColor: '#000'}}/>
-          <View style={{flexDirection: 'column'}}>
+          <View style={{width: '20%', alignItems:'center'}}>
+            <Image
+              source={this.props.userInfo.imageAvatarBase64 === '' ? require('../../../../assets/images/userplaceholder.png') : {uri: this.props.userInfo.imageAvatarBase64}}
+              style={{width: 160, height: 200}}/>
+          </View>
+          <View style={{flexDirection: 'column', width: '80%', alignItems: 'center'}}>
             <View style={styles.rowContainer}>
               <View style={styles.itemRowContainer}>
                 <Text style={styles.textLabelStyle}>Mã bệnh nhân:</Text>
@@ -46,35 +46,35 @@ class UserInfoComponent extends Component<Props, State> {
               </View>
               <View style={styles.itemRowContainer}>
                 <Text style={styles.textLabelStyle}>Mã ví:</Text>
-                <Text style={styles.textStyle}>{this.props.userWards}</Text>
+                <Text style={styles.textStyle}>{this.props.userInfo.userWards}</Text>
               </View>
             </View>
             <View style={styles.rowContainer}>
               <View style={styles.itemRowContainer}>
                 <Text style={styles.textLabelStyle}>Mã thẻ:</Text>
                 <Text
-                  style={styles.textStyle}>{this.props.userDistrict}</Text>
+                  style={styles.textStyle}>{this.props.userInfo.userDistrict}</Text>
               </View>
               <View style={styles.itemRowContainer}>
                 <Text style={styles.textLabelStyle}>Bệnh viện:</Text>
-                <Text style={styles.textStyle}>{this.props.userWards}</Text>
+                <Text style={styles.textStyle}>{this.props.userInfo.userWards}</Text>
               </View>
             </View>
             <View style={styles.rowContainer}>
               <View style={styles.itemRowContainer}>
                 <Text style={styles.textLabelStyle}>Họ tên:</Text>
                 <Text style={styles.textStyle}>
-                  {this.props.userName}
+                  {this.props.userInfo.userName}
                 </Text>
               </View>
               <View style={styles.itemRowContainer}>
                 <Text style={styles.textLabelStyle}>Ngày sinh:</Text>
-                <Text style={styles.textStyle}>{this.props.userBirth}</Text>
+                <Text style={styles.textStyle}>{this.props.userInfo.userBirth}</Text>
               </View>
               <View style={styles.itemRowContainer}>
                 <Text style={styles.textLabelStyle}>Tuổi:</Text>
                 <Text
-                  style={styles.textStyle}>{this.props.userOld}</Text>
+                  style={styles.textStyle}>{this.props.userInfo.userOld}</Text>
               </View>
             </View>
             <View style={styles.rowContainer}>
@@ -85,24 +85,24 @@ class UserInfoComponent extends Component<Props, State> {
               <View style={[styles.itemRowContainer]}>
                 <Text style={styles.textLabelStyle}>Nghề nghiệp:</Text>
                 <Text
-                  style={styles.textStyle}>{this.props.userJob}</Text>
+                  style={styles.textStyle}>{this.props.userInfo.userJob}</Text>
               </View>
             </View>
             <View style={styles.rowContainer}>
               <View style={styles.itemRowContainer}>
                 <Text style={styles.textLabelStyle}>Email:</Text>
                 <Text
-                  style={styles.textStyle}>{this.props.userEmail}</Text>
+                  style={styles.textStyle}>{this.props.userInfo.userEmail}</Text>
               </View>
               <View style={styles.itemRowContainer}>
                 <Text style={styles.textLabelStyle}>Số điện thoại:</Text>
-                <Text style={styles.textStyle}>{this.props.userPhone}</Text>
+                <Text style={styles.textStyle}>{this.props.userInfo.userPhone}</Text>
               </View>
             </View>
             <View style={styles.rowContainer}>
               <View style={styles.itemRowContainer}>
                 <Text style={styles.textLabelStyle}>Số CMT/CC:</Text>
-                <Text style={styles.textStyle}>{this.props.userCMT}</Text>
+                <Text style={styles.textStyle}>{this.props.userInfo.userCMT}</Text>
               </View>
               <View style={styles.itemRowContainer}>
                 <Text style={styles.textLabelStyle}>Ngày cấp:</Text>
@@ -111,46 +111,46 @@ class UserInfoComponent extends Component<Props, State> {
               </View>
               <View style={styles.itemRowContainer}>
                 <Text style={styles.textLabelStyle}>Nơi cấp:</Text>
-                <Text style={styles.textStyle}>{this.props.userCMTPlace}</Text>
+                <Text style={styles.textStyle}>{this.props.userInfo.userCMTPlace}</Text>
               </View>
             </View>
             <View style={styles.rowContainer}>
               <View style={styles.itemRowContainer}>
                 <Text style={styles.textLabelStyle}>Hộ chiếu:</Text>
                 <Text
-                  style={styles.textStyle}>{this.props.userPassport}</Text>
+                  style={styles.textStyle}>{this.props.userInfo.userPassport}</Text>
               </View>
               <View style={styles.itemRowContainer}>
                 <Text style={styles.textLabelStyle}>Ngày cấp:</Text>
                 <Text
-                  style={styles.textStyle}>{this.props.userPassportDate}</Text>
+                  style={styles.textStyle}>{this.props.userInfo.userPassportDate}</Text>
               </View>
               <View style={styles.itemRowContainer}>
                 <Text style={styles.textLabelStyle}>Nơi cấp:</Text>
                 <Text
-                  style={styles.textStyle}>{this.props.userPassportPlace}</Text>
+                  style={styles.textStyle}>{this.props.userInfo.userPassportPlace}</Text>
               </View>
             </View>
             <View style={styles.rowContainer}>
               <View style={styles.itemRowContainer}>
                 <Text style={styles.textLabelStyle}>Quốc tịch:</Text>
-                <Text style={styles.textStyle}>{this.props.userCountry}</Text>
+                <Text style={styles.textStyle}>{this.props.userInfo.userCountry}</Text>
               </View>
               <View style={styles.itemRowContainer}>
                 <Text style={styles.textLabelStyle}>Dân tộc:</Text>
                 <Text
-                  style={styles.textStyle}>{this.props.userNation}</Text>
+                  style={styles.textStyle}>{this.props.userInfo.userNation}</Text>
               </View>
               <View style={styles.itemRowContainer}>
                 <Text style={styles.textLabelStyle}>Thẻ BHYT:</Text>
                 <Text
-                  style={styles.textStyle}>{this.props.userTBH}</Text>
+                  style={styles.textStyle}>{this.props.userInfo.userTBH}</Text>
               </View>
             </View>
             <View style={styles.rowContainer}>
               <View style={[styles.itemRowContainer, {width: '100%'}]}>
                 <Text style={styles.textLabelStyle}>Địa chỉ:</Text>
-                <Text style={styles.textStyle}>{this.props.userAddress}</Text>
+                <Text style={styles.textStyle}>{this.props.userInfo.userAddress}</Text>
               </View>
             </View>
           </View>
@@ -161,7 +161,7 @@ class UserInfoComponent extends Component<Props, State> {
 }
 
 const mapStateToProps = state => ({
-  ...state.userInfoReducer
+  userInfo: state.userInfoReducer
 })
 export default connect(
   mapStateToProps, {}
@@ -170,8 +170,8 @@ export default connect(
 const styles = StyleSheet.create({
   container: {
     backgroundColor: 'transparent',
-    padding: 10,
-    flex: 1
+    flex: 1,
+    padding: 15
   },
   rowContainer: {
     width: '90%',
