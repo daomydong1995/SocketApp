@@ -1021,7 +1021,7 @@
 				TargetAttributes = {
 					00E356ED1AD99517003FC87E = {
 						CreatedOnToolsVersion = 6.2;
-						DevelopmentTeam = VWHV94RMV9;
+						DevelopmentTeam = 65MUWGJ9FF;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
@@ -1635,7 +1635,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = VWHV94RMV9;
+				DEVELOPMENT_TEAM = 65MUWGJ9FF;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -1686,7 +1686,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				DEVELOPMENT_TEAM = VWHV94RMV9;
+				DEVELOPMENT_TEAM = 65MUWGJ9FF;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-camera/ios/**",
@@ -1760,7 +1760,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.imprint.smartcard.userapp;
 				PRODUCT_NAME = SocketApp;
 				PROVISIONING_PROFILE_SPECIFIER = SmartCard_inhouse;
-				TARGETED_DEVICE_FAMILY = 2;
+				TARGETED_DEVICE_FAMILY = 1;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -1799,7 +1799,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.imprint.smartcard.userapp;
 				PRODUCT_NAME = SocketApp;
 				PROVISIONING_PROFILE_SPECIFIER = SmartCard_inhouse;
-				TARGETED_DEVICE_FAMILY = 2;
+				TARGETED_DEVICE_FAMILY = 1;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;

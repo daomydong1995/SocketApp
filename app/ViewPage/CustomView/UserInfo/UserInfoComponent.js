@@ -38,24 +38,24 @@ class UserInfoComponent extends Component<Props, State> {
               style={{width: 160, height: 200}}/>
           </View>
           <View style={{flexDirection: 'column', width: '80%', alignItems: 'center'}}>
-            <View style={styles.rowContainer}>
-              <View style={styles.itemRowContainer}>
+            <View style={styles.rowContainer2}>
+              <View style={styles.itemRowContainer2}>
                 <Text style={styles.textLabelStyle}>Mã bệnh nhân:</Text>
                 <Text
-                  style={styles.textStyle}>{this.props.userDistrict}</Text>
+                  style={styles.textStyle}>{this.props.userInfo.userId}</Text>
               </View>
-              <View style={styles.itemRowContainer}>
+              <View style={styles.itemRowContainer2}>
                 <Text style={styles.textLabelStyle}>Mã ví:</Text>
-                <Text style={styles.textStyle}>{this.props.userInfo.userWards}</Text>
+                <Text style={styles.textStyle}>{this.props.userInfo.userWalletId}</Text>
               </View>
             </View>
-            <View style={styles.rowContainer}>
-              <View style={styles.itemRowContainer}>
+            <View style={styles.rowContainer2}>
+              <View style={styles.itemRowContainer2}>
                 <Text style={styles.textLabelStyle}>Mã thẻ:</Text>
                 <Text
-                  style={styles.textStyle}>{this.props.userInfo.userDistrict}</Text>
+                  style={styles.textStyle}>{this.props.userInfo.userCardId}</Text>
               </View>
-              <View style={styles.itemRowContainer}>
+              <View style={styles.itemRowContainer2}>
                 <Text style={styles.textLabelStyle}>Bệnh viện:</Text>
                 <Text style={styles.textStyle}>{this.props.userInfo.userWards}</Text>
               </View>
@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
     padding: 15
   },
   rowContainer: {
-    width: '90%',
+    width: '100%',
     height: 50,
     marginBottom: 3,
     flexDirection: 'row',
@@ -185,6 +185,13 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
     width: '33%',
+    height: '100%',
+  },
+  itemRowContainer2: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    width: '50%',
     height: '100%',
   },
   textTileStyle: {
@@ -199,6 +206,14 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     width: 100,
     height: '100%'
+  },
+  rowContainer2: {
+    width: '100%',
+    height: 50,
+    marginBottom: 3,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between'
   },
   textStyle: {
     fontWeight: 'bold',

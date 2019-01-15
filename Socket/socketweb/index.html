@@ -317,6 +317,8 @@
 
   socket.on('connect', function (data) {
     // getLocalStream();
+    onChangeUserValue()
+    onChangeRltValue()
   })
 
   function logError (error) {
@@ -353,7 +355,6 @@
 
   function onTakePicture (id) {
     socket.emit('takePicture',id)
-    socket.emit('web_wallet_emit', {control: 'none'})
     socket.emit('closeRoom', 'default')
   }
 
@@ -385,7 +386,10 @@
     }
     socket.emit('web_wallet_emit', {screen: 'SIGN_WALLETS_SUBMIT', userInfo: userInfo})
   }
-  function showInfo () {
+  const userId = 'fc220b60-18a9-11e9-ba25-c321312caa'
+  const userWalletId = 'fc220b60-18a9-1ae9-ba25-cb2792a54a66'
+  const userCardId = 'fc220b60-18a9-11e9-ba25-dascxzasa6'
+    function showInfo () {
     const userName = $('#userName').val()
     const userBirth = $('#userBirth').val()
     const userOld = $('#userOld').val()
@@ -409,7 +413,7 @@
     const userInfo = {
       userName, userBirth, userOld, userGender, userJob, userEmail, userPhone,
       userCMT, userCMTDay, userCMTPlace, userPassport, userPassportDate, userPassportPlace, userCountry,
-      userNation, userTBH, userAddress, userDistrict, userWards, userProvince
+      userNation, userTBH, userAddress, userDistrict, userWards, userProvince, userId, userWalletId, userCardId
     }
     socket.emit('web_wallet_emit', {screen: 'USER_INFO_PAGE', userInfo: userInfo})
   }

@@ -4,9 +4,13 @@ import SmartCardLogoComponent from './SmartCardLogoComponent'
 import rules from '../../../../assets/json/rules'
 import { CheckBox } from 'react-native-elements'
 import SignWritingComponent from './HandleSignWritingComponent/SignWritingComponent'
-import { updateAccessRules, updateAvatarBase64, updateAvatarRltBase64 } from '../../../reducer/action/index'
+import {
+  updateAccessRules,
+  updateAvatarBase64,
+  updateAvatarRltBase64,
+  updateControl
+} from '../../../reducer/action/index'
 import { connect } from 'react-redux'
-import SCREENS from '../../../ContanstPage/SCREENS'
 import CameraStream from '../../StreamCamera/CameraStream'
 import ViewShot from 'react-native-view-shot'
 
@@ -15,7 +19,8 @@ type Props = {
   navigate: any
 }
 type State = {
-  enabled: true
+  enabled: true,
+  controlCamera: 'none'
 }
 
 class SmartCardSignComponent extends Component<Props, State> {
@@ -44,14 +49,16 @@ class SmartCardSignComponent extends Component<Props, State> {
           }
           self.props.socket.emit('web_wallet_on', {type: msg, buffer: base64Image})
         }).then(() => {
-          RNFS.exists(path).then((result) => {
+          RNFS.exists(uri).then((result) => {
             if (result) {
-              return RNFS.unlink(path)
+              console.log('takePicture',uri)
+              self.props.updateControl('none')
+              return RNFS.unlink(uri)
             }
           })
         })
       })
-    })
+    }, error => console.error("Oops, snapshot failed", error))
   }
 
   render () {
@@ -62,7 +69,7 @@ class SmartCardSignComponent extends Component<Props, State> {
               <View>
                 <Text style={styles.textTileStyle}>Ảnh cá nhân</Text>
                 <View style={styles.stylePhoto}>
-                  <ViewShot ref="userAvatar" options={{format: 'jpg', quality: 1.0}}>
+                  <ViewShot ref="userAvatar" options={{format: 'jpg', quality: 0.9}}>
                     {
                       this.props.control !== 'USER_AVATAR' &&
                       <Image
@@ -70,8 +77,7 @@ class SmartCardSignComponent extends Component<Props, State> {
                         style={{width: '100%', height: '100%'}}/>
                     }
                     {
-                      this.props.control === 'USER_AVATAR' &&
-                      <CameraStream/>
+                      this.props.control === 'USER_AVATAR' && <CameraStream/>
                     }
                   </ViewShot>
                 </View>
@@ -87,9 +93,7 @@ class SmartCardSignComponent extends Component<Props, State> {
                         style={{width: '100%', height: '100%'}}/>
                     }
                     {
-                      this.props.control === 'RELATIVE_USER_AVATAR'
-                      && <CameraStream/>
-
+                      this.props.control === 'RELATIVE_USER_AVATAR' && <CameraStream/>
                     }
                   </ViewShot>
                 </View>
@@ -186,6 +190,7 @@ const mapStateToProps = state => ({
 export default connect(
   mapStateToProps, {
     updateAccessRules,
+    updateControl,
     updateAvatarBase64,
     updateAvatarRltBase64
   }

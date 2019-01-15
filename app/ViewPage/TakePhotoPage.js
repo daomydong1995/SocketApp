@@ -1,8 +1,6 @@
 import React, { Component } from 'react'
 import {
-  Image,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View
 } from 'react-native'
@@ -11,7 +9,6 @@ import connect from 'react-redux/es/connect/connect'
 import { updateAvatarBase64, updateAvatarRltBase64 } from '../reducer/action'
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import HeaderCustom from './CustomView/Header/HeaderCustom'
-// import BackgroundTask from 'react-native-background-task'
 type Props = {}
 type State = {
   fontCamera: boolean,
@@ -21,9 +18,10 @@ class TakePhotoPage extends Component<Props, State> {
   constructor (props) {
     super(props)
     this.state = {
-      fontCamera: true,
+      fontCamera: false,
       flashOn: true
     }
+    this.scanQRcode = this.scanQRcode.bind(this)
     this.eventLeftHeader = this.eventLeftHeader.bind(this)
   }
 
@@ -33,14 +31,21 @@ class TakePhotoPage extends Component<Props, State> {
 
   componentDidMount () {
     // BackgroundTask.schedule()
-    this.timer = setInterval(this.takePicture.bind(this), 100)
+  }
+
+  scanQRcode(barcodes) {
+    console.log(barcodes)
+    if (undefined !== barcodes[0] && barcodes[0].type === 'QR_CODE') {
+      this.props.navigation.getParam('callback')(barcodes[0].data.replace('http://',''))
+      this.props.navigation.goBack()
+    }
   }
 
   render () {
-    const forUser = this.props.navigation.state.params.forUser
+    // const forUser = this.props.navigation.state.params.forUser
     return (
       <View style={styles.container}>
-        <HeaderCustom title={forUser ? 'Chụp ảnh cá nhân' : 'Chụp ảnh người thân'}
+        <HeaderCustom title={'Scan Ip Address'}
                       leftView={(<Icon name='angle-left' color='#fff' size={28}/>)}
                       handleLeftButton={this.eventLeftHeader}
         />
@@ -54,7 +59,7 @@ class TakePhotoPage extends Component<Props, State> {
           permissionDialogTitle={'Permission to use camera'}
           permissionDialogMessage={'We need your permission to use your camera phone'}
           onGoogleVisionBarcodesDetected={({barcodes}) => {
-            console.log(barcodes)
+            this.scanQRcode(barcodes)
           }}>
           <View style={{
             flexDirection: 'row',
@@ -68,40 +73,11 @@ class TakePhotoPage extends Component<Props, State> {
               style={{padding: 20}}>
               <Icon name={'redo-alt'} size={33} color={'#ff65f0'}/>
             </TouchableOpacity>
-            <TouchableOpacity
-              onPress={this.takePicture.bind(this)}
-              style={styles.capture}>
-              <Icon name={'camera'} size={33} color={'#ff65f0'}/>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={this.flashMode.bind(this)}
-              style={{padding: 20}}>
-              <Icon name={'bolt'} color={this.state.flashOn ? '#fff' : 'transparent'} size={33}/>
-            </TouchableOpacity>
           </View>
         </RNCamera>
       </View>
     )
 
-  }
-
-  flashMode = async function () {
-    this.setState({flashOn: !this.state.flashOn})
-  }
-
-  async takePicture () {
-    if (this.camera) {
-      const options = {quality: 0.2, base64: true, forceUpOrientation: true, fixOrientation: true, mirrorImage: true, doNotSave: true}
-      const data = await this.camera.takePictureAsync(options)
-      const base64Image = 'data:image/png;base64,' + data.base64
-      if (this.props.navigation.state.params.forUser) {
-        // this.props.updateAvatarBase64(base64Image)
-        this.props.socket.emit('web_wallet_on', {type: 'USER_AVATAR', buffer: base64Image})
-      } else {
-        // this.props.updateAvatarRltBase64(base64Image)
-        this.props.socket.emit('web_wallet_on', {type: 'RELATIVE_USER_AVATAR', buffer: base64Image})
-      }
-    }
   }
 }
 
@@ -109,6 +85,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
+    alignItems: 'center',
     backgroundColor: 'black'
   },
   preview: {
@@ -126,12 +103,9 @@ const styles = StyleSheet.create({
   }
 })
 const mapStateToProps = state => ({
-  ...state.userInfoReducer,
   socket: state.settingReducer.socket
 })
 export default connect(
   mapStateToProps, {
-    updateAvatarBase64,
-    updateAvatarRltBase64
   }
 )(TakePhotoPage)

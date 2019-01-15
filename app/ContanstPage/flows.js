@@ -9,16 +9,17 @@ import React from 'react'
 import SCREENSTITLE from './SCREENSTITLE'
 import TakePhotoPage from '../ViewPage/TakePhotoPage'
 import SelectPage from '../ViewPage/SelectPage'
-const DashboardFlow = createStackNavigator({
-  [SCREENS.SELECT_SCREEN_PAGE]: { screen: SelectPage, navigationOptions: () => ({ title: '' }) },
+
+const SettingFlow = createStackNavigator({
+  [SCREENS.SETTING_PAGE]: { screen: SettingPage, navigationOptions: () => ({ title: SCREENSTITLE.SETTING_PAGE }) },
   [SCREENS.TAKE_PHOTO_PAGE]: { screen: TakePhotoPage, navigationOptions: () => ({ title: SCREENSTITLE.TAKE_PHOTO_PAGE }) }
 },
 {
   headerMode: 'none'
 })
 const DrawerMenu = createDrawerNavigator({
-  [SCREENS.DASHBOARD_STACK]: { screen: DashboardFlow, navigationOptions: () => ({ title: SCREENSTITLE.DASHBOARD_STACK }) },
-  [SCREENS.SETTING_PAGE]: { screen: SettingPage, navigationOptions: () => ({ title: SCREENSTITLE.SETTING_PAGE }) }
+  [SCREENS.SELECT_SCREEN_PAGE]: { screen: SelectPage, navigationOptions: () => ({ title: 'Trang chủ' }) },
+  [SCREENS.SETTING_STACK]: { screen: SettingFlow, navigationOptions: () => ({ title: SCREENSTITLE.SETTING_STACK }) }
 }, {
   contentComponent: CustomDrawerMenu,
   contentOptions: {

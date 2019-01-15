@@ -9,6 +9,7 @@ import { Row, Table, TableWrapper } from 'react-native-table-component'
 import { Cell } from 'react-native-table-component/components/cell'
 import { connect } from 'react-redux'
 import { updateSocket } from '../reducer/action'
+import SCREENS from '../ContanstPage/SCREENS'
 
 type Props = {}
 type State = {
@@ -43,8 +44,11 @@ class SettingPage extends Component<Props, State> {
     socket.connect()
   }
 
+  callback(address) {
+    this.setState({address})
+  }
   eventScanQRCode () {
-    console.log(this.props.socket)
+    this.props.navigation.navigate(SCREENS.TAKE_PHOTO_PAGE, {callback: this.callback.bind(this)})
   }
 
   render () {

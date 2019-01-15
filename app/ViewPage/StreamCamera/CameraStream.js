@@ -2,13 +2,7 @@
 
 import React, { Component } from 'react'
 import {
-  AppRegistry,
   StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  TextInput,
-  ListView,
   Platform
 } from 'react-native'
 
@@ -22,8 +16,6 @@ import {
   getUserMedia
 } from 'react-native-webrtc'
 import connect from 'react-redux/es/connect/connect'
-import { updateAvatarBase64, updateAvatarRltBase64 } from '../../reducer/action'
-
 const configuration = {'iceServers': [{'url': 'stun:stun.l.google.com:19302'}]}
 
 const pcPeers = {}
@@ -197,7 +189,7 @@ class CameraStream extends Component<Props, State> {
 
   render () {
     return (
-      <RTCView mirror={true} streamURL={this.state.selfViewSrc} style={styles.selfView}/>
+        <RTCView mirror={true} streamURL={this.state.selfViewSrc} style={styles.selfView}/>
     )
   }
 }
