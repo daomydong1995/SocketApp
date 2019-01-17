@@ -2,13 +2,14 @@ import React, { Component } from 'react'
 import {
   StyleSheet,
   TouchableOpacity,
-  View
+  View,Text
 } from 'react-native'
 import { RNCamera } from 'react-native-camera'
 import connect from 'react-redux/es/connect/connect'
 import { updateAvatarBase64, updateAvatarRltBase64 } from '../reducer/action'
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import HeaderCustom from './CustomView/Header/HeaderCustom'
+import QRCodeScanner from 'react-native-qrcode-scanner'
 type Props = {}
 type State = {
   fontCamera: boolean,
@@ -35,8 +36,8 @@ class TakePhotoPage extends Component<Props, State> {
 
   scanQRcode(barcodes) {
     console.log(barcodes)
-    if (undefined !== barcodes[0] && barcodes[0].type === 'QR_CODE') {
-      this.props.navigation.getParam('callback')(barcodes[0].data.replace('http://',''))
+    if (undefined !== barcodes && barcodes.type === 'org.iso.QRCode') {
+      this.props.navigation.getParam('callback')(barcodes.data.replace('http://',''))
       this.props.navigation.goBack()
     }
   }
@@ -49,32 +50,8 @@ class TakePhotoPage extends Component<Props, State> {
                       leftView={(<Icon name='angle-left' color='#fff' size={28}/>)}
                       handleLeftButton={this.eventLeftHeader}
         />
-        <RNCamera
-          ref={ref => {
-            this.camera = ref
-          }}
-          style={styles.preview}
-          type={this.state.fontCamera ? RNCamera.Constants.Type.front : RNCamera.Constants.Type.back}
-          flashMode={this.state.flashOn ? RNCamera.Constants.FlashMode.on : RNCamera.Constants.FlashMode.off}
-          permissionDialogTitle={'Permission to use camera'}
-          permissionDialogMessage={'We need your permission to use your camera phone'}
-          onGoogleVisionBarcodesDetected={({barcodes}) => {
-            this.scanQRcode(barcodes)
-          }}>
-          <View style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            width: '100%',
-            padding: 10
-          }}>
-            <TouchableOpacity
-              onPress={() => this.setState({fontCamera: !this.state.fontCamera})}
-              style={{padding: 20}}>
-              <Icon name={'redo-alt'} size={33} color={'#ff65f0'}/>
-            </TouchableOpacity>
-          </View>
-        </RNCamera>
+        <QRCodeScanner
+          onRead={(data) => this.scanQRcode(data)}/>
       </View>
     )
 
@@ -90,8 +67,8 @@ const styles = StyleSheet.create({
   },
   preview: {
     flex: 1,
-    justifyContent: 'flex-end',
-    alignItems: 'center'
+    width: '100%',
+    justifyContent: 'flex-end'
   },
   capture: {
     flex: 0,

@@ -1,5 +1,5 @@
 import {
-  CONNECTION_STATUS, UPDATE_MOMMENT_SCREEN, UPDATE_SOCKETS_ADDRESS, UPDATE_SOCKETS, UPDATE_CONTROL
+  CONNECTION_STATUS, UPDATE_MOMMENT_SCREEN, UPDATE_SOCKETS_ADDRESS, UPDATE_SOCKETS, UPDATE_CONTROL,UPDATE_VISIBLE_SIGNWRITING
 } from './action/Constants'
 import io from 'socket.io-client'
 import SCREENS from '../ContanstPage/SCREENS'
@@ -8,6 +8,7 @@ const INITIAL_STATE = {
   socketsAddress: [],
   connected: false,
   screen: SCREENS.SIGN_WALLETS_SUBMIT,
+  visibleSignWriting: false,
   control: 'none'
 }
 
@@ -23,6 +24,8 @@ export default function reducer (state = INITIAL_STATE, action) {
       return { ...state, socket: action.payload }
     case UPDATE_CONTROL:
       return { ...state, control: action.payload }
+    case UPDATE_VISIBLE_SIGNWRITING:
+      return { ...state, visibleSignWriting: action.payload }
     default:
       return state
   }

@@ -1,9 +1,8 @@
 import React, { Component } from 'react'
-import { Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { Image, Modal, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, TouchableWithoutFeedback } from 'react-native'
 import SmartCardLogoComponent from './SmartCardLogoComponent'
 import rules from '../../../../assets/json/rules'
 import { CheckBox } from 'react-native-elements'
-import SignWritingComponent from './HandleSignWritingComponent/SignWritingComponent'
 import {
   updateAccessRules,
   updateAvatarBase64,
@@ -13,6 +12,8 @@ import {
 import { connect } from 'react-redux'
 import CameraStream from '../../StreamCamera/CameraStream'
 import ViewShot from 'react-native-view-shot'
+import SignWritingComponent from './HandleSignWritingComponent/SignWritingComponent'
+import { updateVisibleSignWriting } from '../../../reducer/action'
 
 const RNFS = require('react-native-fs')
 type Props = {
@@ -26,8 +27,13 @@ type State = {
 class SmartCardSignComponent extends Component<Props, State> {
   constructor (props) {
     super(props)
+    this.state = {
+      modalVisible: false,
+    }
   }
-
+  submitSignWriting () {
+    this.props.socket.emit('web_wallet_on', {type: 'USER_SIGNATURE', buffer: this.props.userInfo.signatureBase64})
+  }
   componentDidMount () {
     let self = this
     this.props.socket.on('takePicture', function (msg) {
@@ -51,56 +57,58 @@ class SmartCardSignComponent extends Component<Props, State> {
         }).then(() => {
           RNFS.exists(uri).then((result) => {
             if (result) {
-              console.log('takePicture',uri)
+              console.log('takePicture', uri)
               self.props.updateControl('none')
               return RNFS.unlink(uri)
             }
           })
         })
       })
-    }, error => console.error("Oops, snapshot failed", error))
+    }, error => console.error('Oops, snapshot failed', error))
   }
 
   render () {
+    const today = new Date()
+    const isValid = (this.props.userInfo.isAccessRules && this.props.userInfo.existSignature)
     return (
       <View style={styles.container}>
         <View style={styles.cartAndCashStyle}>
-            <View style={{justifyContent: 'space-between', flexDirection: 'row', width: '90%'}}>
-              <View>
-                <Text style={styles.textTileStyle}>Ảnh cá nhân</Text>
-                <View style={styles.stylePhoto}>
-                  <ViewShot ref="userAvatar" options={{format: 'jpg', quality: 0.9}}>
-                    {
-                      this.props.control !== 'USER_AVATAR' &&
-                      <Image
-                        source={this.props.userInfo.imageAvatarBase64 === '' ? require('../../../../assets/images/userplaceholder.png') : {uri: this.props.userInfo.imageAvatarBase64}}
-                        style={{width: '100%', height: '100%'}}/>
-                    }
-                    {
-                      this.props.control === 'USER_AVATAR' && <CameraStream/>
-                    }
-                  </ViewShot>
-                </View>
+          <View style={{justifyContent: 'space-between', flexDirection: 'row', width: '90%'}}>
+            <View>
+              <Text style={styles.textTileStyle}>Ảnh cá nhân</Text>
+              <View style={styles.stylePhoto}>
+                <ViewShot ref="userAvatar" options={{format: 'jpg', quality: 0.9}}>
+                  {
+                    this.props.control !== 'USER_AVATAR' &&
+                    <Image
+                      source={this.props.userInfo.imageAvatarBase64 === '' ? require('../../../../assets/images/userplaceholder.png') : {uri: this.props.userInfo.imageAvatarBase64}}
+                      style={{width: '100%', height: '100%'}}/>
+                  }
+                  {
+                    this.props.control === 'USER_AVATAR' && <CameraStream/>
+                  }
+                </ViewShot>
               </View>
-              <View>
-                  <Text style={styles.textTileStyle}>Ảnh người thân</Text>
-                <View style={styles.stylePhoto}>
-                  <ViewShot ref="rltUserAvatar" options={{format: 'jpg', quality: 1.0}}>
-                    {
-                      this.props.control !== 'RELATIVE_USER_AVATAR'
-                      && <Image
-                        source={this.props.rltInfo.imageRltAvatarBase64 === '' ? require('../../../../assets/images/userplaceholder.png') : {uri: this.props.rltInfo.imageRltAvatarBase64}}
-                        style={{width: '100%', height: '100%'}}/>
-                    }
-                    {
-                      this.props.control === 'RELATIVE_USER_AVATAR' && <CameraStream/>
-                    }
-                  </ViewShot>
-                </View>
-              </View>
-              <SmartCardLogoComponent userCode={'0000-0000-0000-0000'} userName={'đào mỹ đông'}/>
             </View>
+            <View>
+              <Text style={styles.textTileStyle}>Ảnh người thân</Text>
+              <View style={styles.stylePhoto}>
+                <ViewShot ref="rltUserAvatar" options={{format: 'jpg', quality: 1.0}}>
+                  {
+                    this.props.control !== 'RELATIVE_USER_AVATAR'
+                    && <Image
+                      source={this.props.rltInfo.imageRltAvatarBase64 === '' ? require('../../../../assets/images/userplaceholder.png') : {uri: this.props.rltInfo.imageRltAvatarBase64}}
+                      style={{width: '100%', height: '100%'}}/>
+                  }
+                  {
+                    this.props.control === 'RELATIVE_USER_AVATAR' && <CameraStream/>
+                  }
+                </ViewShot>
+              </View>
+            </View>
+            <SmartCardLogoComponent userCode={'0000-0000-0000-0000'} userName={'đào mỹ đông'}/>
           </View>
+        </View>
         <View style={styles.roleContainer}>
           <Text style={[styles.textTileStyle]}>Điều khoản dịch vụ</Text>
           <ScrollView style={styles.rulesScrollStyle}
@@ -127,7 +135,22 @@ class SmartCardSignComponent extends Component<Props, State> {
             textStyle={{fontSize: 18}}
           />
           <View style={styles.signWritingStyle}>
-            <SignWritingComponent/>
+            <View style={{width: 400,height: '70%',justifyContent: 'center', alignItems: 'center'}}>
+              <Text style={{
+                fontSize: 18,
+                marginBottom: 10
+              }}>Ngày {today.getDate()} tháng {today.getMonth()} năm {today.getFullYear()} </Text>
+              <TouchableOpacity style={styles.imageSignWriting} onPress={() =>this.props.updateVisibleSignWriting(true)}>
+                <Image style={{flex: 1}} source={{uri:this.props.userInfo.signatureBase64}} />
+              </TouchableOpacity>
+              <SignWritingComponent/>
+              <View style={{width: '100%', alignItems: 'flex-end', marginTop: 20}}>
+                <TouchableOpacity disabled={!isValid}
+                                  style={isValid?styles.submitButton:styles.submitButtonUnAccepted} onPress={this.submitSignWriting.bind(this)}>
+                  <Text style={{fontSize: 18, color: '#ffffff'}}>Xác nhận</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
           </View>
         </View>
       </View>
@@ -138,7 +161,8 @@ class SmartCardSignComponent extends Component<Props, State> {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: 'transparent',
-    width: '100%'
+    width: '100%',
+    marginTop: 20
   },
   cartAndCashStyle: {
     width: '100%',
@@ -177,9 +201,33 @@ const styles = StyleSheet.create({
   signWritingStyle: {
     alignItems: 'flex-end',
     width: '95%',
+    height: 600,
     justifyContent: 'center'
   },
-  stylePhoto: {width: 160, height: 239 * 0.8, borderWidth: 1}
+  imageSignWriting: {
+    width: '100%',
+    height: '70%',
+    borderWidth: 1
+  },
+  stylePhoto: {width: 160, height: 239 * 0.8, borderWidth: 1},
+  submitButton: {
+    width: 100,
+    marginHorizontal: 2.5, marginVertical: 8, height: 42, padding: 5, paddingLeft: 10, paddingRight: 10,
+    backgroundColor: '#5687ee', justifyContent: 'center', alignItems: 'center', borderRadius: 10,
+    borderColor: 'black',
+    shadowOffset: {width: 1, height: 1},
+    shadowColor: 'black',
+    shadowOpacity: 0.3
+  },
+  submitButtonUnAccepted: {
+    width: 100,
+    marginHorizontal: 2.5, marginVertical: 8, height: 42, padding: 5, paddingLeft: 10, paddingRight: 10,
+    backgroundColor: '#ee3d41', justifyContent: 'center', alignItems: 'center', borderRadius: 10,
+    borderColor: 'black',
+    shadowOffset: {width: 1, height: 1},
+    shadowColor: 'black',
+    shadowOpacity: 0.3
+  }
 })
 const mapStateToProps = state => ({
   userInfo: state.userInfoReducer,
@@ -192,6 +240,7 @@ export default connect(
     updateAccessRules,
     updateControl,
     updateAvatarBase64,
-    updateAvatarRltBase64
+    updateAvatarRltBase64,
+    updateVisibleSignWriting
   }
 )(SmartCardSignComponent)

@@ -1,51 +1,38 @@
 import { Component } from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import RNSketchCanvas from 'react-native-sketch-canvas'
 import React from 'react'
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import { updateSignatureExits } from '../../../../reducer/action/index'
 import { connect } from 'react-redux'
-import { updateSignature } from '../../../../reducer/action'
-
+import { updateSignature, updateVisibleSignWriting } from '../../../../reducer/action'
 const RNFS = require('react-native-fs')
 type Props = {}
 type State = {
-  touchCanvasEnable: boolean,
-  timeOut: boolean
 }
 
 class SignWritingComponent extends Component<Props, State> {
   constructor (props) {
     super(props)
     this.state = {
-      touchCanvasEnable: true
+      modalVisible: false,
+      exitsSign: false
     }
   }
-
+  componentDidMount () {
+    this.props.socket.on('open_sign_writing', (data) => {
+      this.props.updateVisibleSignWriting(data)
+    })
+  }
   clearWriting () {
-    this.props.updateSignatureExits(false)
     this.setState({
-      touchCanvasEnable: true
+      exitsSign: false
     })
   }
 
   onStrokeEnd () {
     this.setState({
-      timeOut: true
-    })
-    this.props.updateSignatureExits(true)
-    setTimeout(()=> {
-      if (this.state.timeOut) {
-        this.setState({
-          touchCanvasEnable: false
-        })
-      }
-    },3000)
-  }
-
-  onStrokeStart () {
-    this.setState({
-      timeOut: false
+      exitsSign: true
     })
   }
 
@@ -58,111 +45,116 @@ class SignWritingComponent extends Component<Props, State> {
   }
 
   renderViewSave () {
-    const isValid = (this.props.isAccessRules && this.props.existSignature)
     return (
       <View
-        style={isValid ? styles.functionButtonAccessible : styles.functionButtonUnAccessible}>
-        <Text style={{fontSize: 18, color: '#151515'}}>Xác nhận</Text>
+        style={styles.saveButtonStyle}>
+        <Text style={{fontSize: 18, color: '#ffffff'}}>Xác nhận</Text>
       </View>
     )
   }
+
   render () {
     const today = new Date()
     return (
-      <View style={styles.container}>
-        <Text style={{
-          fontSize: 18,
-          marginBottom: 20
-        }}>Ngày {today.getDate()} tháng {today.getMonth()} năm {today.getFullYear()} </Text>
-        <RNSketchCanvas
-          containerStyle={{
-            width: 400,
-            height: 400,
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-            alignItems: 'center'
-          }}
-          canvasStyle={{
-            backgroundColor: 'transparent',
-            width: '100%',
-            height: '70%',
-            borderWidth: 1
-          }}
-          enableSaveBtn={(this.props.isAccessRules && this.props.existSignature) === undefined ? false : (this.props.isAccessRules && this.props.existSignature)}
-          touchEnabled={((this.state.touchCanvasEnable) === undefined ? false : (this.state.touchCanvasEnable))}
-          defaultStrokeIndex={0}
-          defaultStrokeWidth={5}
-          clearComponent={this.renderViewClear()}
-          saveComponent={this.renderViewSave()}
-          onClearPressed={this.clearWriting.bind(this)}
-          onStrokeEnd={this.onStrokeEnd.bind(this)}
-          onStrokeStart={this.onStrokeStart.bind(this)}
-          savePreference={() => {
-            return {
-              filename: 'signature',
-              imageType: 'png',
-              transparent: true,
-              folder: 'tempSignature'
-            }
-          }}
-          onSketchSaved={(success, path) => {
-            if (success) {
-              RNFS.readFile(path, 'base64').then(data => {
-                const base64Image = 'data:image/png;base64,' + data
-                this.props.updateSignature(base64Image)
-                this.props.socket.emit('web_wallet_on', {type: 'USER_SIGNATURE', buffer: base64Image})
-              }).then(() => {
-                RNFS.exists(path).then((result) => {
-                  if (result) {
-                    return RNFS.unlink(path)
+      <View>
+        <Modal
+          animationType="fade"
+          presentationStyle={'formSheet'}
+          transparent={false}
+          onBackdropPress={() => this.props.updateVisibleSignWriting(false)}
+          visible={this.props.visibleSignWriting}>
+          <View style={{alignItems: 'flex-end',backgroundColor: '#f3f3f3', flex: 1, justifyContent: 'center'}}>
+            <TouchableOpacity onPress={() => this.props.updateVisibleSignWriting(false)} style={{margin: 5,height: 60, width: 60, alignItems: 'center', justifyContent: 'center'}}>
+              <Icon name='times' size={30} color={'#c32333'}/>
+            </TouchableOpacity>
+            <View style={styles.container}>
+              <Text style={{
+                fontSize: 18
+              }}>Ngày {today.getDate()} tháng {today.getMonth()} năm {today.getFullYear()} </Text>
+              <RNSketchCanvas
+                containerStyle={{
+                  width: 400,
+                  height: 500,
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                  alignItems: 'center'
+                }}
+                canvasStyle={{
+                  backgroundColor: '#fff',
+                  marginBottom:40,
+                  width: '100%',
+                  height: '60%',
+                  borderWidth: 1
+                }}
+                enableSaveBtn={true}
+                touchEnabled={true}
+                defaultStrokeIndex={0}
+                defaultStrokeWidth={5}
+                clearComponent={this.renderViewClear()}
+                saveComponent={this.renderViewSave()}
+                onClearPressed={this.clearWriting.bind(this)}
+                onStrokeEnd={this.onStrokeEnd.bind(this)}
+                savePreference={() => {
+                  return {
+                    filename: 'signature',
+                    imageType: 'png',
+                    transparent: true,
+                    folder: 'tempSignature'
                   }
-                })
-              })
-            }
-          }}
-        />
+                }}
+                onSketchSaved={async (success, path) =>  {
+                  if (success) {
+                    await RNFS.readFile(path, 'base64').then(data => {
+                      const base64Image = 'data:image/png;base64,' + data
+                      this.props.updateSignature(base64Image)
+                    }).then(() => {
+                      RNFS.exists(path).then((result) => {
+                        if (result) {
+                          this.props.updateVisibleSignWriting(false)
+                          this.props.updateSignatureExits(this.state.exitsSign)
+                          return RNFS.unlink(path)
+                        }
+                      })
+                    })
+                  }
+                }}
+              />
+            </View>
+          </View>
+        </Modal>
       </View>
     )
   }
 }
 
 const mapStateToProps = state => ({
-  ...state.userInfoReducer,
-  imageRltAvatarBase64: state.userRelativeInfoReducer.imageRltAvatarBase64,
+  userInfo: state.userInfoReducer,
+  visibleSignWriting: state.settingReducer.visibleSignWriting,
   socket: state.settingReducer.socket
 })
 export default connect(
   mapStateToProps, {
     updateSignatureExits,
-    updateSignature
+    updateSignature,
+    updateVisibleSignWriting
   }
 )(SignWritingComponent)
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+    width: '100%',
     backgroundColor: 'transparent',
     flexDirection: 'column',
     alignItems: 'center',
-    flex: 1
+    justifyContent: 'center',
   },
-  functionButtonAccessible: {
+  saveButtonStyle: {
     width: 100,
     marginHorizontal: 2.5, marginVertical: 8, height: 42, padding: 5, paddingLeft: 10, paddingRight: 10,
-    backgroundColor: '#51e066', justifyContent: 'center', alignItems: 'center', borderRadius: 3,
-    borderWidth: 2,
+    backgroundColor: '#369a56', justifyContent: 'center', alignItems: 'center', borderRadius: 10,
     borderColor: 'black',
-    shadowOffset: {width: 2, height: 2},
+    shadowOffset: {width: 1, height: 1},
     shadowColor: 'black',
-    shadowOpacity: 1.0
-  },
-  functionButtonUnAccessible: {
-    width: 100,
-    marginHorizontal: 2.5, marginVertical: 8, height: 42, padding: 5, paddingLeft: 10, paddingRight: 10,
-    backgroundColor: '#e01d2d', justifyContent: 'center', alignItems: 'center', borderRadius: 3,
-    borderWidth: 2,
-    borderColor: 'black',
-    shadowOffset: {width: 2, height: 2},
-    shadowColor: 'black',
-    shadowOpacity: 1.0
-
+    shadowOpacity: 0.3
   }
 })

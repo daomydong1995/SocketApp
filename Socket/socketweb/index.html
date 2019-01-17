@@ -176,6 +176,7 @@
                 <div class="col-md-3">
                     <p>Chữ ký</p>
                     <img style="width: 300px" id="signatureBase64">
+                    <button onclick="openSignWriting(true)">Lấy chữ ký</button>
                 </div>
             </div>
             <div class="col-md-6">
@@ -196,6 +197,9 @@
   navigator.getUserMedia = navigator.getUserMedia || navigator.mozGetUserMedia || navigator.webkitGetUserMedia || navigator.msGetUserMedia
   const configuration = {'iceServers': [{'url': 'stun:stun.l.google.com:19302'}]}
   const pcPeers = {}
+  let imageRltAvatarBase64 = undefined
+  let imageAvatarBase64 = undefined
+  let signatureBase64 = undefined
   const videoStream = document.getElementById('videoStream')
   let localStream
 
@@ -216,12 +220,15 @@
     switch (item.type) {
       case 'RELATIVE_USER_AVATAR':
         document.getElementById('imageRltAvatarBase64').src = item.buffer
+        imageRltAvatarBase64 = item.buffer
         break
       case 'USER_AVATAR':
         document.getElementById('imageAvatarBase64').src = item.buffer
+        imageAvatarBase64 = item.buffer
         break
       case 'USER_SIGNATURE':
         document.getElementById('signatureBase64').src = item.buffer
+        signatureBase64 = item.buffer
         break
       default:
         break
@@ -358,6 +365,10 @@
     socket.emit('closeRoom', 'default')
   }
 
+  function openSignWriting (data) {
+    socket.emit('open_sign_writing',data)
+  }
+
   function onChangeUserValue () {
     const userName = $('#userName').val()
     const userBirth = $('#userBirth').val()
@@ -383,6 +394,12 @@
       userName, userBirth, userOld, userGender, userJob, userEmail, userPhone,
       userCMT, userCMTDay, userCMTPlace, userPassport, userPassportDate, userPassportPlace, userCountry,
       userNation, userTBH, userAddress, userDistrict, userWards, userProvince
+    }
+    if (imageAvatarBase64) {
+      userInfo.imageAvatarBase64 = imageAvatarBase64
+    }
+    if (signatureBase64) {
+      userInfo.signatureBase64 = signatureBase64
     }
     socket.emit('web_wallet_emit', {screen: 'SIGN_WALLETS_SUBMIT', userInfo: userInfo})
   }
@@ -442,6 +459,9 @@
       rltPassportDate,
       rltPassportPlace,
       rltAddress
+    }
+    if(imageRltAvatarBase64) {
+      rltInfos.imageRltAvatarBase64 = imageRltAvatarBase64
     }
     socket.emit('web_wallet_emit', {screen: 'SIGN_WALLETS_SUBMIT', rltInfo: rltInfos})
   }

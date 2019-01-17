@@ -15,7 +15,7 @@ import {
   UPDATE_PENDING_TRANSACTION,
   UPDATE_HISTORY_TRANSACTION,
   UPDATE_SOCKETS,
-  UPDATE_CONTROL
+  UPDATE_CONTROL, UPDATE_VISIBLE_SIGNWRITING
 } from './Constants'
 
 // UserInfo
@@ -99,6 +99,13 @@ export const updateSocketStatus = (connect) => {
   return {
     type: CONNECTION_STATUS,
     payload: connect
+  }
+}
+
+export const updateVisibleSignWriting = (visibleSignWriting) => {
+  return {
+    type: UPDATE_VISIBLE_SIGNWRITING,
+    payload: visibleSignWriting
   }
 }
 

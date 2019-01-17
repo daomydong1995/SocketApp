@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { ScrollView, View, Dimensions } from 'react-native'
+import { ScrollView, View, Modal, Text,TouchableOpacity } from 'react-native'
 import { connect } from 'react-redux'
 import Spinner from 'react-native-loading-spinner-overlay'
 import HeaderCustom from './CustomView/Header/HeaderCustom'
@@ -11,7 +11,9 @@ import UserRelativeSignComponent from './CustomView/UserInfo/UserRelativeSignCom
 type Props = {
   navigation: any
 }
-type State = {}
+type State = {
+
+}
 
 class SignWalletPage extends Component<Props, State> {
   constructor (props: Props) {
@@ -41,6 +43,7 @@ class SignWalletPage extends Component<Props, State> {
               <UserSignComponent/>
               <View style={{width: '100%', height: 1, backgroundColor: '#000'}}/>
               <UserRelativeSignComponent/>
+              <View style={{width: '100%', height: 1, backgroundColor: '#000'}}/>
               <SmartCardSignComponent/>
             </ScrollView>
           </ScrollView>
