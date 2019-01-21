@@ -8,7 +8,7 @@ const INITIAL_STATE = {
   userBirth: '',
   userOld: '',
   //
-  userGender: false,
+  userGender: '',
   userJob: '',
   //
   userEmail: '',

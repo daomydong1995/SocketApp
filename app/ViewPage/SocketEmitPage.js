@@ -12,7 +12,6 @@ import { connect } from 'react-redux'
 import { View } from 'react-native'
 import React from 'react'
 import SCREENS from '../ContanstPage/SCREENS'
-import { CanvasTest } from './StreamCamera/CameraStream'
 
 type Props = {}
 type State = {}
@@ -37,53 +36,52 @@ class SocketEmitPage extends Component<Props, State> {
       socket.on('web_wallet_emit', this.onReceivedMessage)
       socket.emit('init', {init: true})
       DefaultPreference.get('ListAddressConnected').then(function (value) {
-        if (value === undefined || value === null) {
+        if (!value) {
           const firstList = [object]
           updateSocketsAddress(firstList)
-          DefaultPreference.set('ListAddressConnected', JSON.stringify(firstList)).then(function () {console.log('doneFirst')})
+          DefaultPreference.set('ListAddressConnected', JSON.stringify(firstList)).then(() => {console.log('doneFirst')})
         } else {
           const list = JSON.parse(value)
-          const va = list.some(sk => sk.hostname === object.hostname)
-          if (!va) {
-            list.push(object)
-            DefaultPreference.set('ListAddressConnected', JSON.stringify(list)).then(function () {console.log('done')})
-          }
-          updateSocketsAddress(list)
+          const newList = list.filter(sk => sk.hostname !== object.hostname)
+          newList.unshift(object)
+          DefaultPreference.set('ListAddressConnected', JSON.stringify(newList)).then(() => {console.log('done')})
+          updateSocketsAddress(newList)
         }
       })
-    })
-    socket.on('disconnect', () => {
-      updateSocketStatus(false)
+      socket.on('connect_timeout', (timeout) => {
+        console.log('connect_timeout', timeout)
+      })
+      socket.on('error', (error) => {
+        console.log('error', error)
+      })
+      socket.on('connect_error', (error) => {
+        console.log('connect_error', error)
+      })
+      socket.on('disconnect', () => {
+        updateSocketStatus(false)
+      })
     })
   }
 
   onReceivedMessage (state) {
-    if(state.control !== undefined) {
+    if (state.control) {
       this.props.updateControl(state.control)
     }
-    if ((state.screen === undefined || state.screen === null)){
-      return
+    if (state.screen) {
+      this.props.updateScreenApp(state.screen)
     }
-    this.props.updateScreenApp(state.screen)
-    if (state.screen === SCREENS.SIGN_WALLETS_SUBMIT) {
-      if (state.userInfo !== null || state.userInfo !== undefined) {
-        this.props.syncData(state.userInfo)
-      }
-      if (state.rltInfo !== null || state.rltInfo !== undefined) {
-        this.props.syncRltData(state.rltInfo)
-      }
-    } else if (state.screen === SCREENS.USER_INFO_PAGE) {
-      if (state.pendingTransactions !== null || state.pendingTransactions !== undefined) {
-        this.props.updatePendingTransaction(state.pendingTransactions)
-      }
-      if (state.historyTransactions !== null || state.historyTransactions !== undefined) {
-        this.props.updateHistoryTransaction(state.historyTransactions)
-      }
-      if (state.userInfo !== null || state.userInfo !== undefined) {
-        this.props.syncData(state.userInfo)
-      }
+    if (state.userInfo) {
+      this.props.syncData(state.userInfo)
     }
-
+    if (state.rltInfo) {
+      this.props.syncRltData(state.rltInfo)
+    }
+    if (state.pendingTransactions) {
+      this.props.updatePendingTransaction(state.pendingTransactions)
+    }
+    if (state.historyTransactions) {
+      this.props.updateHistoryTransaction(state.historyTransactions)
+    }
   }
 
   render () {

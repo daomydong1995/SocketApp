@@ -30,24 +30,24 @@ class UserRelativeInfoComponent extends Component<Props, State> {
               style={{width: 160, height: 200}}/>
           </View>
           <View style={{flexDirection: 'column', width: '80%', alignItems: 'center'}}>
-            <View style={styles.rowContainer}>
-              <View style={styles.itemRowContainer}>
+            <View style={styles.rowContainer2}>
+              <View style={styles.itemRowContainer2}>
                 <Text style={styles.textLabelStyle}>Họ tên:</Text>
                 <Text
                   style={styles.textStyle}>{this.props.rltInfo.rltName}</Text>
               </View>
-              <View style={styles.itemRowContainer}>
-                <Text style={styles.textLabelStyle}>Quan hệ</Text>
+              <View style={styles.itemRowContainer2}>
+                <Text style={styles.textLabelStyle}>Quan hệ:</Text>
                 <Text style={styles.textStyle}>{this.props.rltInfo.rltInfo}</Text>
               </View>
             </View>
-            <View style={styles.rowContainer}>
-              <View style={styles.itemRowContainer}>
-                <Text style={styles.textLabelStyle}>Email</Text>
+            <View style={styles.rowContainer2}>
+              <View style={styles.itemRowContainer2}>
+                <Text style={styles.textLabelStyle}>Email:</Text>
                 <Text
                   style={styles.textStyle}>{this.props.rltInfo.rltEmail}</Text>
               </View>
-              <View style={styles.itemRowContainer}>
+              <View style={styles.itemRowContainer2}>
                 <Text style={styles.textLabelStyle}>Số điện thoại:</Text>
                 <Text style={styles.textStyle}>{this.props.rltInfo.rltPhone}</Text>
               </View>
@@ -71,7 +71,7 @@ class UserRelativeInfoComponent extends Component<Props, State> {
             </View>
             <View style={styles.rowContainer}>
               <View style={styles.itemRowContainer}>
-                <Text style={styles.textLabelStyle}>Hộ chiếu</Text>
+                <Text style={styles.textLabelStyle}>Hộ chiếu:</Text>
                 <Text style={styles.textStyle}>{this.props.rltInfo.rltPassport}</Text>
               </View>
               <View style={styles.itemRowContainer}>
@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
     padding: 15
   },
   rowContainer: {
-    width: '90%',
+    width: '100%',
     height: 50,
     marginBottom: 3,
     flexDirection: 'row',
@@ -127,34 +127,35 @@ const styles = StyleSheet.create({
   textTileStyle: {
     fontSize: 28,
     marginTop: 15,
-    marginLeft: 0,
     marginBottom: 15,
     fontWeight: 'bold'
   },
   textLabelStyle: {
+    fontWeight: 'bold',
     fontSize: 16,
     marginLeft: 10,
     width: 100,
     height: '100%'
   },
   textStyle: {
-    fontWeight: 'bold',
     fontSize: 16,
     marginRight: 10,
     width: '60%',
     height: '100%'
-  }
-})
-
-
-const pickerSelectStyles = StyleSheet.create({
-  inputIOS: {
-    fontSize: 16,
-    borderWidth: 1,
-    borderStyle: 'solid',
-    borderRadius: 3,
+  },
+  itemRowContainer2: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    width: '50%',
+    height: '100%',
+  },
+  rowContainer2: {
+    width: '100%',
     height: 50,
-    color: 'black',
-    paddingLeft: 10
-  }
-});
+    marginBottom: 3,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between'
+  },
+})

@@ -2,8 +2,8 @@ import { Component } from 'react'
 import { connect } from 'react-redux'
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import React from 'react'
-import DatePicker from 'react-native-datepicker'
 import RNPickerSelect from 'react-native-picker-select'
+import DateTextBox from '../Common/DateTextBox'
 
 type Props = {}
 type State = {
@@ -30,7 +30,7 @@ class UserSignComponent extends Component<Props, State> {
 
   render () {
     return (
-      <View style={styles.container} pointerEvents={'none'} >
+      <View style={styles.container} pointerEvents={'none'}>
         <Text style={styles.textTileStyle}>
           Thông tin bệnh nhân
         </Text>
@@ -43,25 +43,11 @@ class UserSignComponent extends Component<Props, State> {
               value={this.props.userName}
             />
           </View>
-          <View style={[styles.itemRowContainer, {marginLeft: 5, marginRight: 5}]}>
+          <View style={styles.itemRowContainer}>
             <Text style={styles.textLabelStyle}>Ngày sinh:</Text>
-            <DatePicker
-              style={styles.datePickerStyle}
-              date={this.props.userBirth}
-              mode="date"
-              format="DD/MM/YYYY"
-              minDate="01/01/1995"
-              maxDate="01/01/2050"
-              confirmBtnText="Xác nhận"
-              cancelBtnText="Hủy bỏ"
-              customStyles={{
-                dateIcon: {
-                  // position: '',//absolute is left
-                  width: 45,
-                  height: 40
-                },
-                dateInput: styles.textStyle
-              }}/>
+            <DateTextBox
+              container={styles.datePickerStyle}
+              textDate={this.props.userBirth}/>
           </View>
           <View style={styles.itemRowContainer}>
             <Text style={styles.textLabelStyle}>Tuổi:</Text>
@@ -75,31 +61,11 @@ class UserSignComponent extends Component<Props, State> {
         <View style={styles.rowContainer}>
           <View style={styles.itemRowContainer}>
             <Text style={styles.textLabelStyle}>Giới tính:</Text>
-            <View style={styles.pickkerSelectView}>
-              <RNPickerSelect
-                placeholder={{
-                  label: 'Chọn giới tính...',
-                  value: null,
-                }}
-                items={this.state.genderList}
-                onValueChange={(value) => {
-                  this.setState({
-                    gender: value,
-                  })
-                }}
-                onUpArrow={() => {
-                  // this.inputRefs.picker.togglePicker();
-                }}
-                onDownArrow={() => {
-                  // this.inputRefs.company.focus();
-                }}
-                style={{...pickerSelectStyles}}
-                value={this.props.userGender}
-                ref={(el) => {
-                  // this.inputRefs.picker2 = el;
-                }}
-              />
-            </View>
+            <TextInput
+              style={styles.textStyle}
+              value={this.props.userGender}
+              placeholder={''}
+            />
           </View>
           <View style={[styles.itemRowContainer]}>
             <Text style={styles.textLabelStyle}>Nghề nghiệp:</Text>
@@ -137,25 +103,11 @@ class UserSignComponent extends Component<Props, State> {
               placeholder={''}
             />
           </View>
-          <View style={[styles.itemRowContainer, {marginLeft: 5, marginRight: 5}]}>
+          <View style={styles.itemRowContainer}>
             <Text style={styles.textLabelStyle}>Ngày cấp:</Text>
-            <DatePicker
-              style={styles.datePickerStyle}
-              date={this.props.userCMTDay}
-              mode="date"
-              format="DD/MM/YYYY"
-              minDate="01/01/1995"
-              maxDate="01/01/2050"
-              confirmBtnText="Xác nhận"
-              cancelBtnText="Hủy bỏ"
-              customStyles={{
-                dateIcon: {
-                  // position: '',//absolute is left
-                  width: 45,
-                  height: 40
-                },
-                dateInput: styles.textStyle
-              }}/>
+            <DateTextBox
+              container={styles.datePickerStyle}
+              textDate={this.props.userCMTDay}/>
           </View>
           <View style={styles.itemRowContainer}>
             <Text style={styles.textLabelStyle}>Nơi cấp:</Text>
@@ -175,25 +127,11 @@ class UserSignComponent extends Component<Props, State> {
               placeholder={''}
             />
           </View>
-          <View style={[styles.itemRowContainer, {marginLeft: 5, marginRight: 5}]}>
+          <View style={styles.itemRowContainer}>
             <Text style={styles.textLabelStyle}>Ngày cấp:</Text>
-            <DatePicker
-              style={styles.datePickerStyle}
-              date={this.props.userPassportDate}
-              mode="date"
-              format="DD/MM/YYYY"
-              minDate="01/01/1995"
-              maxDate="01/01/2050"
-              confirmBtnText="Xác nhận"
-              cancelBtnText="Hủy bỏ"
-              customStyles={{
-                dateIcon: {
-                  // position: '',//absolute is left
-                  width: 45,
-                  height: 40
-                },
-                dateInput: styles.textStyle
-              }}/>
+            <DateTextBox
+              container={styles.datePickerStyle}
+              textDate={this.props.userPassportDate}/>
           </View>
           <View style={styles.itemRowContainer}>
             <Text style={styles.textLabelStyle}>Nơi cấp:</Text>
@@ -213,7 +151,7 @@ class UserSignComponent extends Component<Props, State> {
               placeholder={''}
             />
           </View>
-          <View style={[styles.itemRowContainer, {marginLeft: 5, marginRight: 5}]}>
+          <View style={styles.itemRowContainer}>
             <Text style={styles.textLabelStyle}>Dân tộc:</Text>
             <TextInput
               style={styles.textStyle}
@@ -302,7 +240,6 @@ const styles = StyleSheet.create({
   textTileStyle: {
     fontSize: 28,
     marginTop: 15,
-    marginLeft: 0,
     marginBottom: 15,
     fontWeight: 'bold',
   },
@@ -314,19 +251,18 @@ const styles = StyleSheet.create({
   },
   datePickerStyle: {
     width: '60%',
-    marginRight: 10,
     height: 50
   },
   textStyle: {
     fontSize: 16,
-    marginRight: 10,
     width: '60%',
     borderStyle: 'solid',
     borderWidth: 1,
+    borderColor: '#4c4c4c',
     borderRadius: 3,
     height: 50,
     backgroundColor: '#fff',
-    paddingLeft: 10
+    paddingLeft: 15
   },
   pickkerSelectView: {
     marginRight: 10,

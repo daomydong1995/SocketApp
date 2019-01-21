@@ -36,7 +36,7 @@ class SmartCardSignComponent extends Component<Props, State> {
   }
   componentDidMount () {
     let self = this
-    this.props.socket.on('takePicture', function (msg) {
+    this.props.socket.on('take_picture', function (msg) {
       let viewShot
       if (msg === 'USER_AVATAR') {
         viewShot = self.refs.userAvatar
@@ -57,7 +57,6 @@ class SmartCardSignComponent extends Component<Props, State> {
         }).then(() => {
           RNFS.exists(uri).then((result) => {
             if (result) {
-              console.log('takePicture', uri)
               self.props.updateControl('none')
               return RNFS.unlink(uri)
             }
@@ -77,7 +76,7 @@ class SmartCardSignComponent extends Component<Props, State> {
             <View>
               <Text style={styles.textTileStyle}>Ảnh cá nhân</Text>
               <View style={styles.stylePhoto}>
-                <ViewShot ref="userAvatar" options={{format: 'jpg', quality: 0.9}}>
+                <ViewShot ref="userAvatar" options={{format: 'jpg', quality: 1.0}}>
                   {
                     this.props.control !== 'USER_AVATAR' &&
                     <Image

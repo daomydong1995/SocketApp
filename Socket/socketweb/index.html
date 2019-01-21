@@ -69,8 +69,8 @@
     <div class="d-flex justify-content-center align-items-center container">
         <div class="col-sm-12" id="infoUser">
             <h3>Thông tin bệnh nhân</h3>
-            <button onclick="showInfo();">Show Info</button>
-            <label>http://upfile.vn/6QXtKrXmNCGg/socketserver-zip.html</label>
+            <button onclick="showInfo();">Info User Screen</button>
+            <button onclick="showSign();">Sign User Screen</button>
             <div class="form-group row">
                 <label>Họ tên</label>
                 <input onchange="onChangeUserValue()" id="userName"/>
@@ -82,8 +82,8 @@
             <div class="form-group row">
                 <label>Giới tính</label>
                 <select id="userGender" onchange="onChangeUserValue()">
-                    <option value="false">Nữ</option>
-                    <option value="true">Nam</option>
+                    <option value="Nữ">Nữ</option>
+                    <option value="Nam">Nam</option>
                 </select>
                 <label>Nghề nghiệp</label>
                 <input data-provide="datepicker" type="text" onchange="onChangeUserValue()" id="userJob"/>
@@ -202,6 +202,8 @@
   let signatureBase64 = undefined
   const videoStream = document.getElementById('videoStream')
   let localStream
+  const SIGN_WALLETS_SUBMIT = 'SIGN_WALLETS_SUBMIT'
+  const USER_INFO_PAGE = 'USER_INFO_PAGE'
 
   function getLocalStream () {
     navigator.getUserMedia({'audio': false, 'video': true}, function (stream) {
@@ -356,24 +358,24 @@
   })
 
   function onOpenStream (id) {
-    socket.emit('createRoom', 'default')
+    socket.emit('create_room', 'default')
     socket.emit('web_wallet_emit', {control: id})
   }
 
   function onTakePicture (id) {
-    socket.emit('takePicture',id)
-    socket.emit('closeRoom', 'default')
+    socket.emit('take_picture', id)
+    socket.emit('close_room', 'default')
   }
 
   function openSignWriting (data) {
-    socket.emit('open_sign_writing',data)
+    socket.emit('open_sign_writing', data)
   }
 
   function onChangeUserValue () {
     const userName = $('#userName').val()
     const userBirth = $('#userBirth').val()
     const userOld = $('#userOld').val()
-    const userGender = $('#userGender').val() === 'true'
+    const userGender = $('#userGender').val()
     const userJob = $('#userJob').val()
     const userEmail = $('#userEmail').val()
     const userPhone = $('#userPhone').val()
@@ -393,47 +395,16 @@
     const userInfo = {
       userName, userBirth, userOld, userGender, userJob, userEmail, userPhone,
       userCMT, userCMTDay, userCMTPlace, userPassport, userPassportDate, userPassportPlace, userCountry,
-      userNation, userTBH, userAddress, userDistrict, userWards, userProvince
+      userNation, userTBH, userAddress, userDistrict, userWards, userProvince,userId,userWalletId,userCardId
     }
-    if (imageAvatarBase64) {
-      userInfo.imageAvatarBase64 = imageAvatarBase64
-    }
-    if (signatureBase64) {
-      userInfo.signatureBase64 = signatureBase64
-    }
-    socket.emit('web_wallet_emit', {screen: 'SIGN_WALLETS_SUBMIT', userInfo: userInfo})
+    userInfo.imageAvatarBase64 = (imageAvatarBase64) ? imageAvatarBase64 : ''
+    userInfo.signatureBase64 = (signatureBase64) ? signatureBase64 : ''
+    socket.emit('web_wallet_emit', {userInfo: userInfo})
   }
+
   const userId = 'fc220b60-18a9-11e9-ba25-c321312caa'
   const userWalletId = 'fc220b60-18a9-1ae9-ba25-cb2792a54a66'
   const userCardId = 'fc220b60-18a9-11e9-ba25-dascxzasa6'
-    function showInfo () {
-    const userName = $('#userName').val()
-    const userBirth = $('#userBirth').val()
-    const userOld = $('#userOld').val()
-    const userGender = $('#userGender').val() === 'true'
-    const userJob = $('#userJob').val()
-    const userEmail = $('#userEmail').val()
-    const userPhone = $('#userPhone').val()
-    const userCMT = $('#userCMT').val()
-    const userCMTDay = $('#userCMTDay').val()
-    const userCMTPlace = $('#userCMTPlace').val()
-    const userPassport = $('#userPassport').val()
-    const userPassportDate = $('#userPassportDate').val()
-    const userPassportPlace = $('#userPassportPlace').val()
-    const userCountry = $('#userCountry').val()
-    const userNation = $('#userNation').val()
-    const userTBH = $('#userTBH').val()
-    const userAddress = $('#userAddress').val()
-    const userDistrict = $('#userDistrict').val()
-    const userWards = $('#userWards').val()
-    const userProvince = $('#userProvince').val()
-    const userInfo = {
-      userName, userBirth, userOld, userGender, userJob, userEmail, userPhone,
-      userCMT, userCMTDay, userCMTPlace, userPassport, userPassportDate, userPassportPlace, userCountry,
-      userNation, userTBH, userAddress, userDistrict, userWards, userProvince, userId, userWalletId, userCardId
-    }
-    socket.emit('web_wallet_emit', {screen: 'USER_INFO_PAGE', userInfo: userInfo})
-  }
 
   function onChangeRltValue () {
     const rltName = $('#rltName').val()
@@ -460,10 +431,9 @@
       rltPassportPlace,
       rltAddress
     }
-    if(imageRltAvatarBase64) {
-      rltInfos.imageRltAvatarBase64 = imageRltAvatarBase64
-    }
-    socket.emit('web_wallet_emit', {screen: 'SIGN_WALLETS_SUBMIT', rltInfo: rltInfos})
+    rltInfos.imageRltAvatarBase64 = (imageRltAvatarBase64) ? imageRltAvatarBase64 : ''
+
+    socket.emit('web_wallet_emit', {rltInfo: rltInfos})
   }
 
   $(function () {
@@ -488,5 +458,12 @@
       uiLibrary: 'bootstrap4'
     })
   })
+  function showInfo () {
+    socket.emit('web_wallet_emit', {screen: USER_INFO_PAGE})
+  }
+
+  function showSign () {
+    socket.emit('web_wallet_emit', {screen: SIGN_WALLETS_SUBMIT})
+  }
 </script>
 </html>

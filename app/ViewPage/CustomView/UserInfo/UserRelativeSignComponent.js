@@ -1,8 +1,8 @@
 import { Component } from 'react'
 import { connect } from 'react-redux'
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, Text, TextInput, View } from 'react-native'
 import React from 'react'
-import DatePicker from 'react-native-datepicker'
+import DateTextBox from '../Common/DateTextBox'
 
 type Props = {}
 type State = {
@@ -11,15 +11,14 @@ type State = {
 }
 
 class UserRelativeSignComponent extends Component<Props, State> {
-  constructor(props) {
-    super(props);
-    this.state = {
-    }
+  constructor (props) {
+    super(props)
+    this.state = {}
   }
 
   render () {
     return (
-      <View style={styles.container} pointerEvents={'none'} >
+      <View style={styles.container} pointerEvents={'none'}>
         <Text style={styles.textTileStyle}>
           Thông tin người thân
         </Text>
@@ -68,25 +67,11 @@ class UserRelativeSignComponent extends Component<Props, State> {
               placeholder={''}
             />
           </View>
-          <View style={[styles.itemRowContainer,{marginLeft: 5, marginRight: 5}]}>
+          <View style={styles.itemRowContainer}>
             <Text style={styles.textLabelStyle}>Ngày cấp:</Text>
-            <DatePicker
-              style={styles.datePickerStyle}
-              date={this.props.rltCMTDay}
-              mode="date"
-              format="DD/MM/YYYY"
-              minDate="01/01/1995"
-              maxDate="01/01/2050"
-              confirmBtnText="Xác nhận"
-              cancelBtnText="Hủy bỏ"
-              customStyles={{
-                dateIcon: {
-                  // position: '',//absolute is left
-                  width: 45,
-                  height: 40
-                },
-                dateInput: styles.textStyle
-              }} />
+            <DateTextBox
+              container={styles.datePickerStyle}
+              textDate={this.props.rltCMTDay}/>
           </View>
           <View style={styles.itemRowContainer}>
             <Text style={styles.textLabelStyle}>Nơi cấp:</Text>
@@ -106,25 +91,11 @@ class UserRelativeSignComponent extends Component<Props, State> {
               placeholder={''}
             />
           </View>
-          <View style={[styles.itemRowContainer,{marginLeft: 5, marginRight: 5}]}>
+          <View style={styles.itemRowContainer}>
             <Text style={styles.textLabelStyle}>Ngày cấp:</Text>
-            <DatePicker
-              style={styles.datePickerStyle}
-              date={this.props.rltPassportDate}
-              mode="date"
-              format="DD/MM/YYYY"
-              minDate="01/01/1995"
-              maxDate="01/01/2050"
-              confirmBtnText="Xác nhận"
-              cancelBtnText="Hủy bỏ"
-              customStyles={{
-                dateIcon: {
-                  // position: '',//absolute is left
-                  width: 45,
-                  height: 40
-                },
-                dateInput: styles.textStyle
-              }} />
+            <DateTextBox
+              container={styles.datePickerStyle}
+              textDate={this.props.rltPassportDate}/>
           </View>
           <View style={styles.itemRowContainer}>
             <Text style={styles.textLabelStyle}>Nơi cấp:</Text>
@@ -136,8 +107,8 @@ class UserRelativeSignComponent extends Component<Props, State> {
           </View>
         </View>
         <View style={styles.rowContainer}>
-          <View style={[styles.itemRowContainer,{width: '100%'}]}>
-            <Text style={styles.textLabelStyle}>Địa chỉ liên lạc</Text>
+          <View style={[styles.itemRowContainer, {width: '100%'}]}>
+            <Text style={styles.textLabelStyle}>Địa chỉ liên lạc:</Text>
             <TextInput
               style={[styles.textStyle]}
               value={this.props.rltAddress}
@@ -181,7 +152,6 @@ const styles = StyleSheet.create({
   textTileStyle: {
     fontSize: 28,
     marginTop: 15,
-    marginLeft: 0,
     marginBottom: 15,
     fontWeight: 'bold',
   },
@@ -189,21 +159,20 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginLeft: 10,
     width: 100,
-    fontWeight:'bold'
+    fontWeight: 'bold'
   },
   datePickerStyle: {
     width: '60%',
-    marginRight: 10,
     height: 50
   },
   textStyle: {
-    fontSize:16,
-    marginRight: 10,
+    fontSize: 16,
     width: '60%',
     borderStyle: 'solid',
     borderWidth: 1,
     borderRadius: 3,
     height: 50,
+    borderColor: '#4c4c4c',
     backgroundColor: '#fff',
     paddingLeft: 10
   },
@@ -215,7 +184,6 @@ const styles = StyleSheet.create({
   }
 })
 
-
 const pickerSelectStyles = StyleSheet.create({
   inputIOS: {
     fontSize: 16,
@@ -226,4 +194,4 @@ const pickerSelectStyles = StyleSheet.create({
     color: 'black',
     paddingLeft: 10
   }
-});
+})

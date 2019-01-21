@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { ScrollView, View, Dimensions, Text } from 'react-native'
+import { ScrollView, View, Text } from 'react-native'
 import { connect } from 'react-redux'
 import Spinner from 'react-native-loading-spinner-overlay'
 import HeaderCustom from './CustomView/Header/HeaderCustom'
@@ -80,7 +80,7 @@ const styles = {
   content: {
     width: '100%',
     height: '100%',
-    backgroundColor: '#f6f6f6',
+    backgroundColor: '#ffffff',
     justifyContent: 'center'
   },
   itemStyle: {

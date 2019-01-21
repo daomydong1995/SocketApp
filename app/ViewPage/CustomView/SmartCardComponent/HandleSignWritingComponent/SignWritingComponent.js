@@ -60,11 +60,12 @@ class SignWritingComponent extends Component<Props, State> {
         <Modal
           animationType="fade"
           presentationStyle={'formSheet'}
+          onRequestClose={()=>{}}
           transparent={false}
-          onBackdropPress={() => this.props.updateVisibleSignWriting(false)}
           visible={this.props.visibleSignWriting}>
           <View style={{alignItems: 'flex-end',backgroundColor: '#f3f3f3', flex: 1, justifyContent: 'center'}}>
-            <TouchableOpacity onPress={() => this.props.updateVisibleSignWriting(false)} style={{margin: 5,height: 60, width: 60, alignItems: 'center', justifyContent: 'center'}}>
+            <TouchableOpacity onPress={() => this.props.updateVisibleSignWriting(false)}
+                              style={{margin: 5,height: 60, width: 60, alignItems: 'center', justifyContent: 'center'}}>
               <Icon name='times' size={30} color={'#c32333'}/>
             </TouchableOpacity>
             <View style={styles.container}>
@@ -86,8 +87,6 @@ class SignWritingComponent extends Component<Props, State> {
                   height: '60%',
                   borderWidth: 1
                 }}
-                enableSaveBtn={true}
-                touchEnabled={true}
                 defaultStrokeIndex={0}
                 defaultStrokeWidth={5}
                 clearComponent={this.renderViewClear()}
@@ -102,9 +101,9 @@ class SignWritingComponent extends Component<Props, State> {
                     folder: 'tempSignature'
                   }
                 }}
-                onSketchSaved={async (success, path) =>  {
+                onSketchSaved={(success, path) =>  {
                   if (success) {
-                    await RNFS.readFile(path, 'base64').then(data => {
+                      RNFS.readFile(path, 'base64').then(data => {
                       const base64Image = 'data:image/png;base64,' + data
                       this.props.updateSignature(base64Image)
                     }).then(() => {
@@ -151,7 +150,7 @@ const styles = StyleSheet.create({
   saveButtonStyle: {
     width: 100,
     marginHorizontal: 2.5, marginVertical: 8, height: 42, padding: 5, paddingLeft: 10, paddingRight: 10,
-    backgroundColor: '#369a56', justifyContent: 'center', alignItems: 'center', borderRadius: 10,
+    backgroundColor: '#3dae61', justifyContent: 'center', alignItems: 'center', borderRadius: 10,
     borderColor: 'black',
     shadowOffset: {width: 1, height: 1},
     shadowColor: 'black',

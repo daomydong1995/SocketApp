@@ -26,7 +26,6 @@ const renderDrawerItem = (data) => {
 }
 function transformClicked (data){
   // data.navigation.navigate(data.item.key)
-
 }
 const styles = StyleSheet.create({
     safeStyle: {

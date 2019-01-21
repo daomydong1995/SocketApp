@@ -80,7 +80,7 @@ class UserInfoComponent extends Component<Props, State> {
             <View style={styles.rowContainer}>
               <View style={styles.itemRowContainer}>
                 <Text style={styles.textLabelStyle}>Giới tính:</Text>
-                <Text style={styles.textStyle}>{this.props.userGender ? 'Nam' : 'Nữ'}</Text>
+                <Text style={styles.textStyle}>{this.props.userInfo.userGender}</Text>
               </View>
               <View style={[styles.itemRowContainer]}>
                 <Text style={styles.textLabelStyle}>Nghề nghiệp:</Text>
@@ -107,7 +107,7 @@ class UserInfoComponent extends Component<Props, State> {
               <View style={styles.itemRowContainer}>
                 <Text style={styles.textLabelStyle}>Ngày cấp:</Text>
                 <Text
-                  style={styles.textStyle}>{this.props.userCMTDay}</Text>
+                  style={styles.textStyle}>{this.props.userInfo.userCMTDay}</Text>
               </View>
               <View style={styles.itemRowContainer}>
                 <Text style={styles.textLabelStyle}>Nơi cấp:</Text>
@@ -194,19 +194,6 @@ const styles = StyleSheet.create({
     width: '50%',
     height: '100%',
   },
-  textTileStyle: {
-    fontSize: 28,
-    marginTop: 15,
-    marginLeft: 0,
-    marginBottom: 15,
-    fontWeight: 'bold'
-  },
-  textLabelStyle: {
-    fontSize: 16,
-    marginLeft: 10,
-    width: 100,
-    height: '100%'
-  },
   rowContainer2: {
     width: '100%',
     height: 50,
@@ -215,23 +202,23 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between'
   },
-  textStyle: {
+  textTileStyle: {
+    fontSize: 28,
+    marginTop: 15,
+    marginBottom: 15,
+    fontWeight: 'bold'
+  },
+  textLabelStyle: {
     fontWeight: 'bold',
+    fontSize: 16,
+    marginLeft: 10,
+    width: 100,
+    height: '100%'
+  },
+  textStyle: {
     fontSize: 16,
     marginRight: 10,
     width: '60%',
     height: '100%'
-  }
-})
-
-const pickerSelectStyles = StyleSheet.create({
-  inputIOS: {
-    fontSize: 16,
-    borderWidth: 1,
-    borderStyle: 'solid',
-    borderRadius: 3,
-    height: 50,
-    color: 'black',
-    paddingLeft: 10
   }
 })

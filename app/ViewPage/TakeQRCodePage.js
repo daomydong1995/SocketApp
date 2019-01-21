@@ -1,12 +1,9 @@
 import React, { Component } from 'react'
 import {
   StyleSheet,
-  TouchableOpacity,
-  View,Text
+  View
 } from 'react-native'
-import { RNCamera } from 'react-native-camera'
 import connect from 'react-redux/es/connect/connect'
-import { updateAvatarBase64, updateAvatarRltBase64 } from '../reducer/action'
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import HeaderCustom from './CustomView/Header/HeaderCustom'
 import QRCodeScanner from 'react-native-qrcode-scanner'
@@ -15,14 +12,14 @@ type State = {
   fontCamera: boolean,
   flashOn: boolean
 }
-class TakePhotoPage extends Component<Props, State> {
+class TakeQRCodePage extends Component<Props, State> {
   constructor (props) {
     super(props)
     this.state = {
       fontCamera: false,
       flashOn: true
     }
-    this.scanQRcode = this.scanQRcode.bind(this)
+    this.scanQRCode = this.scanQRCode.bind(this)
     this.eventLeftHeader = this.eventLeftHeader.bind(this)
   }
 
@@ -30,20 +27,15 @@ class TakePhotoPage extends Component<Props, State> {
     this.props.navigation.goBack()
   }
 
-  componentDidMount () {
-    // BackgroundTask.schedule()
-  }
-
-  scanQRcode(barcodes) {
-    console.log(barcodes)
-    if (undefined !== barcodes && barcodes.type === 'org.iso.QRCode') {
-      this.props.navigation.getParam('callback')(barcodes.data.replace('http://',''))
+  scanQRCode(barCodes) {
+    console.log(barCodes)
+    if (barCodes && (barCodes.type === 'org.iso.QRCode' || barCodes.type === 'QR_CODE')) {
+      this.props.navigation.getParam('callback')(barCodes.data.replace('http://',''))
       this.props.navigation.goBack()
     }
   }
 
   render () {
-    // const forUser = this.props.navigation.state.params.forUser
     return (
       <View style={styles.container}>
         <HeaderCustom title={'Scan Ip Address'}
@@ -51,7 +43,7 @@ class TakePhotoPage extends Component<Props, State> {
                       handleLeftButton={this.eventLeftHeader}
         />
         <QRCodeScanner
-          onRead={(data) => this.scanQRcode(data)}/>
+          onRead={(data) => this.scanQRCode(data)}/>
       </View>
     )
 
@@ -85,4 +77,4 @@ const mapStateToProps = state => ({
 export default connect(
   mapStateToProps, {
   }
-)(TakePhotoPage)
+)(TakeQRCodePage)

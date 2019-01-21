@@ -1,5 +1,5 @@
 import { Component } from 'react'
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView } from 'react-native'
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, Alert } from 'react-native'
 import React from 'react'
 import HeaderCustom from './CustomView/Header/HeaderCustom'
 import Icon from 'react-native-vector-icons/FontAwesome5'
@@ -8,8 +8,9 @@ import io from 'socket.io-client'
 import { Row, Table, TableWrapper } from 'react-native-table-component'
 import { Cell } from 'react-native-table-component/components/cell'
 import { connect } from 'react-redux'
-import { updateSocket } from '../reducer/action'
+import { updateSocket, updateSocketsAddress } from '../reducer/action'
 import SCREENS from '../ContanstPage/SCREENS'
+import DefaultPreference from 'react-native-default-preference'
 
 type Props = {}
 type State = {
@@ -40,15 +41,37 @@ class SettingPage extends Component<Props, State> {
     const {socket} = this.props
     socket.disconnect()
     let ip = 'http://' + address + ':' + port
-    socket.io = new io.connect(ip).io;
+    socket.io = new io.connect(ip).io
     socket.connect()
   }
 
-  callback(address) {
-    this.setState({address})
+  removeIpAddress (hostname) {
+    const {socketsAddress} = this.props
+    Alert.alert(
+      'Xóa',
+      'Bạn muốn xóa :' + hostname,
+      [
+        {text: 'Hủy bỏ', onPress: () => {}, style: 'cancel'},
+        {
+          text: 'Đồng ý', onPress: () => {
+            const listHostname = socketsAddress.filter(sk => sk.hostname !== hostname )
+            DefaultPreference.set('ListAddressConnected', JSON.stringify(listHostname)).then(() => {console.log('done')})
+            this.props.updateSocketsAddress(listHostname)
+          }
+        },
+      ],
+      {cancelable: false}
+    )
   }
+
+  callback (address) {
+    this.setState({address}, () => {
+      this.updateSocketGlobal()
+    })
+  }
+
   eventScanQRCode () {
-    this.props.navigation.navigate(SCREENS.TAKE_PHOTO_PAGE, {callback: this.callback.bind(this)})
+    this.props.navigation.navigate(SCREENS.TAKE_QR_CODE_PAGE, {callback: this.callback.bind(this)})
   }
 
   render () {
@@ -96,16 +119,27 @@ class SettingPage extends Component<Props, State> {
                         </View>
                       )} textStyle={styles.text}/>
                       <Cell data={(
-                        <View style={{marginLeft: 10, flexDirection: 'row', flex: 1, alignItems: 'center'}}>
-                          <View
-                            style={{
-                              width: 10,
-                              height: 10,
-                              borderRadius: 20,
-                              backgroundColor: (this.props.socket.io.engine.hostname === sk.hostname && connected) ? '#4eff35' : '#ff0c16'
-                            }}/>
-                          <Text
-                            style={styles.text}>{(this.props.socket.io.engine.hostname === sk.hostname && connected) ? 'Đang kết nối...' : 'Không kết nối!'}</Text>
+                        <View style={{
+                          marginLeft: 10,
+                          flexDirection: 'row',
+                          flex: 1,
+                          alignItems: 'center',
+                          justifyContent: 'space-between'
+                        }}>
+                          <View style={{
+                            width: 10,
+                            height: 10,
+                            borderRadius: 20,
+                            backgroundColor: (this.props.socket.io.engine.hostname === sk.hostname && connected) ? '#4eff35' : '#ff0c16'
+                          }}/>
+                          <View style={{width: '95%', flexDirection: 'row', height: '100%', alignItems: 'center'}}>
+                            <Text style={{fontSize: 18, width: '90%'}}>
+                              {(this.props.socket.io.engine.hostname === sk.hostname && connected) ? 'Đang kết nối...' : 'Không kết nối!'}
+                            </Text>
+                            <TouchableOpacity onPress={() => this.removeIpAddress(sk.hostname)}>
+                              <Icon name={'times'} color={'#ff2128'} size={35}/>
+                            </TouchableOpacity>
+                          </View>
                         </View>
                       )}/>
                     </TableWrapper>
@@ -164,7 +198,8 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps, {
-    updateSocket
+    updateSocket,
+    updateSocketsAddress
   }
 )(SettingPage)
 

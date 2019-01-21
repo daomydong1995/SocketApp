@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { ScrollView, View, Modal, Text,TouchableOpacity } from 'react-native'
+import { ScrollView, View } from 'react-native'
 import { connect } from 'react-redux'
 import Spinner from 'react-native-loading-spinner-overlay'
 import HeaderCustom from './CustomView/Header/HeaderCustom'

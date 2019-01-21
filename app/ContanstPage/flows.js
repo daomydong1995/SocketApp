@@ -7,12 +7,12 @@ import SettingPage from '../ViewPage/SettingPage'
 import CustomDrawerMenu from '../ViewPage/CustomView/CustomDrawersComponent'
 import React from 'react'
 import SCREENSTITLE from './SCREENSTITLE'
-import TakePhotoPage from '../ViewPage/TakePhotoPage'
+import TakeQRCodePage from '../ViewPage/TakeQRCodePage'
 import SelectPage from '../ViewPage/SelectPage'
 
 const SettingFlow = createStackNavigator({
   [SCREENS.SETTING_PAGE]: { screen: SettingPage, navigationOptions: () => ({ title: SCREENSTITLE.SETTING_PAGE }) },
-  [SCREENS.TAKE_PHOTO_PAGE]: { screen: TakePhotoPage, navigationOptions: () => ({ title: SCREENSTITLE.TAKE_PHOTO_PAGE }) }
+  [SCREENS.TAKE_QR_CODE_PAGE]: { screen: TakeQRCodePage, navigationOptions: () => ({ title: SCREENSTITLE.TAKE_QR_CODE_PAGE }) }
 },
 {
   headerMode: 'none'
@@ -23,7 +23,7 @@ const DrawerMenu = createDrawerNavigator({
 }, {
   contentComponent: CustomDrawerMenu,
   contentOptions: {
-    activeTintColor: '#ffdc6a'
+    activeTintColor: '#6589db'
   }
 })
 export default createAppContainer(DrawerMenu)
