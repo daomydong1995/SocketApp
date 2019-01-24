@@ -5,10 +5,10 @@ import HeaderCustom from './CustomView/Header/HeaderCustom'
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import SCREENSTITLE from '../ContanstPage/SCREENSTITLE'
 import io from 'socket.io-client'
-import { Row, Table, TableWrapper } from 'react-native-table-component'
+import { Row, TableWrapper } from 'react-native-table-component'
 import { Cell } from 'react-native-table-component/components/cell'
 import { connect } from 'react-redux'
-import { updateSocket, updateSocketsAddress } from '../reducer/action'
+import { updateMessageSocket, updateSocket, updateSocketsAddress } from '../reducer/action'
 import SCREENS from '../ContanstPage/SCREENS'
 import DefaultPreference from 'react-native-default-preference'
 
@@ -39,9 +39,24 @@ class SettingPage extends Component<Props, State> {
   updateSocketGlobal () {
     const {address, port} = this.state
     const {socket} = this.props
+    this.props.updateMessageSocket(true)
     socket.disconnect()
     let ip = 'http://' + address + ':' + port
-    socket.io = new io.connect(ip).io
+    const trySocket = io.connect(ip, {'timeout': 3000, 'connect_timeout': 3000})
+    trySocket.on('connect_error', (error) => {
+      if (this.props.messageSocketStatus) {
+        this.props.updateMessageSocket(false)
+        Alert.alert(
+          'Thông báo',
+          `Địa chỉ IP không hợp lệ`,
+          [
+            {text: 'Ok', onPress: () => {}, style: 'cancel'},
+          ],
+          {cancelable: false}
+        )
+      }
+    })
+    socket.io = trySocket.io
     socket.connect()
   }
 
@@ -54,7 +69,7 @@ class SettingPage extends Component<Props, State> {
         {text: 'Hủy bỏ', onPress: () => {}, style: 'cancel'},
         {
           text: 'Đồng ý', onPress: () => {
-            const listHostname = socketsAddress.filter(sk => sk.hostname !== hostname )
+            const listHostname = socketsAddress.filter(sk => sk.hostname !== hostname)
             DefaultPreference.set('ListAddressConnected', JSON.stringify(listHostname)).then(() => {console.log('done')})
             this.props.updateSocketsAddress(listHostname)
           }
@@ -65,9 +80,7 @@ class SettingPage extends Component<Props, State> {
   }
 
   callback (address) {
-    this.setState({address}, () => {
-      this.updateSocketGlobal()
-    })
+    this.setState({address})
   }
 
   eventScanQRCode () {
@@ -199,7 +212,8 @@ const mapStateToProps = state => ({
 export default connect(
   mapStateToProps, {
     updateSocket,
-    updateSocketsAddress
+    updateSocketsAddress,
+    updateMessageSocket
   }
 )(SettingPage)
 

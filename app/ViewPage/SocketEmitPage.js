@@ -2,16 +2,15 @@ import { Component } from 'react'
 import DefaultPreference from 'react-native-default-preference'
 import {
   syncData,
-  syncRltData, updateControl, updateHistoryTransaction,
+  syncRltData, updateControl, updateHistoryTransaction, updateLoadingSpinner, updateMessageSocket,
   updatePendingTransaction,
   updateScreenApp,
   updateSocketsAddress,
   updateSocketStatus
 } from '../reducer/action'
 import { connect } from 'react-redux'
-import { View } from 'react-native'
+import { ActivityIndicator, Alert, Modal, StyleSheet, View } from 'react-native'
 import React from 'react'
-import SCREENS from '../ContanstPage/SCREENS'
 
 type Props = {}
 type State = {}
@@ -48,49 +47,71 @@ class SocketEmitPage extends Component<Props, State> {
           updateSocketsAddress(newList)
         }
       })
-      socket.on('connect_timeout', (timeout) => {
-        console.log('connect_timeout', timeout)
-      })
-      socket.on('error', (error) => {
-        console.log('error', error)
-      })
-      socket.on('connect_error', (error) => {
-        console.log('connect_error', error)
-      })
-      socket.on('disconnect', () => {
-        updateSocketStatus(false)
-      })
+      if (this.props.messageSocketStatus) {
+        this.props.updateMessageSocket(false)
+        Alert.alert(
+          'Thông báo',
+          `Kết nối thành công`,
+          [
+            {text: 'Ok', onPress: () => {}, style: 'cancel'},
+          ],
+          {cancelable: false}
+        )
+      }
+    })
+    socket.on('disconnect', () => {
+      updateSocketStatus(false)
     })
   }
 
   onReceivedMessage (state) {
+    const {updateControl, updateScreenApp, syncData, syncRltData,
+      updatePendingTransaction, updateHistoryTransaction,updateLoadingSpinner} = this.props
     if (state.control) {
-      this.props.updateControl(state.control)
+      // updateLoadingSpinner(true)
+      updateControl(state.control)
     }
     if (state.screen) {
-      this.props.updateScreenApp(state.screen)
+      updateScreenApp(state.screen)
+      updateLoadingSpinner(false)
     }
     if (state.userInfo) {
-      this.props.syncData(state.userInfo)
+      syncData(state.userInfo)
     }
     if (state.rltInfo) {
-      this.props.syncRltData(state.rltInfo)
+      syncRltData(state.rltInfo)
     }
     if (state.pendingTransactions) {
-      this.props.updatePendingTransaction(state.pendingTransactions)
+      updatePendingTransaction(state.pendingTransactions)
     }
     if (state.historyTransactions) {
-      this.props.updateHistoryTransaction(state.historyTransactions)
+      updateHistoryTransaction(state.historyTransactions)
     }
   }
 
   render () {
-    return (<View/>)
+    return (
+      <View>
+        <Modal
+          transparent={true}
+          animationType={'none'}
+          visible={this.props.loadingSpinner}
+          onRequestClose={() => {}}>
+          <View style={styles.modalBackground}>
+            <View style={styles.activityIndicatorWrapper}>
+              <ActivityIndicator size="large" color="#0000ff"/>
+            </View>
+          </View>
+        </Modal>
+      </View>
+    )
   }
 }
 
 const mapStateToProps = state => ({
-  socket: state.settingReducer.socket
+  socket: state.settingReducer.socket,
+  loadingSpinner: state.settingReducer.loadingSpinner,
+  messageSocketStatus: state.settingReducer.messageSocketStatus
 })
 
 export default connect(
@@ -102,6 +123,26 @@ export default connect(
     updateScreenApp,
     updatePendingTransaction,
     updateHistoryTransaction,
-    updateControl
+    updateControl,
+    updateLoadingSpinner,
+    updateMessageSocket
   }
 )(SocketEmitPage)
+const styles = StyleSheet.create({
+  modalBackground: {
+    flex: 1,
+    alignItems: 'center',
+    flexDirection: 'column',
+    justifyContent: 'space-around',
+    backgroundColor: '#00000040'
+  },
+  activityIndicatorWrapper: {
+    backgroundColor: 'transparent',
+    height: 100,
+    width: 100,
+    borderRadius: 10,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-around'
+  }
+})

@@ -36,9 +36,9 @@ const INITIAL_STATE = {
   userWalletId: '',
   userCardId: '',
   userHospital: '',
-  userMoneyTotal: '0',
-  userNameCard: 'Dao my dong',
-  userCodeCard: '0000-0000-0000-0000',
+  userMoneyTotal: '',
+  userNameCard: '',
+  userCodeCard: '',
   //
   isAccessRules: false,
   existSignature: false,

@@ -15,7 +15,7 @@ import {
   UPDATE_PENDING_TRANSACTION,
   UPDATE_HISTORY_TRANSACTION,
   UPDATE_SOCKETS,
-  UPDATE_CONTROL, UPDATE_VISIBLE_SIGNWRITING
+  UPDATE_CONTROL, UPDATE_VISIBLE_SIGNWRITING, UPDATE_LOADING_SPINNER, UPDATE_MESSAGE_SOCKET
 } from './Constants'
 
 // UserInfo
@@ -127,6 +127,20 @@ export const updateControl = (socket) => {
   return {
     type: UPDATE_CONTROL,
     payload: socket
+  }
+}
+
+export const updateLoadingSpinner = (loading) => {
+  return {
+    type: UPDATE_LOADING_SPINNER,
+    payload: loading
+  }
+}
+
+export const updateMessageSocket = (status) => {
+  return {
+    type: UPDATE_MESSAGE_SOCKET,
+    payload: status
   }
 }
 

@@ -8,10 +8,10 @@ const INITIAL_STATE = {
   rltEmail: '',
   rltPhone: '',
   rltCMT: '',
-  rltCMTDay: '01/01/2005',
+  rltCMTDay: '',
   rltCMTPlace: '',
   rltPassport: '',
-  rltPassportDate: '01/01/2005',
+  rltPassportDate: '',
   rltPassportPlace: '',
   rltAddress: '',
   imageRltAvatarBase64: ''

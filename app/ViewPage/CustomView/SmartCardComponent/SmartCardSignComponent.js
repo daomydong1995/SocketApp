@@ -105,24 +105,21 @@ class SmartCardSignComponent extends Component<Props, State> {
                 </ViewShot>
               </View>
             </View>
-            <SmartCardLogoComponent userCode={'0000-0000-0000-0000'} userName={'đào mỹ đông'}/>
+            <SmartCardLogoComponent userCode={this.props.userInfo.userCodeCard} userName={this.props.userInfo.userNameCard}/>
           </View>
         </View>
         <View style={styles.roleContainer}>
           <Text style={[styles.textTileStyle]}>Điều khoản dịch vụ</Text>
-          <ScrollView style={styles.rulesScrollStyle}
-                      contentContainerStyle={{paddingBottom: 30}}
-                      bounces={false}
-                      bouncesZoom={false}>
-            <TextInput
-              multiline={true}
-              placeholder='Enter description...'
-              editable={false}
-              selectTextOnFocus={false}
-              style={styles.textInputStyle}>
-              {rules.rule}
-            </TextInput>
-          </ScrollView>
+          <TouchableOpacity style={styles.rulesScrollStyle}>
+              <TextInput
+                multiline={true}
+                placeholder='Enter description...'
+                editable={false}
+                selectTextOnFocus={false}
+                style={styles.textInputStyle}>
+                {rules.rule}
+              </TextInput>
+          </TouchableOpacity>
           <CheckBox
             title='Tôi chấp thuận điều khoản này.'
             checked={this.props.userInfo.isAccessRules}
@@ -187,10 +184,9 @@ const styles = StyleSheet.create({
     width: '95%',
     height: 200,
     borderWidth: 2,
-    borderColor: '#9c9c9c',
+    borderColor: '#979797',
     borderRadius: 2,
-    padding: 5,
-    flex: 1
+    padding: 10
   },
   roleContainer: {
     width: '100%',

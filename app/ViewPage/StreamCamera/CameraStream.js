@@ -16,6 +16,7 @@ import {
   getUserMedia
 } from 'react-native-webrtc'
 import connect from 'react-redux/es/connect/connect'
+import { updateLoadingSpinner } from '../../reducer/action'
 const configuration = {'iceServers': [{'url': 'stun:stun.l.google.com:19302'}]}
 
 const pcPeers = {}
@@ -84,6 +85,7 @@ class CameraStream extends Component<Props, State> {
 
   componentDidMount () {
     let self = this
+    const {updateLoadingSpinner} = this.props
     if (this.props.socket.connected) {
       self.props.socket.on('exchange', function (data) {
         self.exchange(data)
@@ -223,5 +225,6 @@ const mapStateToProps = state => ({
 })
 export default connect(
   mapStateToProps, {
+    updateLoadingSpinner
   }
 )(CameraStream)

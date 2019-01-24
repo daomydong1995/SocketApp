@@ -3,9 +3,8 @@ import { Provider } from 'react-redux'
 import { createStore } from 'redux'
 import combineReducers from './app/reducer/index'
 import DrawerMenu from './app/ContanstPage/flows'
-import { View, StatusBar } from 'react-native'
+import { View, StatusBar, NetInfo} from 'react-native'
 import SocketEmitPage from './app/ViewPage/SocketEmitPage'
-import {Text} from 'react-native';
 
 type Props = {};
 type State = {}
@@ -27,3 +26,4 @@ class App extends Component<Props, State> {
 }
 
 export default (App)
+

@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { ScrollView, View, Text } from 'react-native'
+import { ScrollView, View, Text, StyleSheet } from 'react-native'
 import { connect } from 'react-redux'
 import Spinner from 'react-native-loading-spinner-overlay'
 import HeaderCustom from './CustomView/Header/HeaderCustom'
@@ -76,7 +76,7 @@ export default connect(
   mapStateToProps, {}
 )(InfoUserWalletPage)
 
-const styles = {
+const styles = StyleSheet.create({
   content: {
     width: '100%',
     height: '100%',
@@ -125,4 +125,4 @@ const styles = {
     justifyContent: 'space-between',
     alignItems: 'center'
   }
-}
+})

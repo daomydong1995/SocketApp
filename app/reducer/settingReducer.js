@@ -1,15 +1,19 @@
 import {
-  CONNECTION_STATUS, UPDATE_MOMMENT_SCREEN, UPDATE_SOCKETS_ADDRESS, UPDATE_SOCKETS, UPDATE_CONTROL,UPDATE_VISIBLE_SIGNWRITING
+  CONNECTION_STATUS, UPDATE_MOMMENT_SCREEN, UPDATE_SOCKETS_ADDRESS,
+  UPDATE_SOCKETS, UPDATE_CONTROL, UPDATE_VISIBLE_SIGNWRITING,
+  UPDATE_LOADING_SPINNER, UPDATE_MESSAGE_SOCKET
 } from './action/Constants'
 import io from 'socket.io-client'
 import SCREENS from '../ContanstPage/SCREENS'
 const INITIAL_STATE = {
-  socket: io.connect('http://172.16.20.61:4000'),
+  socket: io.connect('http://172.16.20.61:4000', { 'timeout': 5000, 'connect_timeout': 5000 }),
   socketsAddress: [],
   connected: false,
   screen: SCREENS.SIGN_WALLETS_SUBMIT,
   visibleSignWriting: false,
-  control: 'none'
+  control: 'none',
+  loadingSpinner: false,
+  messageSocketStatus: false
 }
 
 export default function reducer (state = INITIAL_STATE, action) {
@@ -26,6 +30,10 @@ export default function reducer (state = INITIAL_STATE, action) {
       return { ...state, control: action.payload }
     case UPDATE_VISIBLE_SIGNWRITING:
       return { ...state, visibleSignWriting: action.payload }
+    case UPDATE_LOADING_SPINNER:
+      return { ...state, loadingSpinner: action.payload }
+    case UPDATE_MESSAGE_SOCKET:
+      return { ...state, messageSocketStatus: action.payload }
     default:
       return state
   }
