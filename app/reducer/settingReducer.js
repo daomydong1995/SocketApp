@@ -1,7 +1,7 @@
 import {
   CONNECTION_STATUS, UPDATE_MOMMENT_SCREEN, UPDATE_SOCKETS_ADDRESS,
   UPDATE_SOCKETS, UPDATE_CONTROL, UPDATE_VISIBLE_SIGNWRITING,
-  UPDATE_LOADING_SPINNER, UPDATE_MESSAGE_SOCKET
+  UPDATE_LOADING_SPINNER, UPDATE_MESSAGE_SOCKET, UPDATE_PEER_CONNECTION
 } from './action/Constants'
 import io from 'socket.io-client'
 import SCREENS from '../ContanstPage/SCREENS'
@@ -13,7 +13,8 @@ const INITIAL_STATE = {
   visibleSignWriting: false,
   control: 'none',
   loadingSpinner: false,
-  messageSocketStatus: false
+  messageSocketStatus: false,
+  peerConnection: null
 }
 
 export default function reducer (state = INITIAL_STATE, action) {
@@ -34,6 +35,8 @@ export default function reducer (state = INITIAL_STATE, action) {
       return { ...state, loadingSpinner: action.payload }
     case UPDATE_MESSAGE_SOCKET:
       return { ...state, messageSocketStatus: action.payload }
+    case UPDATE_PEER_CONNECTION:
+      return {...state, peerConnection: action.payload}
     default:
       return state
   }

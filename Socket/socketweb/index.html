@@ -247,34 +247,56 @@
     const pc = new RTCPeerConnection(configuration)
     pcPeers[socketId] = pc
 
-    pc.onicecandidate = function (event) {
-      if (event.candidate) {
-        socket.emit('exchange', {'toIp': socketId, 'candidate': event.candidate})
-      }
-    }
+    // pc.onicecandidate = function (event) {
+    //   if (event.candidate) {
+    //     socket.emit('exchange', {'toIp': socketId, 'candidate': event.candidate})
+    //   }
+    // }
+    //
+    // function createOffer () {
+    //   pc.createOffer(function (desc) {
+    //     pc.setLocalDescription(desc, function () {
+    //       socket.emit('exchange', {'toIp': socketId, 'sdp': pc.localDescription})
+    //     }, logError)
+    //   }, logError)
+    // }
 
-    function createOffer () {
-      pc.createOffer(function (desc) {
-        pc.setLocalDescription(desc, function () {
-          socket.emit('exchange', {'toIp': socketId, 'sdp': pc.localDescription})
-        }, logError)
-      }, logError)
-    }
+    // pc.onnegotiationneeded = function () {
+    //   if (isOffer) {
+    //     createOffer()
+    //   }
+    // }
 
-    pc.onnegotiationneeded = function () {
-      if (isOffer) {
-        createOffer()
-      }
-    }
+    // pc.oniceconnectionstatechange = function (event) {
+    //   if (event.target.iceConnectionState === 'connected') {
+    //     createDataChannel()
+    //   }
+    // }
+    // pc.onsignalingstatechange = function (event) {
+    // }
 
-    pc.oniceconnectionstatechange = function (event) {
-      if (event.target.iceConnectionState === 'connected') {
-        createDataChannel()
-      }
-    }
-    pc.onsignalingstatechange = function (event) {
-    }
-
+    // function createDataChannel () {
+    //   if (pc.textDataChannel) {
+    //     return
+    //   }
+    //   const dataChannel = pc.createDataChannel('text')
+    //
+    //   dataChannel.onerror = function (error) {
+    //     console.log('dataChannel.onerror', error)
+    //   }
+    //
+    //   dataChannel.onmessage = function (event) {
+    //   }
+    //
+    //   dataChannel.onopen = function () {
+    //   }
+    //
+    //   dataChannel.onclose = function () {
+    //     console.log('dataChannel.onclose')
+    //   }
+    //
+    //   pc.textDataChannel = dataChannel
+    // }
     pc.onaddstream = function (event) {
       try {
         videoStream.autoplay = 'autoplay'
@@ -285,39 +307,15 @@
         // remoteRTC.src = window.URL.createObjectURL(event.stream);
       }
     }
-
-    // pc.addStream(localStream);
-    function createDataChannel () {
-      if (pc.textDataChannel) {
-        return
-      }
-      const dataChannel = pc.createDataChannel('text')
-
-      dataChannel.onerror = function (error) {
-        console.log('dataChannel.onerror', error)
-      }
-
-      dataChannel.onmessage = function (event) {
-      }
-
-      dataChannel.onopen = function () {
-      }
-
-      dataChannel.onclose = function () {
-        console.log('dataChannel.onclose')
-      }
-
-      pc.textDataChannel = dataChannel
-    }
-
     return pc
   }
 
   function leave (socketId) {
     const pc = pcPeers[socketId]
-    pc.close()
-    delete pcPeers[socketId]
-    if (videoStream) videoStream.clear()
+    if(pc) {
+      pc.close()
+      delete pcPeers[socketId]
+    }
   }
 
   socket.on('leave', function (socketId) {
@@ -358,8 +356,10 @@
   })
 
   function onOpenStream (id) {
-    socket.emit('create_room', 'default')
-    socket.emit('web_wallet_emit', {control: id})
+    socket.emit('create_room', 'default' , () => {
+      console.log('create_room')
+      socket.emit('web_wallet_emit', {control: id})
+    })
   }
 
   function onTakePicture (id) {

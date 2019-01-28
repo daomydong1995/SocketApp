@@ -11,12 +11,12 @@ import { connect } from 'react-redux'
 import { updateMessageSocket, updateSocket, updateSocketsAddress } from '../reducer/action'
 import SCREENS from '../ContanstPage/SCREENS'
 import DefaultPreference from 'react-native-default-preference'
+import flows from '../ContanstPage/flows'
 
 type Props = {}
 type State = {
   address: string, //ip address of server
   port: number //port of socket server
-
 }
 
 class SettingPage extends Component<Props, State> {

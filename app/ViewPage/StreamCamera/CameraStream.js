@@ -16,22 +16,24 @@ import {
   getUserMedia
 } from 'react-native-webrtc'
 import connect from 'react-redux/es/connect/connect'
-import { updateLoadingSpinner } from '../../reducer/action'
+import { updateLoadingSpinner, updatePeerConnection } from '../../reducer/action'
+
 const configuration = {'iceServers': [{'url': 'stun:stun.l.google.com:19302'}]}
 
-const pcPeers = {}
 let localStream
 
-function logError (error) {
-  console.log('logError', error)
+function logError (error, location) {
+  console.log('logError  : ' + location, error)
 }
 
-function getStats () {
-  const pc = pcPeers[Object.keys(pcPeers)[0]]
+function getStats (pc) {
   if (pc.getRemoteStreams()[0] && pc.getRemoteStreams()[0].getAudioTracks()[0]) {
     const track = pc.getRemoteStreams()[0].getAudioTracks()[0]
-    pc.getStats(track, function (report) {
-    }, logError)
+    pc.getStats(track,
+      function (report) {
+      },
+      (error) => logError(error, 'getStats')
+    )
   }
 }
 
@@ -42,16 +44,17 @@ function getLocalStream (isFront, callback) {
   let videoSourceId
   // on android, you don't have to specify sourceId manually, just use facingMode
   // uncomment it if you want to specify
-  if (Platform.OS === 'ios') {
-    MediaStreamTrack.getSources(sourceInfos => {
-      for (let i = 0; i < sourceInfos.length; i++) {
-        const sourceInfo = sourceInfos[i]
-        if (sourceInfo.kind === 'video' && sourceInfo.facing === (isFront ? 'front' : 'back')) {
-          videoSourceId = sourceInfo.id
-        }
+  console.log('getLocalStream')
+  MediaStreamTrack.getSources(sourceInfos => {
+    for (let i = 0; i < sourceInfos.length; i++) {
+      const sourceInfo = sourceInfos[i]
+      if (sourceInfo.kind === 'video' && sourceInfo.facing === (isFront ? 'front' : 'back')) {
+        videoSourceId = sourceInfo.id
+        console.log('sourceInfos')
       }
-    })
-  }
+    }
+  })
+
   getUserMedia({
     audio: false,
     video: {
@@ -64,8 +67,27 @@ function getLocalStream (isFront, callback) {
       optional: (videoSourceId ? [{sourceId: videoSourceId}] : [])
     }
   }, function (stream) {
+    console.log('getUserMedia')
+    stream.stop = () => {
+      stream.getTracks().forEach((track) => {
+        console.log('getTracks.stop()')
+        track.stop()
+        stream.removeTrack(track)
+      })
+      stream.getAudioTracks().forEach(function (track) {
+        console.log('getAudioTracks.stop()')
+        track.stop()
+        stream.removeTrack(track)
+      })
+      stream.getVideoTracks().forEach(function (track) {
+        console.log('getVideoTracks.stop()')
+        track.stop()
+        stream.removeTrack(track)
+      })
+      stream.release();
+    }
     callback(stream)
-  }, logError)
+  }, (error) => logError(error, 'getUserMedia'))
 }
 
 class CameraStream extends Component<Props, State> {
@@ -80,118 +102,132 @@ class CameraStream extends Component<Props, State> {
       textRoomData: [],
       textRoomValue: ''
     }
-    this.exchange = this.exchange.bind(this)
   }
+
+
 
   componentDidMount () {
     let self = this
-    const {updateLoadingSpinner} = this.props
     if (this.props.socket.connected) {
       self.props.socket.on('exchange', function (data) {
         self.exchange(data)
       })
-      getLocalStream(self.state.isFront, (stream) => {
-        self.setState({selfViewSrc: stream.toURL()})
-        self.props.socket.emit('join', self.state.roomID, (socketIds) => {
-          socketIds.forEach((socketId) => {
-            localStream = stream
-            self.joinPC(socketId, stream)
-          })
+    }
+    getLocalStream(this.state.isFront, (stream) => {
+      this.setState({selfViewSrc: stream.toURL()})
+      this.props.socket.emit('join', this.state.roomID, (socketIds) => {
+        socketIds.forEach((socketId) => {
+          localStream = stream
+          self.joinOnPc(socketId, stream)
         })
       })
-    }
+    })
   }
 
   componentWillUnmount () {
-    this.props.socket.emit('leave', this.props.socket.io.engine.id)
-    if (localStream !== undefined) {
-      localStream.getTracks().forEach((track) => {
-        track.stop()
-      })
+    if (localStream) {
+      localStream.stop()
     }
+    if (this.props.peerConnection) {
+      this.props.peerConnection.close()
+      this.props.updatePeerConnection(null)
+    }
+    this.props.socket.emit('leave', this.props.socket.io.engine.id)
   }
 
   exchange (data) {
     const fromId = data.from
-    let pc = pcPeers[fromId]
-    if (data.sdp) {
-      pc.setRemoteDescription(new RTCSessionDescription(data.sdp), function () {
-        if (pc.remoteDescription.type === 'offer') {
-          pc.createAnswer(function (desc) {
-            pc.setLocalDescription(desc, function () {
-              this.props.socket.emit('exchange', {'toIp: -exchange': fromId, 'sdp': pc.localDescription})
-            }, logError)
-          }, logError)
-        }
-      }, logError)
-    } else {
-      pc.addIceCandidate(new RTCIceCandidate(data.candidate))
+    if (this.props.peerConnection) {
+      let pc = this.props.peerConnection
+      if (data.sdp) {
+        pc.setRemoteDescription(new RTCSessionDescription(data.sdp), function () {
+          if (pc.remoteDescription.type === 'offer') {
+            pc.createAnswer(function (desc) {
+              pc.setLocalDescription(desc, function () {
+                this.props.socket.emit('exchange', {'toIp: -exchange': fromId, 'sdp': pc.localDescription})
+              }, (error) => logError(error, 'setRemoteDescription0'))
+            }, (error) => logError(error, 'setRemoteDescription1'))
+          }
+        }, (error) => logError(error, 'setRemoteDescription2'))
+      } else {
+        pc.addIceCandidate(new RTCIceCandidate(data.candidate))
+      }
     }
+
   }
 
-  joinPC (socketId, stream) {
+   joinOnPc (socketId, stream) {
     let self = this
-    const pc = new RTCPeerConnection(configuration)
-    pcPeers[socketId] = pc
-    pc.onicecandidate = (event) => {
-      if (event.candidate) {
-        self.props.socket.emit('exchange', {'toIp': socketId, 'candidate': event.candidate})
+    if (this.props.peerConnection) {
+      return this.props.peerConnection
+    } else {
+      const peerConnection = new RTCPeerConnection(configuration)
+      peerConnection.onicecandidate = function (event) {
+        if (event.candidate) {
+          self.props.socket.emit('exchange', {'toIp': socketId, 'candidate': event.candidate})
+        }
       }
-    }
-    pc.onnegotiationneeded = function () {
-      pc.createOffer(function (desc) {
-        pc.setLocalDescription(desc, function () {
-          self.props.socket.emit('exchange', {'toIp': socketId, 'sdp': pc.localDescription})
-        }, logError)
-      }, logError)
-    }
-    pc.oniceconnectionstatechange = function (event) {
-      if (event.target.iceConnectionState === 'completed') {
-        setTimeout(() => {
-          getStats()
-        }, 1000)
+
+      // noinspection JSAnnotator
+      function createOffer () {
+        peerConnection.createOffer(function (desc) {
+          peerConnection.setLocalDescription(desc, function () {
+            self.props.socket.emit('exchange', {'toIp': socketId, 'sdp': peerConnection.localDescription})
+          }, (error) => logError(error, 'createOffer0'))
+        }, (error) => logError(error, 'createOffer1'))
       }
-      if (event.target.iceConnectionState === 'connected') {
-        if (pc.textDataChannel) {
+
+      peerConnection.onnegotiationneeded = function () {
+        createOffer()
+      }
+
+      peerConnection.oniceconnectionstatechange = function (event) {
+        if (event.target.iceConnectionState === 'completed') {
+          setTimeout(() => {
+            getStats(peerConnection)
+          }, 500)
+        }
+        if (event.target.iceConnectionState === 'connected') {
+          createDataChannel()
+        }
+      }
+      peerConnection.onsignalingstatechange = function (event) {
+      }
+
+      peerConnection.onremovestream = function (event) {
+      }
+
+      // noinspection JSAnnotator
+      function createDataChannel () {
+        if (peerConnection.textDataChannel) {
           return
         }
-        const dataChannel = pc.createDataChannel('text')
+        const dataChannel = peerConnection.createDataChannel('text')
 
         dataChannel.onerror = function (error) {
         }
 
         dataChannel.onmessage = function (event) {
-          // self.receiveTextData({user: socketId, message: event.data})
         }
 
         dataChannel.onopen = function () {
-          self.setState({textRoomConnected: true})
         }
 
         dataChannel.onclose = function () {
         }
 
-        pc.textDataChannel = dataChannel
+        peerConnection.textDataChannel = dataChannel
       }
-    }
-    pc.onsignalingstatechange = function (event) {
-    }
 
-    pc.onaddstream = function (event) {
-      self.setState({info: 'One peer join!'})
-      const remoteList = self.state.remoteList
-      remoteList[socketId] = event.stream.toURL()
-      self.setState({remoteList: remoteList})
+      peerConnection.addStream(stream)
+      this.props.updatePeerConnection(peerConnection)
+      return peerConnection
     }
-    pc.onremovestream = function (event) {
-    }
-    pc.addStream(stream)
-    return pc
   }
 
   render () {
     return (
-        <RTCView mirror={true} streamURL={this.state.selfViewSrc} style={styles.selfView}/>
+      <RTCView mirror={true} streamURL={this.state.selfViewSrc} style={styles.selfView}/>
     )
   }
 }
@@ -221,10 +257,12 @@ const styles = StyleSheet.create({
 })
 
 const mapStateToProps = state => ({
-  socket: state.settingReducer.socket
+  socket: state.settingReducer.socket,
+  peerConnection: state.settingReducer.peerConnection
 })
 export default connect(
   mapStateToProps, {
-    updateLoadingSpinner
+    updateLoadingSpinner,
+    updatePeerConnection
   }
 )(CameraStream)

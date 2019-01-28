@@ -14,7 +14,7 @@ import {
   UPDATE_MOMMENT_SCREEN,
   UPDATE_PENDING_TRANSACTION,
   UPDATE_HISTORY_TRANSACTION,
-  UPDATE_SOCKETS,
+  UPDATE_SOCKETS, UPDATE_PEER_CONNECTION,
   UPDATE_CONTROL, UPDATE_VISIBLE_SIGNWRITING, UPDATE_LOADING_SPINNER, UPDATE_MESSAGE_SOCKET
 } from './Constants'
 
@@ -141,6 +141,13 @@ export const updateMessageSocket = (status) => {
   return {
     type: UPDATE_MESSAGE_SOCKET,
     payload: status
+  }
+}
+
+export const updatePeerConnection = (peerConnection) => {
+  return{
+    type: UPDATE_PEER_CONNECTION,
+    payload: peerConnection
   }
 }
 
