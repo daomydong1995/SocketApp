@@ -9,7 +9,7 @@ import {
   updateSocketStatus
 } from '../reducer/action'
 import { connect } from 'react-redux'
-import { ActivityIndicator, Alert, Modal, StyleSheet, View } from 'react-native'
+import { ActivityIndicator, Alert, Modal, NetInfo, StyleSheet, View } from 'react-native'
 import React from 'react'
 
 type Props = {}
@@ -68,8 +68,8 @@ class SocketEmitPage extends Component<Props, State> {
     const {updateControl, updateScreenApp, syncData, syncRltData,
       updatePendingTransaction, updateHistoryTransaction,updateLoadingSpinner} = this.props
     if (state.control) {
-      // updateLoadingSpinner(true)
-      updateControl(state.control)
+      updateControl('none')
+      setTimeout(() => {updateControl(state.control)}, 200)
     }
     if (state.screen) {
       updateScreenApp(state.screen)

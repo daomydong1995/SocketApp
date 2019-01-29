@@ -57,7 +57,7 @@ class UserInfoComponent extends Component<Props, State> {
               </View>
               <View style={styles.itemRowContainer2}>
                 <Text style={styles.textLabelStyle}>Bệnh viện:</Text>
-                <Text style={styles.textStyle}>{this.props.userInfo.userWards}</Text>
+                <Text style={styles.textStyle}>{this.props.userInfo.userHospital}</Text>
               </View>
             </View>
             <View style={styles.rowContainer}>
@@ -101,7 +101,7 @@ class UserInfoComponent extends Component<Props, State> {
             </View>
             <View style={styles.rowContainer}>
               <View style={styles.itemRowContainer}>
-                <Text style={styles.textLabelStyle}>Số CMT/CC:</Text>
+                <Text style={styles.textLabelStyle}>Số CMND:</Text>
                 <Text style={styles.textStyle}>{this.props.userInfo.userCMT}</Text>
               </View>
               <View style={styles.itemRowContainer}>

@@ -1,5 +1,5 @@
 import { Component } from 'react'
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, Alert } from 'react-native'
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, Alert, NetInfo } from 'react-native'
 import React from 'react'
 import HeaderCustom from './CustomView/Header/HeaderCustom'
 import Icon from 'react-native-vector-icons/FontAwesome5'
@@ -11,8 +11,6 @@ import { connect } from 'react-redux'
 import { updateMessageSocket, updateSocket, updateSocketsAddress } from '../reducer/action'
 import SCREENS from '../ContanstPage/SCREENS'
 import DefaultPreference from 'react-native-default-preference'
-import flows from '../ContanstPage/flows'
-
 type Props = {}
 type State = {
   address: string, //ip address of server

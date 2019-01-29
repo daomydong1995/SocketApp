@@ -96,7 +96,7 @@ class UserSignComponent extends Component<Props, State> {
         </View>
         <View style={styles.rowContainer}>
           <View style={styles.itemRowContainer}>
-            <Text style={styles.textLabelStyle}>Số CMT/CC:</Text>
+            <Text style={styles.textLabelStyle}>Số CMND:</Text>
             <TextInput
               style={styles.textStyle}
               value={this.props.userCMT}
