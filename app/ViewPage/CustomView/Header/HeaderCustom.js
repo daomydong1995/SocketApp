@@ -55,7 +55,7 @@ const style = {
     marginBottom: 5,
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#6589db',
+    backgroundColor: '#2196f3',
     shadowOffset: {
       width: 0,
       height: 0

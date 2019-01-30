@@ -1,21 +1,16 @@
 import React, { Component } from 'react'
-import { Image, Modal, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, TouchableWithoutFeedback } from 'react-native'
+import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import SmartCardLogoComponent from './SmartCardLogoComponent'
 import rules from '../../../../assets/json/rules'
 import { CheckBox } from 'react-native-elements'
 import {
-  updateAccessRules,
-  updateAvatarBase64,
-  updateAvatarRltBase64,
-  updateControl
+  updateAccessRules
 } from '../../../reducer/action/index'
 import { connect } from 'react-redux'
 import CameraStream from '../../StreamCamera/CameraStream'
-import ViewShot from 'react-native-view-shot'
 import SignWritingComponent from './HandleSignWritingComponent/SignWritingComponent'
 import { updateVisibleSignWriting } from '../../../reducer/action'
 
-const RNFS = require('react-native-fs')
 type Props = {
   navigate: any
 }
@@ -31,39 +26,12 @@ class SmartCardSignComponent extends Component<Props, State> {
       modalVisible: false,
     }
   }
+
   submitSignWriting () {
     this.props.socket.emit('web_wallet_on', {type: 'USER_SIGNATURE', buffer: this.props.userInfo.signatureBase64})
   }
+
   componentDidMount () {
-    let self = this
-    this.props.socket.on('take_picture', function (msg) {
-      let viewShot
-      if (msg === 'USER_AVATAR') {
-        viewShot = self.refs.userAvatar
-      } else if (msg === 'RELATIVE_USER_AVATAR') {
-        viewShot = self.refs.rltUserAvatar
-      } else {
-        return
-      }
-      viewShot.capture().then(uri => {
-        RNFS.readFile(uri, 'base64').then(data => {
-          const base64Image = 'data:image/png;base64,' + data
-          if (msg === 'USER_AVATAR') {
-            self.props.updateAvatarBase64(base64Image)
-          } else if (msg === 'RELATIVE_USER_AVATAR') {
-            self.props.updateAvatarRltBase64(base64Image)
-          }
-          self.props.socket.emit('web_wallet_on', {type: msg, buffer: base64Image})
-        }).then(() => {
-          RNFS.exists(uri).then((result) => {
-            if (result) {
-              self.props.updateControl('none')
-              return RNFS.unlink(uri)
-            }
-          })
-        })
-      })
-    }, error => console.error('Oops, snapshot failed', error))
   }
 
   render () {
@@ -76,7 +44,6 @@ class SmartCardSignComponent extends Component<Props, State> {
             <View>
               <Text style={styles.textTileStyle}>Ảnh cá nhân</Text>
               <View style={styles.stylePhoto}>
-                <ViewShot ref="userAvatar" options={{format: 'jpg', quality: 1.0}}>
                   {
                     this.props.control !== 'USER_AVATAR' &&
                     <Image
@@ -86,13 +53,11 @@ class SmartCardSignComponent extends Component<Props, State> {
                   {
                     this.props.control === 'USER_AVATAR' && <CameraStream/>
                   }
-                </ViewShot>
               </View>
             </View>
             <View>
               <Text style={styles.textTileStyle}>Ảnh người thân</Text>
               <View style={styles.stylePhoto}>
-                <ViewShot ref="rltUserAvatar" options={{format: 'jpg', quality: 1.0}}>
                   {
                     this.props.control !== 'RELATIVE_USER_AVATAR'
                     && <Image
@@ -102,23 +67,23 @@ class SmartCardSignComponent extends Component<Props, State> {
                   {
                     this.props.control === 'RELATIVE_USER_AVATAR' && <CameraStream/>
                   }
-                </ViewShot>
               </View>
             </View>
-            <SmartCardLogoComponent userCode={this.props.userInfo.userCodeCard} userName={this.props.userInfo.userNameCard}/>
+            <SmartCardLogoComponent userCode={this.props.userInfo.userCodeCard}
+                                    userName={this.props.userInfo.userNameCard}/>
           </View>
         </View>
         <View style={styles.roleContainer}>
           <Text style={[styles.textTileStyle]}>Điều khoản dịch vụ</Text>
           <TouchableOpacity style={styles.rulesScrollStyle}>
-              <TextInput
-                multiline={true}
-                placeholder='Enter description...'
-                editable={false}
-                selectTextOnFocus={false}
-                style={styles.textInputStyle}>
-                {rules.rule}
-              </TextInput>
+            <TextInput
+              multiline={true}
+              placeholder='Enter description...'
+              editable={false}
+              selectTextOnFocus={false}
+              style={styles.textInputStyle}>
+              {rules.rule}
+            </TextInput>
           </TouchableOpacity>
           <CheckBox
             title='Tôi chấp thuận điều khoản này.'
@@ -131,18 +96,20 @@ class SmartCardSignComponent extends Component<Props, State> {
             textStyle={{fontSize: 18}}
           />
           <View style={styles.signWritingStyle}>
-            <View style={{width: 400,height: '70%',justifyContent: 'center', alignItems: 'center'}}>
+            <View style={{width: 400, height: '70%', justifyContent: 'center', alignItems: 'center'}}>
               <Text style={{
                 fontSize: 18,
                 marginBottom: 10
               }}>Ngày {today.getDate()} tháng {today.getMonth()} năm {today.getFullYear()} </Text>
-              <TouchableOpacity style={styles.imageSignWriting} onPress={() =>this.props.updateVisibleSignWriting(true)}>
-                <Image style={{flex: 1}} source={{uri:this.props.userInfo.signatureBase64}} />
+              <TouchableOpacity style={styles.imageSignWriting}
+                                onPress={() => this.props.updateVisibleSignWriting(true)}>
+                <Image style={{flex: 1}} source={{uri: this.props.userInfo.signatureBase64}}/>
               </TouchableOpacity>
               <SignWritingComponent/>
               <View style={{width: '100%', alignItems: 'flex-end', marginTop: 20}}>
                 <TouchableOpacity disabled={!isValid}
-                                  style={isValid?styles.submitButton:styles.submitButtonUnAccepted} onPress={this.submitSignWriting.bind(this)}>
+                                  style={isValid ? styles.submitButton : styles.submitButtonUnAccepted}
+                                  onPress={this.submitSignWriting.bind(this)}>
                   <Text style={{fontSize: 18, color: '#ffffff'}}>Xác nhận</Text>
                 </TouchableOpacity>
               </View>
@@ -233,9 +200,6 @@ const mapStateToProps = state => ({
 export default connect(
   mapStateToProps, {
     updateAccessRules,
-    updateControl,
-    updateAvatarBase64,
-    updateAvatarRltBase64,
     updateVisibleSignWriting
   }
 )(SmartCardSignComponent)

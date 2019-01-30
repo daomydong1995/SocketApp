@@ -150,7 +150,7 @@ class UserInfoComponent extends Component<Props, State> {
             <View style={styles.rowContainer}>
               <View style={[styles.itemRowContainer, {width: '100%'}]}>
                 <Text style={styles.textLabelStyle}>Địa chỉ:</Text>
-                <Text style={styles.textStyle}>{this.props.userInfo.userAddress}</Text>
+                <Text style={styles.textStyle}>{ `${this.props.userInfo.userAddress}, ${this.props.userInfo.userWards}, ${this.props.userInfo.userDistrict}, ${this.props.userInfo.userProvince}` }</Text>
               </View>
             </View>
           </View>

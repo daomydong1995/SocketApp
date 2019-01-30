@@ -16,7 +16,15 @@ import {
   getUserMedia
 } from 'react-native-webrtc'
 import connect from 'react-redux/es/connect/connect'
-import { updateLoadingSpinner, updatePeerConnection } from '../../reducer/action'
+import {
+  updateAvatarBase64,
+  updateAvatarRltBase64, updateControl,
+  updateLoadingSpinner,
+  updatePeerConnection
+} from '../../reducer/action'
+import ViewShot from 'react-native-view-shot'
+
+const RNFS = require('react-native-fs')
 
 const configuration = {'iceServers': [{'url': 'stun:stun.l.google.com:19302'}]}
 
@@ -37,8 +45,11 @@ function getStats (pc) {
   }
 }
 
-type Props = {}
-type State = {}
+type Props = {
+}
+type State = {
+  viewShot: Object
+}
 
 function getLocalStream (isFront, callback) {
   let videoSourceId
@@ -67,7 +78,6 @@ function getLocalStream (isFront, callback) {
       optional: (videoSourceId ? [{sourceId: videoSourceId}] : [])
     }
   }, function (stream) {
-    console.log('getUserMedia')
     stream.stop = () => {
       stream.getTracks().forEach((track) => {
         console.log('getTracks.stop()')
@@ -84,7 +94,7 @@ function getLocalStream (isFront, callback) {
         track.stop()
         stream.removeTrack(track)
       })
-      stream.release();
+      stream.release()
     }
     callback(stream)
   }, (error) => logError(error, 'getUserMedia'))
@@ -100,15 +110,39 @@ class CameraStream extends Component<Props, State> {
       remoteList: {},
       textRoomConnected: false,
       textRoomData: [],
-      textRoomValue: ''
+      textRoomValue: '',
+      viewShot: null
     }
   }
 
-
-
   componentDidMount () {
+    this.setState({
+      viewShot: this.refs.viewShot
+    })
     let self = this
     if (this.props.socket.connected) {
+      this.props.socket.on('take_picture', (msg) => {
+        if (self.state.viewShot) {
+          self.state.viewShot.capture().then(uri => {
+            RNFS.readFile(uri, 'base64').then(data => {
+              const base64Image = 'data:image/png;base64,' + data
+              if (msg === 'USER_AVATAR') {
+                self.props.updateAvatarBase64(base64Image)
+              } else if (msg === 'RELATIVE_USER_AVATAR') {
+                self.props.updateAvatarRltBase64(base64Image)
+              }
+              self.props.socket.emit('web_wallet_on', {type: msg, buffer: base64Image})
+            }).then(() => {
+              RNFS.exists(uri).then( (result) => {
+                if (result) {
+                  self.props.updateControl('none')
+                  return RNFS.unlink(uri)
+                }
+              })
+            })
+          })
+        }
+      })
       self.props.socket.on('exchange', function (data) {
         self.exchange(data)
       })
@@ -156,7 +190,7 @@ class CameraStream extends Component<Props, State> {
 
   }
 
-   joinOnPc (socketId, stream) {
+  joinOnPc (socketId, stream) {
     let self = this
     if (this.props.peerConnection) {
       return this.props.peerConnection
@@ -227,7 +261,9 @@ class CameraStream extends Component<Props, State> {
 
   render () {
     return (
-      <RTCView mirror={true} streamURL={this.state.selfViewSrc} style={styles.selfView}/>
+      <ViewShot ref="viewShot" options={{format: 'png', quality: 1.0}}>
+        <RTCView mirror={true} streamURL={this.state.selfViewSrc} style={styles.selfView}/>
+      </ViewShot>
     )
   }
 }
@@ -263,6 +299,9 @@ const mapStateToProps = state => ({
 export default connect(
   mapStateToProps, {
     updateLoadingSpinner,
-    updatePeerConnection
+    updatePeerConnection,
+    updateAvatarBase64,
+    updateAvatarRltBase64,
+    updateControl
   }
 )(CameraStream)

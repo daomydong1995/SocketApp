@@ -95,7 +95,7 @@ class SignWritingComponent extends Component<Props, State> {
                 onStrokeEnd={this.onStrokeEnd.bind(this)}
                 savePreference={() => {
                   return {
-                    filename: 'signature',
+                    filename: String(Math.ceil(Math.random() * 100000000)),
                     imageType: 'png',
                     transparent: true,
                     folder: 'tempSignature'
