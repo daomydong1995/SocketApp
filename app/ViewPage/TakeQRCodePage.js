@@ -28,7 +28,6 @@ class TakeQRCodePage extends Component<Props, State> {
   }
 
   scanQRCode(barCodes) {
-    console.log(barCodes)
     if (barCodes && (barCodes.type === 'org.iso.QRCode' || barCodes.type === 'QR_CODE')) {
       this.props.navigation.getParam('callback')(barCodes.data.replace('http://',''))
       this.props.navigation.goBack()

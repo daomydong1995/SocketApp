@@ -87,7 +87,7 @@ class UserRelativeInfoComponent extends Component<Props, State> {
             <View style={styles.rowContainer}>
               <View style={[styles.itemRowContainer, {width: '100%'}]}>
                 <Text style={styles.textLabelStyle}>Địa chỉ:</Text>
-                <Text style={styles.textStyle}>{this.props.rltInfo.rltAddress}</Text>
+                <Text style={[styles.textStyle,{ width: '80%'}]}>{this.props.rltInfo.rltAddress}</Text>
               </View>
             </View>
           </View>

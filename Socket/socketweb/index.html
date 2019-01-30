@@ -341,7 +341,6 @@
       pc = createPC(fromId, false)
     }
     if (data.sdp) {
-      console.log('exchange sdp', data)
       pc.setRemoteDescription(new RTCSessionDescription(data.sdp), function () {
         if (pc.remoteDescription.type == 'offer')
           pc.createAnswer(function (desc) {
@@ -357,7 +356,6 @@
 
   function onOpenStream (id) {
     socket.emit('create_room', 'default' , () => {
-      console.log('create_room')
       socket.emit('web_wallet_emit', {control: id})
     })
   }

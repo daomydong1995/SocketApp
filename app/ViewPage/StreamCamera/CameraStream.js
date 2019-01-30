@@ -55,13 +55,11 @@ function getLocalStream (isFront, callback) {
   let videoSourceId
   // on android, you don't have to specify sourceId manually, just use facingMode
   // uncomment it if you want to specify
-  console.log('getLocalStream')
   MediaStreamTrack.getSources(sourceInfos => {
     for (let i = 0; i < sourceInfos.length; i++) {
       const sourceInfo = sourceInfos[i]
       if (sourceInfo.kind === 'video' && sourceInfo.facing === (isFront ? 'front' : 'back')) {
         videoSourceId = sourceInfo.id
-        console.log('sourceInfos')
       }
     }
   })
@@ -80,17 +78,14 @@ function getLocalStream (isFront, callback) {
   }, function (stream) {
     stream.stop = () => {
       stream.getTracks().forEach((track) => {
-        console.log('getTracks.stop()')
         track.stop()
         stream.removeTrack(track)
       })
       stream.getAudioTracks().forEach(function (track) {
-        console.log('getAudioTracks.stop()')
         track.stop()
         stream.removeTrack(track)
       })
       stream.getVideoTracks().forEach(function (track) {
-        console.log('getVideoTracks.stop()')
         track.stop()
         stream.removeTrack(track)
       })

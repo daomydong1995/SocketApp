@@ -11,6 +11,7 @@ import {
 import { connect } from 'react-redux'
 import { ActivityIndicator, Alert, Modal, NetInfo, StyleSheet, View } from 'react-native'
 import React from 'react'
+import { formatDate, formatMoney, formatStatus, formatStatuses } from '../helpers'
 
 type Props = {}
 type State = {}
@@ -82,12 +83,39 @@ class SocketEmitPage extends Component<Props, State> {
       syncRltData(state.rltInfo)
     }
     if (state.pendingTransactions) {
-      updatePendingTransaction(state.pendingTransactions)
+      let pendingTransactions = state.pendingTransactions.map((data,index) => this.toPending(data,index))
+      updatePendingTransaction(pendingTransactions)
     }
     if (state.historyTransactions) {
-      updateHistoryTransaction(state.historyTransactions)
+      let historyTransactions = state.historyTransactions.map((data,index) => this.toHistory(data,index))
+      updateHistoryTransaction(historyTransactions)
     }
   }
+  toHistory (data, index) {
+    return {
+      stt: index + 1,
+      created_at: formatDate(data.created_at),
+      id: data.id,
+      status: formatStatuses(data.status)[0],
+      ref_id: data.ref_id,
+      amount: formatMoney(data.amount),
+      memo: data.memo
+    }
+  }
+
+  toPending(data,index) {
+    return {
+      stt: index + 1,
+      created_at: formatDate(data.created_at),
+      id: data.id,
+      ref_id: data.ref_id,
+      amount: formatMoney(data.amount),
+      memo: data.memo
+    }
+  }
+
+
+
 
   render () {
     return (

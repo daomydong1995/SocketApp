@@ -100,10 +100,14 @@ class SmartCardSignComponent extends Component<Props, State> {
               <Text style={{
                 fontSize: 18,
                 marginBottom: 10
-              }}>Ngày {today.getDate()} tháng {today.getMonth()} năm {today.getFullYear()} </Text>
+              }}>Ngày {today.getDate()} tháng {today.getMonth() + 1} năm {today.getFullYear()} </Text>
               <TouchableOpacity style={styles.imageSignWriting}
                                 onPress={() => this.props.updateVisibleSignWriting(true)}>
-                <Image style={{flex: 1}} source={{uri: this.props.userInfo.signatureBase64}}/>
+                {
+                  this.props.userInfo.signatureBase64 !== '' &&
+                  <Image style={{flex: 1}} source={{uri: this.props.userInfo.signatureBase64}}/>
+                }
+
               </TouchableOpacity>
               <SignWritingComponent/>
               <View style={{width: '100%', alignItems: 'flex-end', marginTop: 20}}>

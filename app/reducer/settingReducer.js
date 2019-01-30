@@ -6,7 +6,7 @@ import {
 import io from 'socket.io-client'
 import SCREENS from '../ContanstPage/SCREENS'
 const INITIAL_STATE = {
-  socket: io.connect('http://172.16.20.61:4000', { 'timeout': 5000, 'connect_timeout': 5000 }),
+  socket: io.connect('http://10.0.50.223:4000', { 'timeout': 5000, 'connect_timeout': 5000 }),
   socketsAddress: [],
   connected: false,
   screen: SCREENS.SIGN_WALLETS_SUBMIT,

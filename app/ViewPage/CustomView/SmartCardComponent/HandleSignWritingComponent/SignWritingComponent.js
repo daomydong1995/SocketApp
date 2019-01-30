@@ -71,7 +71,7 @@ class SignWritingComponent extends Component<Props, State> {
             <View style={styles.container}>
               <Text style={{
                 fontSize: 18
-              }}>Ngày {today.getDate()} tháng {today.getMonth()} năm {today.getFullYear()} </Text>
+              }}>Ngày {today.getDate()} tháng {today.getMonth() + 1} năm {today.getFullYear()} </Text>
               <RNSketchCanvas
                 containerStyle={{
                   width: 400,
