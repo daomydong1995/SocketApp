@@ -49,14 +49,6 @@ class UserSignComponent extends Component<Props, State> {
               container={styles.datePickerStyle}
               textDate={this.props.userBirth}/>
           </View>
-          <View style={styles.itemRowContainer}>
-            <Text style={styles.textLabelStyle}>Tuổi:</Text>
-            <TextInput
-              style={styles.textStyle}
-              placeholder={''}
-              value={this.props.userOld}
-            />
-          </View>
         </View>
         <View style={styles.rowContainer}>
           <View style={styles.itemRowContainer}>

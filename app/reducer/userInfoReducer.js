@@ -6,7 +6,6 @@ import {
 const INITIAL_STATE = {
   userName: '',
   userBirth: '',
-  userOld: '',
   //
   userGender: '',
   userJob: '',

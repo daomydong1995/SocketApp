@@ -12,16 +12,16 @@ class SmartCartTable extends Component<Props, State> {
   constructor (props) {
     super(props)
     this.state = {
-      flexArrPending: [0.5,1.5,2,2,1.5,2],
-      flexArrHistory: [0.5,1.5,2,1,1.5,2,2],
+      flexArrPending: [0.5,1,2,2,1.5,1.5],
+      flexArrHistory: [0.5,1,2,1,2,1.5,2,2.5],
       transactionPending: ['STT', 'Ngày giao dịch', 'Mã giao dịch', 'Mô tả', 'Mã tham chiếu', 'Giá'],
-      transactionHistory:['STT', 'Ngày giao dịch','Mã giao dịch','Trạng thái giao dịch', 'Mã tham chiếu', 'Số tiền', 'Mô tả']
+      transactionHistory:['STT', 'Ngày giao dịch','Mã giao dịch','Trạng thái giao dịch', 'Loại giao dịch','Mã tham chiếu', 'Số tiền', 'Mô tả']
     }
   }
 
   render () {
     const attrPending = ['stt', 'created_at', 'id', 'memo', 'ref_id', 'amount']
-    const attrHistory = ['stt', 'created_at', 'id', 'status', 'ref_id', 'amount', 'memo']
+    const attrHistory = ['stt', 'created_at', 'id', 'status', 'type', 'ref_id', 'amount', 'memo']
     const state = this.state
     const  dataPending = this.props.pendingTransactions.map(transaction => {
       return attrPending.map(field => {

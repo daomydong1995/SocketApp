@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
   },
   rowContainer: {
     width: '100%',
-    height: 50,
+    minHeight: 40,
     marginBottom: 3,
     flexDirection: 'row',
     alignItems: 'center'
@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
   },
   rowContainer2: {
     width: '100%',
-    height: 50,
+    minHeight: 40,
     marginBottom: 3,
     flexDirection: 'row',
     alignItems: 'center',

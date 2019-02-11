@@ -26,6 +26,7 @@ class UserInfoComponent extends Component<Props, State> {
   }
 
   render () {
+    const testString = 'dsakdlasndlkansdaskldnsakjdbnsajbdajsdbasjdbnasjbdna;djasbdjabsndjasndjasndkasjdaskdaskd[paskd[pakd[pkasp[dkas[dkas[daks[dkasp[dwpldwda;dalkmsdklmnas'
     return (
       <View style={styles.container} pointerEvents={'none'}>
         <Text style={styles.textTileStyle}>
@@ -41,8 +42,10 @@ class UserInfoComponent extends Component<Props, State> {
             <View style={styles.rowContainer2}>
               <View style={styles.itemRowContainer2}>
                 <Text style={styles.textLabelStyle}>Mã bệnh nhân:</Text>
+                {/*<Text*/}
+                  {/*style={styles.textStyle}>{this.props.userInfo.userId}</Text>*/}
                 <Text
-                  style={styles.textStyle}>{this.props.userInfo.userId}</Text>
+                  style={styles.textStyle}>{testString}</Text>
               </View>
               <View style={styles.itemRowContainer2}>
                 <Text style={styles.textLabelStyle}>Mã ví:</Text>
@@ -70,11 +73,6 @@ class UserInfoComponent extends Component<Props, State> {
               <View style={styles.itemRowContainer}>
                 <Text style={styles.textLabelStyle}>Ngày sinh:</Text>
                 <Text style={styles.textStyle}>{this.props.userInfo.userBirth}</Text>
-              </View>
-              <View style={styles.itemRowContainer}>
-                <Text style={styles.textLabelStyle}>Tuổi:</Text>
-                <Text
-                  style={styles.textStyle}>{this.props.userInfo.userOld}</Text>
               </View>
             </View>
             <View style={styles.rowContainer}>
@@ -175,7 +173,7 @@ const styles = StyleSheet.create({
   },
   rowContainer: {
     width: '100%',
-    height: 50,
+    minHeight: 40,
     marginBottom: 3,
     flexDirection: 'row',
     alignItems: 'center'
@@ -196,7 +194,7 @@ const styles = StyleSheet.create({
   },
   rowContainer2: {
     width: '100%',
-    height: 50,
+    minHeight: 40,
     marginBottom: 3,
     flexDirection: 'row',
     alignItems: 'center',

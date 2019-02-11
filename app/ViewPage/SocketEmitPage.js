@@ -11,7 +11,15 @@ import {
 import { connect } from 'react-redux'
 import { ActivityIndicator, Alert, Modal, NetInfo, StyleSheet, View } from 'react-native'
 import React from 'react'
-import { formatDate, formatMoney, formatStatus, formatStatuses } from '../helpers'
+import {
+  formatDate,
+  formatMoney,
+  formatMoneyToString,
+  formatStatus,
+  formatStatuses,
+  formatTransactionSign, formatType,
+  getTitle
+} from '../helpers'
 
 type Props = {}
 type State = {}
@@ -92,24 +100,27 @@ class SocketEmitPage extends Component<Props, State> {
     }
   }
   toHistory (data, index) {
+    const sign = formatTransactionSign(this.props.userWalletId, data)
     return {
       stt: index + 1,
       created_at: formatDate(data.created_at),
       id: data.id,
       status: formatStatuses(data.status)[0],
       ref_id: data.ref_id,
-      amount: formatMoney(data.amount),
-      memo: data.memo
+      amount: `${sign}${formatMoney(data.amount)}`,
+      memo: data.memo,
+      type: formatType(data.type)
     }
   }
 
   toPending(data,index) {
+    const sign = formatTransactionSign(this.props.userWalletId, data)
     return {
       stt: index + 1,
       created_at: formatDate(data.created_at),
       id: data.id,
       ref_id: data.ref_id,
-      amount: formatMoney(data.amount),
+      amount: `${sign}${formatMoney(data.amount)}`,
       memo: data.memo
     }
   }
@@ -139,7 +150,8 @@ class SocketEmitPage extends Component<Props, State> {
 const mapStateToProps = state => ({
   socket: state.settingReducer.socket,
   loadingSpinner: state.settingReducer.loadingSpinner,
-  messageSocketStatus: state.settingReducer.messageSocketStatus
+  messageSocketStatus: state.settingReducer.messageSocketStatus,
+  userWalletId: state.userInfoReducer.userWalletId
 })
 
 export default connect(

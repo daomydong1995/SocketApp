@@ -126,7 +126,9 @@ class CameraStream extends Component<Props, State> {
               } else if (msg === 'RELATIVE_USER_AVATAR') {
                 self.props.updateAvatarRltBase64(base64Image)
               }
-              self.props.socket.emit('web_wallet_on', {type: msg, buffer: base64Image})
+              self.props.socket.emit('web_wallet_on', {type: msg, buffer: base64Image}, () => {
+
+              })
             }).then(() => {
               RNFS.exists(uri).then( (result) => {
                 if (result) {

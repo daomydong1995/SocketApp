@@ -25,6 +25,18 @@ export const formatType = data => {
   return data
 }
 
+export const formatTransactionSign = (walletId, transaction) => {
+  if (transaction.sender_wallet && transaction.sender_wallet.id === walletId) {
+    return '-'
+  } else if (
+    transaction.receiver_wallet &&
+    transaction.receiver_wallet.id === walletId
+  ) {
+    return '+'
+  }
+  return ''
+}
+
 export const formatStatus = data => {
   const matched = map(STATUS, (label, value) => {
     if (value === data) {
@@ -178,6 +190,17 @@ const formatThreeDigits = baso => {
       break
   }
   return KetQua
+}
+
+export const getTitle = mode => {
+  switch (mode) {
+    case 'DEPOSIT':
+      return 'Nạp tiền'
+    case 'WITHDRAW':
+      return 'Rút tiền'
+    default:
+      return mode
+  }
 }
 
 export const formatMoneyToString = SoTien => {

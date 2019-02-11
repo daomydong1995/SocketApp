@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { Alert, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import SmartCardLogoComponent from './SmartCardLogoComponent'
 import rules from '../../../../assets/json/rules'
 import { CheckBox } from 'react-native-elements'
@@ -28,7 +28,16 @@ class SmartCardSignComponent extends Component<Props, State> {
   }
 
   submitSignWriting () {
-    this.props.socket.emit('web_wallet_on', {type: 'USER_SIGNATURE', buffer: this.props.userInfo.signatureBase64})
+    this.props.socket.emit('web_wallet_on', {type: 'USER_SIGNATURE', buffer: this.props.userInfo.signatureBase64}, () => {
+      Alert.alert(
+        'Thông báo',
+        `Xác nhận thành công`,
+        [
+          {text: 'Ok', onPress: () => {}, style: 'cancel'},
+        ],
+        {cancelable: false}
+      )
+    })
   }
 
   componentDidMount () {
