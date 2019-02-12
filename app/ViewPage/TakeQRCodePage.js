@@ -71,7 +71,6 @@ const styles = StyleSheet.create({
   }
 })
 const mapStateToProps = state => ({
-  socket: state.settingReducer.socket
 })
 export default connect(
   mapStateToProps, {

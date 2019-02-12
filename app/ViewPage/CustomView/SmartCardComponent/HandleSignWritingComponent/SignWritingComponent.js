@@ -19,11 +19,7 @@ class SignWritingComponent extends Component<Props, State> {
       exitsSign: false
     }
   }
-  componentDidMount () {
-    this.props.socket.on('open_sign_writing', (data) => {
-      this.props.updateVisibleSignWriting(data)
-    })
-  }
+
   clearWriting () {
     this.setState({
       exitsSign: false
@@ -103,18 +99,9 @@ class SignWritingComponent extends Component<Props, State> {
                 }}
                 onSketchSaved={(success, path) =>  {
                   if (success) {
-                      RNFS.readFile(path, 'base64').then(data => {
-                      const base64Image = 'data:image/png;base64,' + data
-                      this.props.updateSignature(base64Image)
-                    }).then(() => {
-                      RNFS.exists(path).then((result) => {
-                        if (result) {
-                          this.props.updateVisibleSignWriting(false)
-                          this.props.updateSignatureExits(this.state.exitsSign)
-                          return RNFS.unlink(path)
-                        }
-                      })
-                    })
+                    this.props.updateSignature(path)
+                    this.props.updateVisibleSignWriting(false)
+                    this.props.updateSignatureExits(this.state.exitsSign)
                   }
                 }}
               />
@@ -128,8 +115,7 @@ class SignWritingComponent extends Component<Props, State> {
 
 const mapStateToProps = state => ({
   userInfo: state.userInfoReducer,
-  visibleSignWriting: state.settingReducer.visibleSignWriting,
-  socket: state.settingReducer.socket
+  visibleSignWriting: state.settingReducer.visibleSignWriting
 })
 export default connect(
   mapStateToProps, {

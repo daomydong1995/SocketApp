@@ -11,6 +11,7 @@ import { connect } from 'react-redux'
 import { updateMessageSocket, updateSocket, updateSocketsAddress } from '../reducer/action'
 import SCREENS from '../ContanstPage/SCREENS'
 import DefaultPreference from 'react-native-default-preference'
+import SocketEmitPage from './SocketEmitPage'
 type Props = {}
 type State = {
   address: string, //ip address of server
@@ -141,11 +142,11 @@ class SettingPage extends Component<Props, State> {
                             width: 10,
                             height: 10,
                             borderRadius: 20,
-                            backgroundColor: (this.props.socket.io.engine.hostname === sk.hostname && connected) ? '#4eff35' : '#ff0c16'
+                            backgroundColor: (this.props.socket && this.props.socket.io.engine.hostname === sk.hostname && connected) ? '#4eff35' : '#ff0c16'
                           }}/>
                           <View style={{width: '95%', flexDirection: 'row', height: '100%', alignItems: 'center'}}>
                             <Text style={{fontSize: 18, width: '90%'}}>
-                              {(this.props.socket.io.engine.hostname === sk.hostname && connected) ? 'Đang kết nối...' : 'Không kết nối!'}
+                              {(this.props.socket && this.props.socket.io.engine.hostname === sk.hostname && connected) ? 'Đang kết nối...' : 'Không kết nối!'}
                             </Text>
                             <TouchableOpacity onPress={() => this.removeIpAddress(sk.hostname)}>
                               <Icon name={'times'} color={'#ff2128'} size={35}/>

@@ -6,7 +6,7 @@ import {
   updatePendingTransaction,
   updateScreenApp,
   updateSocketsAddress,
-  updateSocketStatus
+  updateSocketStatus, updateVisibleSignWriting
 } from '../reducer/action'
 import { connect } from 'react-redux'
 import { ActivityIndicator, Alert, Modal, NetInfo, StyleSheet, View } from 'react-native'
@@ -14,12 +14,10 @@ import React from 'react'
 import {
   formatDate,
   formatMoney,
-  formatMoneyToString,
-  formatStatus,
   formatStatuses,
-  formatTransactionSign, formatType,
-  getTitle
+  formatTransactionSign, formatType
 } from '../helpers'
+import { RTCIceCandidate, RTCSessionDescription } from 'react-native-webrtc'
 
 type Props = {}
 type State = {}
@@ -27,10 +25,8 @@ type State = {}
 class SocketEmitPage extends Component<Props, State> {
   constructor (props: Props) {
     super(props)
-    const {socket, updateSocketStatus, updateSocketsAddress} = this.props
+    const { updateSocketStatus, updateSocketsAddress} = this.props
     this.onReceivedMessage = this.onReceivedMessage.bind(this)
-    socket.disconnect()
-    socket.connect()
     DefaultPreference.get('ListAddressConnected').then(function (value) {
       if (value === undefined || value === null) {
       } else {
@@ -38,39 +34,69 @@ class SocketEmitPage extends Component<Props, State> {
         updateSocketsAddress(list)
       }
     })
-    socket.on('connect', () => {
-      const object = {id: socket.id, hostname: socket.io.engine.hostname, port: socket.io.engine.port}
-      updateSocketStatus(true)
-      socket.on('web_wallet_emit', this.onReceivedMessage)
-      socket.emit('init', {init: true})
-      DefaultPreference.get('ListAddressConnected').then(function (value) {
-        if (!value) {
-          const firstList = [object]
-          updateSocketsAddress(firstList)
-          DefaultPreference.set('ListAddressConnected', JSON.stringify(firstList)).then(() => {console.log('doneFirst')})
-        } else {
-          const list = JSON.parse(value)
-          const newList = list.filter(sk => sk.hostname !== object.hostname)
-          newList.unshift(object)
-          DefaultPreference.set('ListAddressConnected', JSON.stringify(newList)).then(() => {console.log('done')})
-          updateSocketsAddress(newList)
+    if(this.props.socket) {
+      const socket = this.props.socket
+      socket.on('connect', () => {
+        const object = {id: socket.id, hostname: socket.io.engine.hostname, port: socket.io.engine.port}
+        updateSocketStatus(true)
+        socket.on('web_wallet_emit', this.onReceivedMessage)
+        socket.emit('init', {init: true})
+        DefaultPreference.get('ListAddressConnected').then(function (value) {
+          if (!value) {
+            const firstList = [object]
+            updateSocketsAddress(firstList)
+            DefaultPreference.set('ListAddressConnected', JSON.stringify(firstList)).then(() => {console.log('doneFirst')})
+          } else {
+            const list = JSON.parse(value)
+            const newList = list.filter(sk => sk.hostname !== object.hostname)
+            newList.unshift(object)
+            DefaultPreference.set('ListAddressConnected', JSON.stringify(newList)).then(() => {console.log('done')})
+            updateSocketsAddress(newList)
+          }
+        })
+        socket.on('open_sign_writing', (data) => {
+          this.props.updateVisibleSignWriting(data)
+        })
+        const self = this
+        socket.on('exchange', (data) => {
+          self.exchange(data)
+        })
+        if (this.props.messageSocketStatus) {
+          this.props.updateMessageSocket(false)
+          Alert.alert(
+            'Thông báo',
+            'Kết nối thành công',
+            [
+              {text: 'Ok', onPress: () => {}, style: 'cancel'},
+            ],
+            {cancelable: false}
+          )
         }
       })
-      if (this.props.messageSocketStatus) {
-        this.props.updateMessageSocket(false)
-        Alert.alert(
-          'Thông báo',
-          `Kết nối thành công`,
-          [
-            {text: 'Ok', onPress: () => {}, style: 'cancel'},
-          ],
-          {cancelable: false}
-        )
+      socket.on('disconnect', () => {
+        updateSocketStatus(false)
+      })
+    }
+  }
+
+  exchange (data) {
+    const fromId = data.from
+    if (this.props.peerConnection) {
+      let pc = this.props.peerConnection
+      if (data.sdp) {
+        pc.setRemoteDescription(new RTCSessionDescription(data.sdp), function () {
+          if (pc.remoteDescription.type === 'offer') {
+            pc.createAnswer(function (desc) {
+              pc.setLocalDescription(desc, function () {
+                this.props.socket.emit('exchange', {'toIp: -exchange': fromId, 'sdp': pc.localDescription})
+              }, (error) => logError(error, 'setRemoteDescription0'))
+            }, (error) => logError(error, 'setRemoteDescription1'))
+          }
+        }, (error) => logError(error, 'setRemoteDescription2'))
+      } else {
+        pc.addIceCandidate(new RTCIceCandidate(data.candidate))
       }
-    })
-    socket.on('disconnect', () => {
-      updateSocketStatus(false)
-    })
+    }
   }
 
   onReceivedMessage (state) {
@@ -82,6 +108,10 @@ class SocketEmitPage extends Component<Props, State> {
     }
     if (state.screen) {
       updateScreenApp(state.screen)
+      syncData({})
+      syncRltData({})
+      updateHistoryTransaction([])
+      updatePendingTransaction([])
       updateLoadingSpinner(false)
     }
     if (state.userInfo) {
@@ -151,7 +181,8 @@ const mapStateToProps = state => ({
   socket: state.settingReducer.socket,
   loadingSpinner: state.settingReducer.loadingSpinner,
   messageSocketStatus: state.settingReducer.messageSocketStatus,
-  userWalletId: state.userInfoReducer.userWalletId
+  userWalletId: state.userInfoReducer.userWalletId,
+  peerConnection: state.settingReducer.peerConnection
 })
 
 export default connect(
@@ -165,7 +196,8 @@ export default connect(
     updateHistoryTransaction,
     updateControl,
     updateLoadingSpinner,
-    updateMessageSocket
+    updateMessageSocket,
+    updateVisibleSignWriting
   }
 )(SocketEmitPage)
 const styles = StyleSheet.create({

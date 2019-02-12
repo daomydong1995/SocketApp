@@ -54,8 +54,7 @@ class SignWalletPage extends Component<Props, State> {
 }
 
 const mapStateToProps = state => ({
-  loading: state.userInfoReducer.loading,
-  socket: state.settingReducer.socket
+  loading: state.userInfoReducer.loading
 })
 
 export default connect(

@@ -1,6 +1,7 @@
 'use strict'
 
 import React, { Component } from 'react'
+const request = require('axios')
 import {
   StyleSheet,
   Platform
@@ -30,6 +31,16 @@ const configuration = {'iceServers': [{'url': 'stun:stun.l.google.com:19302'}]}
 
 let localStream
 
+const createFormData = (uri) => {
+  const data = new FormData();
+  data.append("image", {
+    name: 'image.png',
+    type: 'image/png',
+    uri: uri
+  });
+  return data;
+}
+
 function logError (error, location) {
   console.log('logError  : ' + location, error)
 }
@@ -45,8 +56,7 @@ function getStats (pc) {
   }
 }
 
-type Props = {
-}
+type Props = {}
 type State = {
   viewShot: Object
 }
@@ -118,30 +128,36 @@ class CameraStream extends Component<Props, State> {
     if (this.props.socket.connected) {
       this.props.socket.on('take_picture', (msg) => {
         if (self.state.viewShot) {
-          self.state.viewShot.capture().then(uri => {
-            RNFS.readFile(uri, 'base64').then(data => {
-              const base64Image = 'data:image/png;base64,' + data
-              if (msg === 'USER_AVATAR') {
-                self.props.updateAvatarBase64(base64Image)
-              } else if (msg === 'RELATIVE_USER_AVATAR') {
-                self.props.updateAvatarRltBase64(base64Image)
-              }
-              self.props.socket.emit('web_wallet_on', {type: msg, buffer: base64Image}, () => {
-
-              })
-            }).then(() => {
-              RNFS.exists(uri).then( (result) => {
-                if (result) {
-                  self.props.updateControl('none')
-                  return RNFS.unlink(uri)
+          self.state.viewShot.capture().then((uri) => {
+            console.log(uri)
+            fetch('http://localhost:3000/api/files', {
+              method: "POST",
+              body: createFormData(uri)
+            }).then(response => response.json())
+              .then( response => {
+                if (response.status && response.status === 'success') {
+                  let resUri = response.data.uri
+                  if (msg === 'USER_AVATAR') {
+                    self.props.updateAvatarBase64(resUri)
+                  } else if (msg === 'RELATIVE_USER_AVATAR') {
+                    self.props.updateAvatarRltBase64(resUri)
+                  }
+                  self.props.socket.emit('web_wallet_on', {type: msg, buffer: resUri}, () => {
+                  })
+                } else {
+                  self.props.socket.emit('web_wallet_on', {type: 'Error', message: response}, () => {
+                  })
                 }
+                RNFS.exists(uri).then( (result) => {
+                  if (result) {
+                    self.props.updateControl('none')
+                    return RNFS.unlink(uri)
+                  }
+                });
               })
-            })
+
           })
         }
-      })
-      self.props.socket.on('exchange', function (data) {
-        self.exchange(data)
       })
     }
     getLocalStream(this.state.isFront, (stream) => {
@@ -164,27 +180,6 @@ class CameraStream extends Component<Props, State> {
       this.props.updatePeerConnection(null)
     }
     this.props.socket.emit('leave', this.props.socket.io.engine.id)
-  }
-
-  exchange (data) {
-    const fromId = data.from
-    if (this.props.peerConnection) {
-      let pc = this.props.peerConnection
-      if (data.sdp) {
-        pc.setRemoteDescription(new RTCSessionDescription(data.sdp), function () {
-          if (pc.remoteDescription.type === 'offer') {
-            pc.createAnswer(function (desc) {
-              pc.setLocalDescription(desc, function () {
-                this.props.socket.emit('exchange', {'toIp: -exchange': fromId, 'sdp': pc.localDescription})
-              }, (error) => logError(error, 'setRemoteDescription0'))
-            }, (error) => logError(error, 'setRemoteDescription1'))
-          }
-        }, (error) => logError(error, 'setRemoteDescription2'))
-      } else {
-        pc.addIceCandidate(new RTCIceCandidate(data.candidate))
-      }
-    }
-
   }
 
   joinOnPc (socketId, stream) {

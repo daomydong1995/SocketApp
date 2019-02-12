@@ -9,7 +9,7 @@ import {
 import { connect } from 'react-redux'
 import CameraStream from '../../StreamCamera/CameraStream'
 import SignWritingComponent from './HandleSignWritingComponent/SignWritingComponent'
-import { updateVisibleSignWriting } from '../../../reducer/action'
+import { updateSignature, updateVisibleSignWriting } from '../../../reducer/action'
 
 type Props = {
   navigate: any
@@ -17,6 +17,16 @@ type Props = {
 type State = {
   enabled: true,
   controlCamera: 'none'
+}
+
+const createFormData = (uri) => {
+  const data = new FormData();
+  data.append("image", {
+    name: 'image.png',
+    type: 'image/png',
+    uri: uri
+  });
+  return data;
 }
 
 class SmartCardSignComponent extends Component<Props, State> {
@@ -28,16 +38,28 @@ class SmartCardSignComponent extends Component<Props, State> {
   }
 
   submitSignWriting () {
-    this.props.socket.emit('web_wallet_on', {type: 'USER_SIGNATURE', buffer: this.props.userInfo.signatureBase64}, () => {
-      Alert.alert(
-        'Thông báo',
-        `Xác nhận thành công`,
-        [
-          {text: 'Ok', onPress: () => {}, style: 'cancel'},
-        ],
-        {cancelable: false}
-      )
-    })
+    fetch('http://localhost:3000/api/files', {
+      method: "POST",
+      body: createFormData(this.props.userInfo.signatureBase64)
+    }).then(response => response.json())
+      .then( response => {
+        if (response.status && response.status === 'success') {
+          this.props.socket.emit('web_wallet_on', {type: 'USER_SIGNATURE', buffer: response.data.uri}, () => {
+            this.props.updateSignature(response.data.uri)
+            Alert.alert(
+              'Thông báo',
+              `Xác nhận thành công`,
+              [
+                {text: 'Ok', onPress: () => {}, style: 'cancel'},
+              ],
+              {cancelable: false}
+            )
+          })
+        } else {
+          self.props.socket.emit('web_wallet_on', {type: 'Error', message: response}, () => {
+          })
+        }
+      })
   }
 
   componentDidMount () {
@@ -116,7 +138,6 @@ class SmartCardSignComponent extends Component<Props, State> {
                   this.props.userInfo.signatureBase64 !== '' &&
                   <Image style={{flex: 1}} source={{uri: this.props.userInfo.signatureBase64}}/>
                 }
-
               </TouchableOpacity>
               <SignWritingComponent/>
               <View style={{width: '100%', alignItems: 'flex-end', marginTop: 20}}>
@@ -213,6 +234,7 @@ const mapStateToProps = state => ({
 export default connect(
   mapStateToProps, {
     updateAccessRules,
-    updateVisibleSignWriting
+    updateVisibleSignWriting,
+    updateSignature
   }
 )(SmartCardSignComponent)

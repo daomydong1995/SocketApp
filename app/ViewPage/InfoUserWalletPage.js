@@ -66,10 +66,8 @@ class InfoUserWalletPage extends Component<Props, State> {
     )
   }
 }
-
 const mapStateToProps = state => ({
-  userInfo: state.userInfoReducer,
-  socket: state.settingReducer.socket
+  userInfo: state.userInfoReducer
 })
 
 export default connect(
