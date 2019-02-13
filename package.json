@@ -10,9 +10,9 @@
     "android": "react-native run-android"
   },
   "dependencies": {
-    "axios": "^0.18.0",
     "json-loader": "^0.5.7",
     "lodash": "^4.17.11",
+    "moment": "latest",
     "mongojs": "^2.4.0",
     "nodemon": "^1.11.0",
     "react": "16.6.1",

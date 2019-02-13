@@ -7,9 +7,11 @@ import {
   updateAccessRules
 } from '../../../reducer/action/index'
 import { connect } from 'react-redux'
-import CameraStream from '../../StreamCamera/CameraStream'
+import CameraStream from '../CameraStream'
 import SignWritingComponent from './HandleSignWritingComponent/SignWritingComponent'
-import { updateSignature, updateVisibleSignWriting } from '../../../reducer/action'
+import { updateLoadingSpinner, updateSignature, updateVisibleSignWriting } from '../../../reducer/action'
+import { createFormData, timeout } from '../../../Common/helpers'
+import { UPLOAD_IMAGE } from '../../../Common/ApiConstants'
 
 type Props = {
   navigate: any
@@ -19,15 +21,6 @@ type State = {
   controlCamera: 'none'
 }
 
-const createFormData = (uri) => {
-  const data = new FormData();
-  data.append("image", {
-    name: 'image.png',
-    type: 'image/png',
-    uri: uri
-  });
-  return data;
-}
 
 class SmartCardSignComponent extends Component<Props, State> {
   constructor (props) {
@@ -38,14 +31,20 @@ class SmartCardSignComponent extends Component<Props, State> {
   }
 
   submitSignWriting () {
-    fetch('http://localhost:3000/api/files', {
+    let self = this
+    self.props.updateLoadingSpinner(true)
+    timeout(3000, fetch(UPLOAD_IMAGE, {
       method: "POST",
-      body: createFormData(this.props.userInfo.signatureBase64)
-    }).then(response => response.json())
-      .then( response => {
+      body: createFormData(self.props.userInfo.signatureBase64)
+    }).then(response => {
+      self.props.updateLoadingSpinner(false)
+      setTimeout(()=> {
+        response.json()
+      },50)
+    }).then( response => {
         if (response.status && response.status === 'success') {
-          this.props.socket.emit('web_wallet_on', {type: 'USER_SIGNATURE', buffer: response.data.uri}, () => {
-            this.props.updateSignature(response.data.uri)
+          self.props.socket.emit('web_wallet_on', {type: 'USER_SIGNATURE', data: response.data}, () => {
+            self.props.updateSignature(response.data.uri)
             Alert.alert(
               'Thông báo',
               `Xác nhận thành công`,
@@ -59,7 +58,20 @@ class SmartCardSignComponent extends Component<Props, State> {
           self.props.socket.emit('web_wallet_on', {type: 'Error', message: response}, () => {
           })
         }
-      })
+      })).catch(function(error) {
+      self.props.updateLoadingSpinner(false)
+      setTimeout(() => {
+        Alert.alert(
+          'Thông báo',
+          error.toLocaleString(),
+          [
+            {text: 'Ok', onPress: () => {}, style: 'cancel'},
+          ],
+          {cancelable: false}
+        )
+      },50)
+    })
+
   }
 
   componentDidMount () {
@@ -235,6 +247,7 @@ export default connect(
   mapStateToProps, {
     updateAccessRules,
     updateVisibleSignWriting,
-    updateSignature
+    updateSignature,
+    updateLoadingSpinner
   }
 )(SmartCardSignComponent)

@@ -2,21 +2,23 @@ import { Component } from 'react'
 import DefaultPreference from 'react-native-default-preference'
 import {
   syncData,
-  syncRltData, updateControl, updateHistoryTransaction, updateLoadingSpinner, updateMessageSocket,
+  syncRltData, updateControl,
+  updateHistoryTransaction, updateLoadingSpinner,
+  updateMessageSocket,
   updatePendingTransaction,
   updateScreenApp,
   updateSocketsAddress,
   updateSocketStatus, updateVisibleSignWriting
 } from '../reducer/action'
 import { connect } from 'react-redux'
-import { ActivityIndicator, Alert, Modal, NetInfo, StyleSheet, View } from 'react-native'
+import { ActivityIndicator, Alert, Modal, StyleSheet, View } from 'react-native'
 import React from 'react'
 import {
   formatDate,
   formatMoney,
   formatStatuses,
   formatTransactionSign, formatType
-} from '../helpers'
+} from '../Common/helpers'
 import { RTCIceCandidate, RTCSessionDescription } from 'react-native-webrtc'
 
 type Props = {}
@@ -37,6 +39,7 @@ class SocketEmitPage extends Component<Props, State> {
     if(this.props.socket) {
       const socket = this.props.socket
       socket.on('connect', () => {
+        this.props.updateLoadingSpinner(false)
         const object = {id: socket.id, hostname: socket.io.engine.hostname, port: socket.io.engine.port}
         updateSocketStatus(true)
         socket.on('web_wallet_emit', this.onReceivedMessage)
@@ -63,14 +66,16 @@ class SocketEmitPage extends Component<Props, State> {
         })
         if (this.props.messageSocketStatus) {
           this.props.updateMessageSocket(false)
-          Alert.alert(
-            'Thông báo',
-            'Kết nối thành công',
-            [
-              {text: 'Ok', onPress: () => {}, style: 'cancel'},
-            ],
-            {cancelable: false}
-          )
+          setTimeout(()=> {
+            Alert.alert(
+              'Thông báo',
+              'Kết nối thành công',
+              [
+                {text: 'Ok', onPress: () => {}, style: 'cancel'},
+              ],
+              {cancelable: false}
+            )
+          }, 50)
         }
       })
       socket.on('disconnect', () => {
@@ -101,7 +106,7 @@ class SocketEmitPage extends Component<Props, State> {
 
   onReceivedMessage (state) {
     const {updateControl, updateScreenApp, syncData, syncRltData,
-      updatePendingTransaction, updateHistoryTransaction,updateLoadingSpinner} = this.props
+      updatePendingTransaction, updateHistoryTransaction,} = this.props
     if (state.control) {
       updateControl('none')
       setTimeout(() => {updateControl(state.control)}, 200)
@@ -112,7 +117,6 @@ class SocketEmitPage extends Component<Props, State> {
       syncRltData({})
       updateHistoryTransaction([])
       updatePendingTransaction([])
-      updateLoadingSpinner(false)
     }
     if (state.userInfo) {
       syncData(state.userInfo)
@@ -195,9 +199,9 @@ export default connect(
     updatePendingTransaction,
     updateHistoryTransaction,
     updateControl,
-    updateLoadingSpinner,
     updateMessageSocket,
-    updateVisibleSignWriting
+    updateVisibleSignWriting,
+    updateLoadingSpinner
   }
 )(SocketEmitPage)
 const styles = StyleSheet.create({

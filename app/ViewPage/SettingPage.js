@@ -8,10 +8,10 @@ import io from 'socket.io-client'
 import { Row, TableWrapper } from 'react-native-table-component'
 import { Cell } from 'react-native-table-component/components/cell'
 import { connect } from 'react-redux'
-import { updateMessageSocket, updateSocket, updateSocketsAddress } from '../reducer/action'
+import { updateLoadingSpinner, updateMessageSocket, updateSocket, updateSocketsAddress } from '../reducer/action'
 import SCREENS from '../ContanstPage/SCREENS'
 import DefaultPreference from 'react-native-default-preference'
-import SocketEmitPage from './SocketEmitPage'
+
 type Props = {}
 type State = {
   address: string, //ip address of server
@@ -36,27 +36,44 @@ class SettingPage extends Component<Props, State> {
   }
 
   updateSocketGlobal () {
-    const {address, port} = this.state
-    const {socket} = this.props
-    this.props.updateMessageSocket(true)
-    socket.disconnect()
-    let ip = 'http://' + address + ':' + port
-    const trySocket = io.connect(ip, {'timeout': 3000, 'connect_timeout': 3000})
-    trySocket.on('connect_error', (error) => {
-      if (this.props.messageSocketStatus) {
-        this.props.updateMessageSocket(false)
+    NetInfo.getConnectionInfo().then((connectionInfo) => {
+      if (connectionInfo.type !== 'none') {
+        const {address, port} = this.state
+        const {socket} = this.props
+        this.props.updateMessageSocket(true)
+        this.props.updateLoadingSpinner(true)
+        socket.disconnect()
+        let ip = 'http://' + address + ':' + port
+        const trySocket = io.connect(ip, {'timeout': 3000, 'connect_timeout': 3000})
+        trySocket.on('connect_error', (error) => {
+          if (this.props.messageSocketStatus) {
+            this.props.updateMessageSocket(false)
+            this.props.updateLoadingSpinner(false)
+            console.log(error)
+            setTimeout(() => {
+              Alert.alert(
+                'Thông báo',
+                `Địa chỉ IP không hợp lệ`,
+                [
+                  {text: 'Ok', onPress: () => {}, style: 'cancel'},
+                ],
+                {cancelable: false}
+              )
+            }, 50)
+          }
+        })
+        socket.io = trySocket.io
+        socket.connect()
+      } else {
         Alert.alert(
           'Thông báo',
-          `Địa chỉ IP không hợp lệ`,
+          `Không có kết nối mạng`,
           [
             {text: 'Ok', onPress: () => {}, style: 'cancel'},
           ],
-          {cancelable: false}
-        )
+          {cancelable: false})
       }
     })
-    socket.io = trySocket.io
-    socket.connect()
   }
 
   removeIpAddress (hostname) {
@@ -212,7 +229,8 @@ export default connect(
   mapStateToProps, {
     updateSocket,
     updateSocketsAddress,
-    updateMessageSocket
+    updateMessageSocket,
+    updateLoadingSpinner
   }
 )(SettingPage)
 

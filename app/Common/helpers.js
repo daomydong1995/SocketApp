@@ -261,3 +261,22 @@ export const formatMoneyToString = SoTien => {
   KetQua = KetQua.substring(1, 2).toUpperCase() + KetQua.substring(2)
   return KetQua // .substring(0, 1);//.toUpperCase();// + KetQua.substring(1);
 }
+
+export const createFormData = (uri) => {
+  const data = new FormData()
+  data.append('image', {
+    name: 'image.png',
+    type: 'image/png',
+    uri: uri
+  })
+  return data
+}
+
+export function timeout (ms, promise) {
+  return new Promise(function (resolve, reject) {
+    setTimeout(function () {
+      reject(new Error('timeout'))
+    }, ms)
+    promise.then(resolve, reject)
+  })
+}

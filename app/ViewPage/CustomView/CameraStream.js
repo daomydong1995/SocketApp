@@ -1,10 +1,9 @@
 'use strict'
 
 import React, { Component } from 'react'
-const request = require('axios')
 import {
   StyleSheet,
-  Platform
+  Platform, Alert
 } from 'react-native'
 
 import {
@@ -19,27 +18,18 @@ import {
 import connect from 'react-redux/es/connect/connect'
 import {
   updateAvatarBase64,
-  updateAvatarRltBase64, updateControl,
-  updateLoadingSpinner,
+  updateAvatarRltBase64, updateControl, updateLoadingSpinner,
   updatePeerConnection
 } from '../../reducer/action'
 import ViewShot from 'react-native-view-shot'
+import { createFormData, timeout } from '../../Common/helpers'
+import { UPLOAD_IMAGE } from '../../Common/ApiConstants'
 
 const RNFS = require('react-native-fs')
 
 const configuration = {'iceServers': [{'url': 'stun:stun.l.google.com:19302'}]}
 
 let localStream
-
-const createFormData = (uri) => {
-  const data = new FormData();
-  data.append("image", {
-    name: 'image.png',
-    type: 'image/png',
-    uri: uri
-  });
-  return data;
-}
 
 function logError (error, location) {
   console.log('logError  : ' + location, error)
@@ -125,36 +115,53 @@ class CameraStream extends Component<Props, State> {
       viewShot: this.refs.viewShot
     })
     let self = this
+
     if (this.props.socket.connected) {
       this.props.socket.on('take_picture', (msg) => {
         if (self.state.viewShot) {
           self.state.viewShot.capture().then((uri) => {
-            console.log(uri)
-            fetch('http://localhost:3000/api/files', {
-              method: "POST",
-              body: createFormData(uri)
-            }).then(response => response.json())
-              .then( response => {
-                if (response.status && response.status === 'success') {
-                  let resUri = response.data.uri
-                  if (msg === 'USER_AVATAR') {
-                    self.props.updateAvatarBase64(resUri)
-                  } else if (msg === 'RELATIVE_USER_AVATAR') {
-                    self.props.updateAvatarRltBase64(resUri)
-                  }
-                  self.props.socket.emit('web_wallet_on', {type: msg, buffer: resUri}, () => {
-                  })
-                } else {
-                  self.props.socket.emit('web_wallet_on', {type: 'Error', message: response}, () => {
-                  })
-                }
-                RNFS.exists(uri).then( (result) => {
-                  if (result) {
-                    self.props.updateControl('none')
-                    return RNFS.unlink(uri)
-                  }
-                });
+            self.props.updateLoadingSpinner(true)
+            timeout(3000,
+              fetch(UPLOAD_IMAGE, {
+                method: 'POST',
+                body: createFormData(uri)
+              }).then(response => {
+                self.props.updateLoadingSpinner(false)
+                response.json()
               })
+                .then(response => {
+                  if (response.status && response.status === 'success') {
+                    let resUri = response.data.uri
+                    if (msg === 'USER_AVATAR') {
+                      self.props.updateAvatarBase64(resUri)
+                    } else if (msg === 'RELATIVE_USER_AVATAR') {
+                      self.props.updateAvatarRltBase64(resUri)
+                    }
+                    self.props.socket.emit('web_wallet_on', {type: msg, data: response.data}, () => {
+                    })
+                  } else {
+                    self.props.socket.emit('web_wallet_on', {type: 'Error', message: response}, () => {
+                    })
+                  }
+                  RNFS.exists(uri).then((result) => {
+                    if (result) {
+                      self.props.updateControl('none')
+                      return RNFS.unlink(uri)
+                    }
+                  })
+                })).catch((error) => {
+              self.props.updateLoadingSpinner(false)
+              setTimeout(() => {
+                Alert.alert(
+                  'Thông báo',
+                  error.toLocaleString(),
+                  [
+                    {text: 'Ok', onPress: () => {}, style: 'cancel'},
+                  ],
+                  {cancelable: false}
+                )
+              }, 50)
+            })
 
           })
         }
