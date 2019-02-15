@@ -26,7 +26,6 @@ class UserInfoComponent extends Component<Props, State> {
   }
 
   render () {
-    const testString = 'dsakdlasndlkansdaskldnsakjdbnsajbdajsdbasjdbnasjbdna;djasbdjabsndjasndjasndkasjdaskdaskd[paskd[pakd[pkasp[dkas[dkas[daks[dkasp[dwpldwda;dalkmsdklmnas'
     return (
       <View style={styles.container} pointerEvents={'none'}>
         <Text style={styles.textTileStyle}>
@@ -42,10 +41,8 @@ class UserInfoComponent extends Component<Props, State> {
             <View style={styles.rowContainer2}>
               <View style={styles.itemRowContainer2}>
                 <Text style={styles.textLabelStyle}>Mã bệnh nhân:</Text>
-                {/*<Text*/}
-                  {/*style={styles.textStyle}>{this.props.userInfo.userId}</Text>*/}
                 <Text
-                  style={styles.textStyle}>{testString}</Text>
+                  style={styles.textStyle}>{this.props.userInfo.userId}</Text>
               </View>
               <View style={styles.itemRowContainer2}>
                 <Text style={styles.textLabelStyle}>Mã ví:</Text>

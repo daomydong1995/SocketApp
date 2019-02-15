@@ -20,6 +20,8 @@ import {
   formatTransactionSign, formatType
 } from '../Common/helpers'
 import { RTCIceCandidate, RTCSessionDescription } from 'react-native-webrtc'
+import { Text } from 'react-native-elements'
+import { INITIAL_STATE_RELATIVE_INFO, INITIAL_STATE_USER_INFO } from '../Common/constants'
 
 type Props = {}
 type State = {}
@@ -113,16 +115,16 @@ class SocketEmitPage extends Component<Props, State> {
     }
     if (state.screen) {
       updateScreenApp(state.screen)
-      syncData({})
-      syncRltData({})
       updateHistoryTransaction([])
       updatePendingTransaction([])
     }
     if (state.userInfo) {
-      syncData(state.userInfo)
+      const userInfo = {...INITIAL_STATE_USER_INFO, ...state.userInfo}
+      syncData(userInfo)
     }
     if (state.rltInfo) {
-      syncRltData(state.rltInfo)
+      const rltInfo = {...INITIAL_STATE_RELATIVE_INFO, ...state.rltInfo}
+      syncRltData(rltInfo)
     }
     if (state.pendingTransactions) {
       let pendingTransactions = state.pendingTransactions.map((data,index) => this.toPending(data,index))

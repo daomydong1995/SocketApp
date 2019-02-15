@@ -21,7 +21,6 @@ type State = {
   controlCamera: 'none'
 }
 
-
 class SmartCardSignComponent extends Component<Props, State> {
   constructor (props) {
     super(props)
@@ -34,31 +33,33 @@ class SmartCardSignComponent extends Component<Props, State> {
     let self = this
     self.props.updateLoadingSpinner(true)
     timeout(3000, fetch(UPLOAD_IMAGE, {
-      method: "POST",
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
       body: createFormData(self.props.userInfo.signatureBase64)
     }).then(response => {
       self.props.updateLoadingSpinner(false)
-      setTimeout(()=> {
-        response.json()
-      },50)
-    }).then( response => {
-        if (response.status && response.status === 'success') {
-          self.props.socket.emit('web_wallet_on', {type: 'USER_SIGNATURE', data: response.data}, () => {
-            self.props.updateSignature(response.data.uri)
-            Alert.alert(
-              'Thông báo',
-              `Xác nhận thành công`,
-              [
-                {text: 'Ok', onPress: () => {}, style: 'cancel'},
-              ],
-              {cancelable: false}
-            )
-          })
-        } else {
-          self.props.socket.emit('web_wallet_on', {type: 'Error', message: response}, () => {
-          })
-        }
-      })).catch(function(error) {
+      return response.json()
+    }).then(response => {
+      if (response.status && response.status === 'success') {
+        self.props.socket.emit('web_wallet_on', {type: 'USER_SIGNATURE', data: response.data}, () => {
+          self.props.updateSignature(response.data.uri)
+          Alert.alert(
+            'Thông báo',
+            `Xác nhận thành công`,
+            [
+              {text: 'Ok', onPress: () => {}, style: 'cancel'},
+            ],
+            {cancelable: false}
+          )
+        })
+      } else {
+        self.props.socket.emit('web_wallet_on', {type: 'Error', message: response}, () => {
+        })
+      }
+    })).catch(function (error) {
       self.props.updateLoadingSpinner(false)
       setTimeout(() => {
         Alert.alert(
@@ -69,7 +70,7 @@ class SmartCardSignComponent extends Component<Props, State> {
           ],
           {cancelable: false}
         )
-      },50)
+      }, 50)
     })
 
   }
@@ -87,29 +88,29 @@ class SmartCardSignComponent extends Component<Props, State> {
             <View>
               <Text style={styles.textTileStyle}>Ảnh cá nhân</Text>
               <View style={styles.stylePhoto}>
-                  {
-                    this.props.control !== 'USER_AVATAR' &&
-                    <Image
-                      source={this.props.userInfo.imageAvatarBase64 === '' ? require('../../../../assets/images/userplaceholder.png') : {uri: this.props.userInfo.imageAvatarBase64}}
-                      style={{width: '100%', height: '100%'}}/>
-                  }
-                  {
-                    this.props.control === 'USER_AVATAR' && <CameraStream/>
-                  }
+                {
+                  this.props.control !== 'USER_AVATAR' &&
+                  <Image
+                    source={this.props.userInfo.imageAvatarBase64 === '' ? require('../../../../assets/images/userplaceholder.png') : {uri: this.props.userInfo.imageAvatarBase64}}
+                    style={{width: '100%', height: '100%'}}/>
+                }
+                {
+                  this.props.control === 'USER_AVATAR' && <CameraStream/>
+                }
               </View>
             </View>
             <View>
               <Text style={styles.textTileStyle}>Ảnh người thân</Text>
               <View style={styles.stylePhoto}>
-                  {
-                    this.props.control !== 'RELATIVE_USER_AVATAR'
-                    && <Image
-                      source={this.props.rltInfo.imageRltAvatarBase64 === '' ? require('../../../../assets/images/userplaceholder.png') : {uri: this.props.rltInfo.imageRltAvatarBase64}}
-                      style={{width: '100%', height: '100%'}}/>
-                  }
-                  {
-                    this.props.control === 'RELATIVE_USER_AVATAR' && <CameraStream/>
-                  }
+                {
+                  this.props.control !== 'RELATIVE_USER_AVATAR'
+                  && <Image
+                    source={this.props.rltInfo.imageRltAvatarBase64 === '' ? require('../../../../assets/images/userplaceholder.png') : {uri: this.props.rltInfo.imageRltAvatarBase64}}
+                    style={{width: '100%', height: '100%'}}/>
+                }
+                {
+                  this.props.control === 'RELATIVE_USER_AVATAR' && <CameraStream/>
+                }
               </View>
             </View>
             <SmartCardLogoComponent userCode={this.props.userInfo.userCodeCard}
@@ -241,7 +242,8 @@ const mapStateToProps = state => ({
   userInfo: state.userInfoReducer,
   rltInfo: state.userRelativeInfoReducer,
   control: state.settingReducer.control,
-  socket: state.settingReducer.socket
+  socket: state.settingReducer.socket,
+  baseUrl: state.settingReducer.baseUrl
 })
 export default connect(
   mapStateToProps, {

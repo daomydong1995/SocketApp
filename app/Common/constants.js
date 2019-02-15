@@ -73,3 +73,58 @@ export const SENDER = [
     label: 'Người nhận'
   }
 ]
+
+export const INITIAL_STATE_USER_INFO = {
+  userName: '',
+  userBirth: '',
+  //
+  userGender: '',
+  userJob: '',
+  //
+  userEmail: '',
+  userPhone: '',
+  //
+  userCMT: '',
+  userCMTDay: '',
+  userCMTPlace: '',
+  //
+  userPassport: '',
+  userPassportDate: '',
+  userPassportPlace: '',
+  //
+  userCountry: '',
+  userNation: '',
+  userTBH: '',
+  //
+  userAddress: '',
+  //
+  userDistrict: '',
+  userWards: '',
+  userProvince: '',
+  //
+  userId: '',
+  userWalletId: '',
+  userCardId: '',
+  userHospital: '',
+  userMoneyTotal: '',
+  userNameCard: '',
+  userCodeCard: '',
+  //
+  signatureBase64: '',
+  imageAvatarBase64: ''
+}
+
+export const INITIAL_STATE_RELATIVE_INFO = {
+  rltName: '',
+  rltInfo: '',
+  rltEmail: '',
+  rltPhone: '',
+  rltCMT: '',
+  rltCMTDay: '',
+  rltCMTPlace: '',
+  rltPassport: '',
+  rltPassportDate: '',
+  rltPassportPlace: '',
+  rltAddress: '',
+  imageRltAvatarBase64: ''
+}

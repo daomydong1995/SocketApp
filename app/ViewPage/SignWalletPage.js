@@ -65,7 +65,7 @@ const styles = {
   content: {
     width: '100%',
     height: '100%',
-    backgroundColor: '#f6f6f6',
+    backgroundColor: 'transparent',
     justifyContent: 'center'
   },
   itemStyle: {

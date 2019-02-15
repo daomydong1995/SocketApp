@@ -8,7 +8,12 @@ import io from 'socket.io-client'
 import { Row, TableWrapper } from 'react-native-table-component'
 import { Cell } from 'react-native-table-component/components/cell'
 import { connect } from 'react-redux'
-import { updateLoadingSpinner, updateMessageSocket, updateSocket, updateSocketsAddress } from '../reducer/action'
+import {
+  updateLoadingSpinner,
+  updateMessageSocket,
+  updateSocket,
+  updateSocketsAddress,
+  updateBaseUrl} from '../reducer/action'
 import SCREENS from '../ContanstPage/SCREENS'
 import DefaultPreference from 'react-native-default-preference'
 
@@ -106,7 +111,7 @@ class SettingPage extends Component<Props, State> {
   render () {
     const {socketsAddress, connected} = this.props
     return (
-      <View style={{flex: 1}}>
+      <View style={{flex: 1, backgroundColor: 'transparent'}}>
         <HeaderCustom title={SCREENSTITLE[this.props.navigation.state.routeName]}
                       leftView={(<Icon name='bars' color='#fff' size={24}/>)}
                       handleLeftButton={this.eventLeftHeader}/>
@@ -230,7 +235,8 @@ export default connect(
     updateSocket,
     updateSocketsAddress,
     updateMessageSocket,
-    updateLoadingSpinner
+    updateLoadingSpinner,
+    updateBaseUrl
   }
 )(SettingPage)
 

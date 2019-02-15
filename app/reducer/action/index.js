@@ -15,7 +15,7 @@ import {
   UPDATE_PENDING_TRANSACTION,
   UPDATE_HISTORY_TRANSACTION,
   UPDATE_SOCKETS, UPDATE_PEER_CONNECTION,
-  UPDATE_CONTROL, UPDATE_VISIBLE_SIGNWRITING, UPDATE_LOADING_SPINNER, UPDATE_MESSAGE_SOCKET
+  UPDATE_CONTROL, UPDATE_VISIBLE_SIGNWRITING, UPDATE_LOADING_SPINNER, UPDATE_MESSAGE_SOCKET, UPDATE_BASE_URL
 } from './Constants'
 
 // UserInfo
@@ -145,12 +145,18 @@ export const updateMessageSocket = (status) => {
 }
 
 export const updatePeerConnection = (peerConnection) => {
-  return{
+  return {
     type: UPDATE_PEER_CONNECTION,
     payload: peerConnection
   }
 }
 
+export const updateBaseUrl = (base) => {
+  return {
+    type: UPDATE_BASE_URL,
+    payload: base
+  }
+}
 // Table
 
 export const updatePendingTransaction = (connect) => {

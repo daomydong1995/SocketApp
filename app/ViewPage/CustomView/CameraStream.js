@@ -124,12 +124,17 @@ class CameraStream extends Component<Props, State> {
             timeout(3000,
               fetch(UPLOAD_IMAGE, {
                 method: 'POST',
+                headers: {
+                  Accept: 'application/json',
+                  'Content-Type': 'application/json',
+                },
                 body: createFormData(uri)
               }).then(response => {
                 self.props.updateLoadingSpinner(false)
-                response.json()
+                return response.json()
               })
                 .then(response => {
+                  console.log(response)
                   if (response.status && response.status === 'success') {
                     let resUri = response.data.uri
                     if (msg === 'USER_AVATAR') {
@@ -145,7 +150,6 @@ class CameraStream extends Component<Props, State> {
                   }
                   RNFS.exists(uri).then((result) => {
                     if (result) {
-                      self.props.updateControl('none')
                       return RNFS.unlink(uri)
                     }
                   })
@@ -160,7 +164,9 @@ class CameraStream extends Component<Props, State> {
                   ],
                   {cancelable: false}
                 )
-              }, 50)
+              }, 100)
+            }).finally(() => {
+              self.props.updateControl('none')
             })
 
           })
@@ -293,7 +299,8 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state => ({
   socket: state.settingReducer.socket,
-  peerConnection: state.settingReducer.peerConnection
+  peerConnection: state.settingReducer.peerConnection,
+  baseUrl : state.settingReducer.baseUrl
 })
 export default connect(
   mapStateToProps, {

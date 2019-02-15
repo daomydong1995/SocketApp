@@ -1,1 +1,1 @@
-export const UPLOAD_IMAGE = process.env.USER_SERVICE_BASE_URL + '/api/files'
+export const UPLOAD_IMAGE = 'http://35.187.234.232:8000/api/files'

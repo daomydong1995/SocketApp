@@ -1,12 +1,13 @@
 import {
   CONNECTION_STATUS, UPDATE_MOMMENT_SCREEN, UPDATE_SOCKETS_ADDRESS,
   UPDATE_SOCKETS, UPDATE_CONTROL, UPDATE_VISIBLE_SIGNWRITING,
-  UPDATE_LOADING_SPINNER, UPDATE_MESSAGE_SOCKET, UPDATE_PEER_CONNECTION
+  UPDATE_LOADING_SPINNER, UPDATE_MESSAGE_SOCKET, UPDATE_PEER_CONNECTION,
+  UPDATE_BASE_URL
 } from './action/Constants'
 import io from 'socket.io-client'
 import SCREENS from '../ContanstPage/SCREENS'
 const INITIAL_STATE = {
-  socket: io.connect('http://10.0.50.223:4000', { 'timeout': 5000, 'connect_timeout': 5000 }),
+  socket: io.connect('http://localhost:4000', { 'timeout': 5000, 'connect_timeout': 5000 }),
   socketsAddress: [],
   connected: false,
   screen: SCREENS.SIGN_WALLETS_SUBMIT,
@@ -14,7 +15,8 @@ const INITIAL_STATE = {
   control: 'none',
   loadingSpinner: false,
   messageSocketStatus: false,
-  peerConnection: null
+  peerConnection: null,
+  baseUrl: null
 }
 
 export default function reducer (state = INITIAL_STATE, action) {
@@ -36,7 +38,9 @@ export default function reducer (state = INITIAL_STATE, action) {
     case UPDATE_MESSAGE_SOCKET:
       return { ...state, messageSocketStatus: action.payload }
     case UPDATE_PEER_CONNECTION:
-      return {...state, peerConnection: action.payload}
+      return { ...state, peerConnection: action.payload }
+    case UPDATE_BASE_URL:
+      return { ...state, baseUrl: action.payload }
     default:
       return state
   }

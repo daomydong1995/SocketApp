@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+            integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
+    <style>
+        label {
+            margin-right: 20px;
+            margin-left: 20px;
+            width: 75px;
+            font-weight: bold
+        }
+
+        input {
+            height: 40px;
+            width: 20%
+        }
+
+        select {
+            height: 40px;
+            width: 20%
+        }
+
+        body {
+            background: #69d47d;
+        }
+
+        #infoUser {
+            margin: 100px;
+            background: #e7e7e7;
+            padding: 10px;
+        }
+
+        p {
+            font-weight: bold;
+        }
+
+        video {
+            height: 300px;
+            border: 2px solid;
+            align-items: center;
+            transform: rotateY(180deg);
+        }
+
+        img {
+            border: 2px solid;
+            width: 120px;
+            height: 170px;
+            align-items: center;
+
+        }
+    </style>
+</head>
+<body>
+<div class="container" action="" method="">
+    <div class="d-flex justify-content-center align-items-center container">
+        <div class="col-sm-12" id="infoUser">
+            <h3>Thông tin bệnh nhân</h3>
+            <button onclick="showInfo();">Info User Screen</button>
+            <button onclick="showSign();">Sign User Screen</button>
+            <div class="form-group row">
+                <label>Họ tên</label>
+                <input onchange="onChangeUserValue()" id="userName"/>
+                <label>Ngày sinh</label>
+                <input id="userBirth" onchange="onChangeUserValue()"/>
+                <label>Tuổi</label>
+                <input onchange="onChangeUserValue()" id="userOld"/>
+            </div>
+            <div class="form-group row">
+                <label>Giới tính</label>
+                <select id="userGender" onchange="onChangeUserValue()">
+                    <option value="Nữ">Nữ</option>
+                    <option value="Nam">Nam</option>
+                </select>
+                <label>Nghề nghiệp</label>
+                <input data-provide="datepicker" type="text" onchange="onChangeUserValue()" id="userJob"/>
+            </div>
+            <div class="form-group row">
+                <label>Email</label><input id="userEmail" onchange="onChangeUserValue()"/>
+                <label>Số DT</label>
+                <input onchange="onChangeUserValue()" id="userPhone"/>
+            </div>
+            <div class="form-group row">
+                <label>Số CMT/CC</label><input onchange="onChangeUserValue()" id="userCMT"/>
+                <label>Ngày cấp</label>
+                <input data-provide="datepicker" type="text" onchange="onChangeUserValue()" id="userCMTDay"/>
+                <label>Nơi cấp</label>
+                <input onchange="onChangeUserValue()" type="text" id="userCMTPlace"/>
+            </div>
+            <div class="form-group row">
+                <label>Hộ chiếuC</label><input onchange="onChangeUserValue()" id="userPassport" type="text"/>
+                <label>Ngày cấp</label>
+                <input data-provide="datepicker" type="text" onchange="onChangeUserValue()" id="userPassportDate"/>
+                <label>Nơi cấp</label>
+                <input onchange="onChangeUserValue()" type="text" id="userPassportPlace"/>
+            </div>
+            <div class="form-group row">
+                <label>Quốc tịch</label><input onchange="onChangeUserValue()" id="userCountry"/>
+                <label>Dân tộc</label>
+                <input onchange="onChangeUserValue()" type="text" id="userNation"/>
+                <label>Thẻ BHYT</label>
+                <input onchange="onChangeUserValue()" type="text" id="userTBH"/>
+            </div>
+            <div class="form-group row">
+                <label>Số nhà/ Thôn/ Xóm</label>
+                <input onchange="onChangeUserValue()" class="col-md-6" id="userAddress"/>
+            </div>
+            <div class="form-group row">
+                <label>Xã phường/Thôn</label
+                ><input onchange="onChangeUserValue()" id="userDistrict"/>
+
+                <label>Quận/Huyện</label>
+                <input onchange="onChangeUserValue()" id="userWards" type="text"/>
+                <label>Tỉnh/Thành Phố</label>
+                <input onchange="onChangeUserValue()" id="userProvince" type="text"/>
+            </div>
+            <div style="height: 1px; width: 100%; background: black"></div>
+            <h3>Thông tin người thân</h3>
+            <div class="form-group row">
+                <label>Họ tên</label>
+                <input onchange="onChangeRltValue()" id="rltName" type="text"/>
+                <label>Quan hệ</label>
+                <input onchange="onChangeRltValue()" id="rltInfo"/>
+            </div>
+            <div class="form-group row">
+                <label>Email</label>
+                <input onchange="onChangeRltValue()" id="rltEmail"/>
+                <label>Số DT</label>
+                <input id="rltPhone" onchange="onChangeRltValue()"/>
+            </div>
+            <div class="form-group row">
+                <label>CMND</label
+                ><input onchange="onChangeRltValue()" id="rltCMT"/>
+                <label>Ngày cấp</label>
+                <input onchange="onChangeRltValue()" id="rltCMTDay"/>
+                <label>Nơi cấp</label>
+                <input onchange="onChangeRltValue()" id="rltCMTPlace" type="text"/>
+            </div>
+            <div class="form-group row">
+                <label>Hộ chiếu</label><input onchange="onChangeRltValue()" id="rltPassport" type="text"/>
+                <label>Ngày cấp</label>
+                <input data-provide="datepicker" type="text" id="rltPassportDate" onchange="onChangeRltValue()"/>
+                <label>Nơi cấp</label>
+                <input onchange="onChangeRltValue()" id="rltPassportPlace" type="text"/>
+            </div>
+            <div class="form-group row">
+                <label>Địa chỉ liên lạc</label><input id="rltAddress" onchange="onChangeRltValue()" class="col-md-6"/>
+            </div>
+            <div style="height: 1px; width: 100%; background: black"></div>
+            <div class="form-group row" style="align-content: center">
+                <div class="col-md-3">
+                    <p>Ảnh cá nhân</p>
+                    <img src="assets/userplaceholder.png" id="imageAvatarBase64">
+                    <button onclick="onTakePicture('USER_AVATAR')">Chụp</button>
+                    <button onclick="onOpenStream('USER_AVATAR');">Mở Stream</button>
+                </div>
+                <div class="col-md-3">
+                    <p>Ảnh người thân</p>
+                    <img src="assets/userplaceholder.png" id="imageRltAvatarBase64">
+                    <button onclick="onTakePicture('RELATIVE_USER_AVATAR')">Chụp</button>
+                    <button onclick="onOpenStream('RELATIVE_USER_AVATAR');">Mở Stream</button>
+                </div>
+                <div class="col-md-3">
+                    <p>Chữ ký</p>
+                    <img style="width: 300px" id="signatureBase64">
+                    <button onclick="openSignWriting(true)">Lấy chữ ký</button>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <video id="videoStream" autoplay/>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<!--<script src="https://cdn.socket.io/socket.io-1.7.3.js"></script>-->
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script>
+  const socket = io.connect('http://localhost:4000/')
+  const RTCPeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection || window.msRTCPeerConnection
+  const RTCSessionDescription = window.RTCSessionDescription || window.mozRTCSessionDescription || window.webkitRTCSessionDescription || window.msRTCSessionDescription
+  navigator.getUserMedia = navigator.getUserMedia || navigator.mozGetUserMedia || navigator.webkitGetUserMedia || navigator.msGetUserMedia
+  const configuration = {'iceServers': [{'url': 'stun:stun.l.google.com:19302'}]}
+  const pcPeers = {}
+  let imageRltAvatarBase64 = undefined
+  let imageAvatarBase64 = undefined
+  let signatureBase64 = undefined
+  const videoStream = document.getElementById('videoStream')
+  let localStream
+  const SIGN_WALLETS_SUBMIT = 'SIGN_WALLETS_SUBMIT'
+  const USER_INFO_PAGE = 'USER_INFO_PAGE'
+
+  function getLocalStream () {
+    navigator.getUserMedia({'audio': false, 'video': true}, function (stream) {
+      localStream = stream
+      try {
+        videoStream.srcObject = stream
+      } catch (error) {
+        videoStream.src = window.URL.createObjectURL(stream)
+      }
+      videoStream.muted = true
+      videoStream.play()
+    }, logError)
+  }
+
+  socket.on('web_wallet_on', function (item) {
+    switch (item.type) {
+      case 'RELATIVE_USER_AVATAR':
+        document.getElementById('imageRltAvatarBase64').src = item.buffer
+        imageRltAvatarBase64 = item.buffer
+        break
+      case 'USER_AVATAR':
+        document.getElementById('imageAvatarBase64').src = item.buffer
+        imageAvatarBase64 = item.buffer
+        break
+      case 'USER_SIGNATURE':
+        document.getElementById('signatureBase64').src = item.buffer
+        signatureBase64 = item.buffer
+        break
+      default:
+        break
+    }
+  })
+  socket.on('init', function (data) {
+    if (data.init) {
+      onChangeUserValue()
+      onChangeRltValue()
+    }
+  })
+
+  function createPC (socketId, isOffer) {
+    const pc = new RTCPeerConnection(configuration)
+    pcPeers[socketId] = pc
+
+    // pc.onicecandidate = function (event) {
+    //   if (event.candidate) {
+    //     socket.emit('exchange', {'toIp': socketId, 'candidate': event.candidate})
+    //   }
+    // }
+    //
+    // function createOffer () {
+    //   pc.createOffer(function (desc) {
+    //     pc.setLocalDescription(desc, function () {
+    //       socket.emit('exchange', {'toIp': socketId, 'sdp': pc.localDescription})
+    //     }, logError)
+    //   }, logError)
+    // }
+
+    // pc.onnegotiationneeded = function () {
+    //   if (isOffer) {
+    //     createOffer()
+    //   }
+    // }
+
+    // pc.oniceconnectionstatechange = function (event) {
+    //   if (event.target.iceConnectionState === 'connected') {
+    //     createDataChannel()
+    //   }
+    // }
+    // pc.onsignalingstatechange = function (event) {
+    // }
+
+    // function createDataChannel () {
+    //   if (pc.textDataChannel) {
+    //     return
+    //   }
+    //   const dataChannel = pc.createDataChannel('text')
+    //
+    //   dataChannel.onerror = function (error) {
+    //     console.log('dataChannel.onerror', error)
+    //   }
+    //
+    //   dataChannel.onmessage = function (event) {
+    //   }
+    //
+    //   dataChannel.onopen = function () {
+    //   }
+    //
+    //   dataChannel.onclose = function () {
+    //     console.log('dataChannel.onclose')
+    //   }
+    //
+    //   pc.textDataChannel = dataChannel
+    // }
+    pc.onaddstream = function (event) {
+      try {
+        videoStream.autoplay = 'autoplay'
+        videoStream.srcObject = event.stream
+        videoStream.muted = true
+        videoStream.play()
+      } catch (error) {
+        // remoteRTC.src = window.URL.createObjectURL(event.stream);
+      }
+    }
+    return pc
+  }
+
+  function leave (socketId) {
+    const pc = pcPeers[socketId]
+    if(pc) {
+      pc.close()
+      delete pcPeers[socketId]
+    }
+  }
+
+  socket.on('leave', function (socketId) {
+    leave(socketId)
+  })
+
+  socket.on('connect', function (data) {
+    // getLocalStream();
+    onChangeUserValue()
+    onChangeRltValue()
+  })
+
+  function logError (error) {
+    console.log('logError', error)
+  }
+
+  socket.on('exchange', function (data) {
+    const fromId = data.from
+    let pc
+    if (fromId in pcPeers) {
+      pc = pcPeers[fromId]
+    } else {
+      pc = createPC(fromId, false)
+    }
+    if (data.sdp) {
+      pc.setRemoteDescription(new RTCSessionDescription(data.sdp), function () {
+        if (pc.remoteDescription.type == 'offer')
+          pc.createAnswer(function (desc) {
+            pc.setLocalDescription(desc, function () {
+              socket.emit('exchange', {'toIp': fromId, 'sdp': pc.localDescription})
+            }, logError)
+          }, logError)
+      }, logError)
+    } else {
+      pc.addIceCandidate(new RTCIceCandidate(data.candidate))
+    }
+  })
+
+  function onOpenStream (id) {
+    socket.emit('create_room', 'default' , () => {
+      socket.emit('web_wallet_emit', {control: id})
+    })
+  }
+
+  function onTakePicture (id) {
+    socket.emit('take_picture', id)
+    socket.emit('close_room', 'default')
+  }
+
+  function openSignWriting (data) {
+    socket.emit('open_sign_writing', data)
+  }
+
+  function onChangeUserValue () {
+    const userName = $('#userName').val()
+    const userBirth = $('#userBirth').val()
+    const userOld = $('#userOld').val()
+    const userGender = $('#userGender').val()
+    const userJob = $('#userJob').val()
+    const userEmail = $('#userEmail').val()
+    const userPhone = $('#userPhone').val()
+    const userCMT = $('#userCMT').val()
+    const userCMTDay = $('#userCMTDay').val()
+    const userCMTPlace = $('#userCMTPlace').val()
+    const userPassport = $('#userPassport').val()
+    const userPassportDate = $('#userPassportDate').val()
+    const userPassportPlace = $('#userPassportPlace').val()
+    const userCountry = $('#userCountry').val()
+    const userNation = $('#userNation').val()
+    const userTBH = $('#userTBH').val()
+    const userAddress = $('#userAddress').val()
+    const userDistrict = $('#userDistrict').val()
+    const userWards = $('#userWards').val()
+    const userProvince = $('#userProvince').val()
+    const userInfo = {
+      userName, userBirth, userOld, userGender, userJob, userEmail, userPhone,
+      userCMT, userCMTDay, userCMTPlace, userPassport, userPassportDate, userPassportPlace, userCountry,
+      userNation, userTBH, userAddress, userDistrict, userWards, userProvince,userId,userWalletId,userCardId
+    }
+    userInfo.imageAvatarBase64 = (imageAvatarBase64) ? imageAvatarBase64 : ''
+    userInfo.signatureBase64 = (signatureBase64) ? signatureBase64 : ''
+    socket.emit('web_wallet_emit', {userInfo: userInfo})
+  }
+
+  const userId = 'fc220b60-18a9-11e9-ba25-c321312caa'
+  const userWalletId = 'fc220b60-18a9-1ae9-ba25-cb2792a54a66'
+  const userCardId = 'fc220b60-18a9-11e9-ba25-dascxzasa6'
+
+  function onChangeRltValue () {
+    const rltName = $('#rltName').val()
+    const rltInfo = $('#rltInfo').val()
+    const rltEmail = $('#rltEmail').val()
+    const rltPhone = $('#rltPhone').val()
+    const rltCMT = $('#rltCMT').val()
+    const rltCMTDay = $('#rltCMTDay').val()
+    const rltCMTPlace = $('#rltCMTPlace').val()
+    const rltPassport = $('#rltPassport').val()
+    const rltPassportDate = $('#rltPassportDate').val()
+    const rltPassportPlace = $('#rltPassportPlace').val()
+    const rltAddress = $('#rltAddress').val()
+    const rltInfos = {
+      rltName,
+      rltInfo,
+      rltEmail,
+      rltPhone,
+      rltCMT,
+      rltCMTDay,
+      rltCMTPlace,
+      rltPassport,
+      rltPassportDate,
+      rltPassportPlace,
+      rltAddress
+    }
+    rltInfos.imageRltAvatarBase64 = (imageRltAvatarBase64) ? imageRltAvatarBase64 : ''
+
+    socket.emit('web_wallet_emit', {rltInfo: rltInfos})
+  }
+
+  $(function () {
+    $('#userBirth').datepicker({
+      dateFormat: 'dd/mm/yy',
+      uiLibrary: 'bootstrap4'
+    })
+    $('#userCMTDay').datepicker({
+      dateFormat: 'dd/mm/yy',
+      uiLibrary: 'bootstrap4'
+    })
+    $('#userPassportDate').datepicker({
+      dateFormat: 'dd/mm/yy',
+      uiLibrary: 'bootstrap4'
+    })
+    $('#rltCMTDay').datepicker({
+      dateFormat: 'dd/mm/yy',
+      uiLibrary: 'bootstrap4'
+    })
+    $('#rltPassportDate').datepicker({
+      dateFormat: 'dd/mm/yy',
+      uiLibrary: 'bootstrap4'
+    })
+  })
+  function showInfo () {
+    socket.emit('web_wallet_emit', {screen: USER_INFO_PAGE})
+  }
+
+  function showSign () {
+    socket.emit('web_wallet_emit', {screen: SIGN_WALLETS_SUBMIT})
+  }
+</script>
+</html>

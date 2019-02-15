@@ -15,7 +15,7 @@ class App extends Component<Props, State> {
     // Text.defaultProps.style = {fontFamily: 'Roboto-Regular'}
     return (
       <Provider store={store}>
-        <View style={{flex: 1}}>
+        <View style={{flex: 1, backgroundColor:'#f6f6f6'}}>
           <StatusBar hidden={true} />
           <SocketEmitPage/>
           <DrawerMenu/>
