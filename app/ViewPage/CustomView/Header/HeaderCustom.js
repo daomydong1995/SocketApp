@@ -3,6 +3,7 @@ import {
   View,
   Text, TouchableOpacity
 } from 'react-native'
+import { connect } from 'react-redux'
 
 type Props = {
   title: string,
@@ -35,18 +36,25 @@ class HeaderCustom extends Component<Props, State> {
     const {headerStyle} = this.props
     const {containerBackStyle, titleStyle} = style
     return (
-      <View style={[containerBackStyle, headerStyle]}>
-        {this.renderLeftView()}
-        <Text style={[titleStyle, this.props.titleStyle]}>
-          {this.props.title}
-        </Text>
+      <View style={style.container}>
+        <View style={[containerBackStyle, headerStyle]}>
+          {this.renderLeftView()}
+          <Text style={[titleStyle, this.props.titleStyle]}>
+            {this.props.title}
+          </Text>
           {this.renderRightView()}
+        </View>
+        {!this.props.connected && <Text style={{color: '#ff2832'}}> Mất kết nối socket ip </Text>}
       </View>
     )
   }
 }
 
 const style = {
+  container: {
+    backgroundColor: 'transparent',
+    alignItems: 'center'
+  },
   containerBackStyle: {
     height: 50,
     width: '100%',
@@ -86,5 +94,10 @@ const style = {
     shadowOpacity: 1.0,
   }
 }
-
-export default HeaderCustom
+const mapStateToProps = state => ({
+  connected: state.settingReducer.connected
+})
+export default connect(
+  mapStateToProps, {
+  }
+)(HeaderCustom)
