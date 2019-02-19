@@ -1,20 +1,17 @@
 'use strict'
-
+const WebRTC = require('react-native-webrtc')
 import React, { Component } from 'react'
 import {
   StyleSheet,
   Platform, Alert
 } from 'react-native'
 
-import {
+const {
   RTCPeerConnection,
-  RTCIceCandidate,
-  RTCSessionDescription,
   RTCView,
-  MediaStream,
   MediaStreamTrack,
-  mediaDevices
-} from 'react-native-webrtc'
+  getUserMedia
+} = WebRTC
 import connect from 'react-redux/es/connect/connect'
 import {
   updateAvatarBase64,
@@ -47,55 +44,50 @@ function getStats (pc) {
 }
 
 type Props = {}
-type State = {
-  viewShot: Object
-}
+type State = {}
 
 function getLocalStream (isFront, callback) {
   let videoSourceId
   // on android, you don't have to specify sourceId manually, just use facingMode
   // uncomment it if you want to specify
-  mediaDevices.enumerateDevices().then(sourceInfos => {
+  MediaStreamTrack.getSources(sourceInfos => {
     for (let i = 0; i < sourceInfos.length; i++) {
-      const sourceInfo = sourceInfos[i];
-      if(sourceInfo.kind === "video" && sourceInfo.facing === (isFront ? "front" : "back")) {
-        videoSourceId = sourceInfo.id;
+      const sourceInfo = sourceInfos[i]
+      if (sourceInfo.kind === 'video' && sourceInfo.facing === (isFront ? 'front' : 'back')) {
+        videoSourceId = sourceInfo.id
       }
     }
-    mediaDevices.getUserMedia({
-      audio: false,
-      video: {
-        mandatory: {
-          width: {min: 1024, ideal: 1280, max: 1920},
-          height: {min: 776, ideal: 720, max: 1080},
-          minFrameRate: 30
-        },
-        facingMode: (isFront ? 'user' : 'environment'),
-        optional: (videoSourceId ? [{sourceId: videoSourceId}] : [])
-      }
-    }).then(stream => {
-      stream.stop = () => {
-        stream.getTracks().forEach((track) => {
-          track.stop()
-          stream.removeTrack(track)
-        })
-        stream.getAudioTracks().forEach(function (track) {
-          track.stop()
-          stream.removeTrack(track)
-        })
-        stream.getVideoTracks().forEach(function (track) {
-          track.stop()
-          stream.removeTrack(track)
-        })
-        stream.release()
-      }
-      callback(stream)
-      }).catch(error => {
-        console.log(error)
-      });
-  });
+  })
 
-
+  getUserMedia({
+    audio: false,
+    video: {
+      mandatory: {
+        width: {min: 1024, ideal: 1280, max: 1920},
+        height: {min: 776, ideal: 720, max: 1080},
+        minFrameRate: 30
+      },
+      facingMode: (isFront ? 'user' : 'environment'),
+      optional: (videoSourceId ? [{sourceId: videoSourceId}] : [])
+    }
+  }, function (stream) {
+    stream.stop = () => {
+      stream.getTracks().forEach((track) => {
+        track.stop()
+        stream.removeTrack(track)
+      })
+      stream.getAudioTracks().forEach(function (track) {
+        track.stop()
+        stream.removeTrack(track)
+      })
+      stream.getVideoTracks().forEach(function (track) {
+        track.stop()
+        stream.removeTrack(track)
+      })
+      stream.release()
+    }
+    callback(stream)
+  }, (error) => logError(error, 'getUserMedia'))
 }
 
 class CameraStream extends Component<Props, State> {
@@ -108,54 +100,55 @@ class CameraStream extends Component<Props, State> {
       remoteList: {},
       textRoomConnected: false,
       textRoomData: [],
-      textRoomValue: '',
-      viewShot: null
+      textRoomValue: ''
     }
   }
 
   componentDidMount () {
-    this.setState({
-      viewShot: this.refs.viewShot
-    })
     let self = this
-
     if (this.props.socket.connected) {
       this.props.socket.on('take_picture', (msg) => {
-        if (self.state.viewShot) {
-          self.state.viewShot.capture().then((uri) => {
+        const mediaStreamTrack = localStream.getVideoTracks().filter(track => track.kind === 'video')[0]
+        const takePictureOptions = {
+          captureTarget: MediaStreamTrack.constants.captureTarget.temp, // memory, temp, disk or cameraRoll
+          maxSize: 2000,
+          maxJpegQuality: 1.0
+        }
+        mediaStreamTrack.takePicture(
+          takePictureOptions,
+          uri => {
             self.props.updateLoadingSpinner(true)
             timeout(15000,
               fetch(UPLOAD_IMAGE, {
                 method: 'POST',
                 headers: {
                   Accept: 'application/json',
-                  'Content-Type': 'application/json',
+                  'Content-Type': 'multipart/form-data'
                 },
                 body: createFormData(uri)
               }).then(response => {
                 self.props.updateLoadingSpinner(false)
                 return response.json()
               }).then(response => {
-                  console.log(response)
-                  if (response.status && response.status === 'success') {
-                    let resUri = response.data.uri
-                    if (msg === 'USER_AVATAR') {
-                      self.props.updateAvatarBase64(resUri)
-                    } else if (msg === 'RELATIVE_USER_AVATAR') {
-                      self.props.updateAvatarRltBase64(resUri)
-                    }
-                    self.props.socket.emit('web_wallet_on', {type: msg, data: response.data}, () => {
-                    })
-                  } else {
-                    self.props.socket.emit('web_wallet_on', {type: 'Error', message: response}, () => {
-                    })
+                if (response.status && response.status === 'success') {
+                  let resUri = response.data.uri
+                  if (msg === 'USER_AVATAR') {
+                    self.props.updateAvatarBase64(resUri)
+                  } else if (msg === 'RELATIVE_USER_AVATAR') {
+                    self.props.updateAvatarRltBase64(resUri)
                   }
-                  RNFS.exists(uri).then((result) => {
-                    if (result) {
-                      return RNFS.unlink(uri)
-                    }
+                  self.props.socket.emit('web_wallet_on', {type: msg, data: response.data}, () => {
                   })
-                })).catch((error) => {
+                } else {
+                  self.props.socket.emit('web_wallet_on', {type: 'Error', message: response}, () => {
+                  })
+                }
+                RNFS.exists(uri).then((result) => {
+                  if (result) {
+                    return RNFS.unlink(uri)
+                  }
+                })
+              })).catch((error) => {
               self.props.updateLoadingSpinner(false)
               setTimeout(() => {
                 Alert.alert(
@@ -170,9 +163,10 @@ class CameraStream extends Component<Props, State> {
             }).finally(() => {
               self.props.updateControl('none')
             })
-
+          },
+          error => {
+            console.log('takePicture', error)
           })
-        }
       })
     }
     getLocalStream(this.state.isFront, (stream) => {
@@ -211,8 +205,8 @@ class CameraStream extends Component<Props, State> {
 
       // noinspection JSAnnotator
       function createOffer () {
-        peerConnection.createOffer().then(function (desc) {
-          peerConnection.setLocalDescription(desc).then( () => {
+        peerConnection.createOffer(function (desc) {
+          peerConnection.setLocalDescription(desc, function () {
             self.props.socket.emit('exchange', {'toIp': socketId, 'sdp': peerConnection.localDescription})
           }, (error) => logError(error, 'createOffer0'))
         }, (error) => logError(error, 'createOffer1'))
@@ -268,9 +262,7 @@ class CameraStream extends Component<Props, State> {
 
   render () {
     return (
-      <ViewShot ref="viewShot" options={{format: 'png', quality: 1.0}}>
-        <RTCView mirror={true} streamURL={this.state.selfViewSrc} style={styles.selfView}/>
-      </ViewShot>
+      <RTCView mirror={true} streamURL={this.state.selfViewSrc} style={styles.selfView}/>
     )
   }
 }
@@ -302,7 +294,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = state => ({
   socket: state.settingReducer.socket,
   peerConnection: state.settingReducer.peerConnection,
-  baseUrl : state.settingReducer.baseUrl
+  baseUrl: state.settingReducer.baseUrl
 })
 export default connect(
   mapStateToProps, {

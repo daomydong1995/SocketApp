@@ -1,5 +1,6 @@
 import { Component } from 'react'
 import DefaultPreference from 'react-native-default-preference'
+const WebRTC = require('react-native-webrtc')
 import {
   syncData,
   syncRltData, updateControl,
@@ -19,8 +20,7 @@ import {
   formatStatuses,
   formatTransactionSign, formatType
 } from '../Common/helpers'
-import { RTCIceCandidate, RTCSessionDescription } from 'react-native-webrtc'
-import { Text } from 'react-native-elements'
+const { RTCIceCandidate, RTCSessionDescription } = WebRTC
 import { INITIAL_STATE_RELATIVE_INFO, INITIAL_STATE_USER_INFO } from '../Common/constants'
 
 type Props = {}
@@ -96,10 +96,10 @@ class SocketEmitPage extends Component<Props, State> {
     if (this.props.peerConnection) {
       let pc = this.props.peerConnection
       if (data.sdp) {
-        pc.setRemoteDescription(new RTCSessionDescription(data.sdp), () => {
+        pc.setRemoteDescription(new RTCSessionDescription(data.sdp), function () {
           if (pc.remoteDescription.type === 'offer') {
-            pc.createAnswer((desc) => {
-              pc.setLocalDescription(desc).then(() => {
+            pc.createAnswer(function (desc) {
+              pc.setLocalDescription(desc, function () {
                 this.props.socket.emit('exchange', {'toIp: -exchange': fromId, 'sdp': pc.localDescription})
               }, (error) => logError(error, 'setRemoteDescription0'))
             }, (error) => logError(error, 'setRemoteDescription1'))
