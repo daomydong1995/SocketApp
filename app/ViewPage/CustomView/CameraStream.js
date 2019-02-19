@@ -8,12 +8,12 @@ import {
 
 import {
   RTCPeerConnection,
-  RTCMediaStream,
   RTCIceCandidate,
   RTCSessionDescription,
   RTCView,
+  MediaStream,
   MediaStreamTrack,
-  getUserMedia
+  mediaDevices
 } from 'react-native-webrtc'
 import connect from 'react-redux/es/connect/connect'
 import {
@@ -55,44 +55,47 @@ function getLocalStream (isFront, callback) {
   let videoSourceId
   // on android, you don't have to specify sourceId manually, just use facingMode
   // uncomment it if you want to specify
-  MediaStreamTrack.getSources(sourceInfos => {
+  mediaDevices.enumerateDevices().then(sourceInfos => {
     for (let i = 0; i < sourceInfos.length; i++) {
-      const sourceInfo = sourceInfos[i]
-      if (sourceInfo.kind === 'video' && sourceInfo.facing === (isFront ? 'front' : 'back')) {
-        videoSourceId = sourceInfo.id
+      const sourceInfo = sourceInfos[i];
+      if(sourceInfo.kind === "video" && sourceInfo.facing === (isFront ? "front" : "back")) {
+        videoSourceId = sourceInfo.id;
       }
     }
-  })
+    mediaDevices.getUserMedia({
+      audio: false,
+      video: {
+        mandatory: {
+          width: {min: 1024, ideal: 1280, max: 1920},
+          height: {min: 776, ideal: 720, max: 1080},
+          minFrameRate: 30
+        },
+        facingMode: (isFront ? 'user' : 'environment'),
+        optional: (videoSourceId ? [{sourceId: videoSourceId}] : [])
+      }
+    }).then(stream => {
+      stream.stop = () => {
+        stream.getTracks().forEach((track) => {
+          track.stop()
+          stream.removeTrack(track)
+        })
+        stream.getAudioTracks().forEach(function (track) {
+          track.stop()
+          stream.removeTrack(track)
+        })
+        stream.getVideoTracks().forEach(function (track) {
+          track.stop()
+          stream.removeTrack(track)
+        })
+        stream.release()
+      }
+      callback(stream)
+      }).catch(error => {
+        console.log(error)
+      });
+  });
 
-  getUserMedia({
-    audio: false,
-    video: {
-      mandatory: {
-        width: {min: 1024, ideal: 1280, max: 1920},
-        height: {min: 776, ideal: 720, max: 1080},
-        minFrameRate: 30
-      },
-      facingMode: (isFront ? 'user' : 'environment'),
-      optional: (videoSourceId ? [{sourceId: videoSourceId}] : [])
-    }
-  }, function (stream) {
-    stream.stop = () => {
-      stream.getTracks().forEach((track) => {
-        track.stop()
-        stream.removeTrack(track)
-      })
-      stream.getAudioTracks().forEach(function (track) {
-        track.stop()
-        stream.removeTrack(track)
-      })
-      stream.getVideoTracks().forEach(function (track) {
-        track.stop()
-        stream.removeTrack(track)
-      })
-      stream.release()
-    }
-    callback(stream)
-  }, (error) => logError(error, 'getUserMedia'))
+
 }
 
 class CameraStream extends Component<Props, State> {
@@ -121,7 +124,7 @@ class CameraStream extends Component<Props, State> {
         if (self.state.viewShot) {
           self.state.viewShot.capture().then((uri) => {
             self.props.updateLoadingSpinner(true)
-            timeout(3000,
+            timeout(10000,
               fetch(UPLOAD_IMAGE, {
                 method: 'POST',
                 headers: {
@@ -132,8 +135,7 @@ class CameraStream extends Component<Props, State> {
               }).then(response => {
                 self.props.updateLoadingSpinner(false)
                 return response.json()
-              })
-                .then(response => {
+              }).then(response => {
                   console.log(response)
                   if (response.status && response.status === 'success') {
                     let resUri = response.data.uri
@@ -209,8 +211,8 @@ class CameraStream extends Component<Props, State> {
 
       // noinspection JSAnnotator
       function createOffer () {
-        peerConnection.createOffer(function (desc) {
-          peerConnection.setLocalDescription(desc, function () {
+        peerConnection.createOffer().then(function (desc) {
+          peerConnection.setLocalDescription(desc).then( () => {
             self.props.socket.emit('exchange', {'toIp': socketId, 'sdp': peerConnection.localDescription})
           }, (error) => logError(error, 'createOffer0'))
         }, (error) => logError(error, 'createOffer1'))
