@@ -96,10 +96,10 @@ class SocketEmitPage extends Component<Props, State> {
     if (this.props.peerConnection) {
       let pc = this.props.peerConnection
       if (data.sdp) {
-        pc.setRemoteDescription(new RTCSessionDescription(data.sdp), function () {
+        pc.setRemoteDescription(new RTCSessionDescription(data.sdp), () => {
           if (pc.remoteDescription.type === 'offer') {
-            pc.createAnswer(function (desc) {
-              pc.setLocalDescription(desc, function () {
+            pc.createAnswer((desc) => {
+              pc.setLocalDescription(desc).then(() => {
                 this.props.socket.emit('exchange', {'toIp: -exchange': fromId, 'sdp': pc.localDescription})
               }, (error) => logError(error, 'setRemoteDescription0'))
             }, (error) => logError(error, 'setRemoteDescription1'))

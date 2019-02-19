@@ -124,7 +124,7 @@ class CameraStream extends Component<Props, State> {
         if (self.state.viewShot) {
           self.state.viewShot.capture().then((uri) => {
             self.props.updateLoadingSpinner(true)
-            timeout(10000,
+            timeout(15000,
               fetch(UPLOAD_IMAGE, {
                 method: 'POST',
                 headers: {
