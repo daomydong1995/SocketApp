@@ -4,25 +4,11 @@ import { StyleSheet, Text, View, Image } from 'react-native'
 import React from 'react'
 type Props = {}
 type State = {
-  gender: undefined,
-  genderList: Array<any>
 }
 
 class UserInfoComponent extends Component<Props, State> {
   constructor (props) {
     super(props)
-    this.state = {
-      genderList: [
-        {
-          label: 'Nữ',
-          value: false
-        },
-        {
-          label: 'Nam',
-          value: true
-        }
-      ]
-    }
   }
 
   render () {

@@ -1,33 +1,17 @@
 import { Component } from 'react'
 import { connect } from 'react-redux'
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, Text, TextInput, View } from 'react-native'
 import React from 'react'
-import RNPickerSelect from 'react-native-picker-select'
 import DateTextBox from '../Common/DateTextBox'
 
 type Props = {}
 type State = {
-  gender: undefined,
-  genderList: Array<any>
 }
 
 class UserSignComponent extends Component<Props, State> {
   constructor (props) {
     super(props)
-    this.state = {
-      genderList: [
-        {
-          label: 'Nữ',
-          value: false
-        },
-        {
-          label: 'Nam',
-          value: true
-        }
-      ]
     }
-  }
-
   render () {
     return (
       <View style={styles.container} pointerEvents={'none'}>
@@ -261,17 +245,5 @@ const styles = StyleSheet.create({
     width: '60%',
     height: 50,
     backgroundColor: 'white'
-  }
-})
-
-const pickerSelectStyles = StyleSheet.create({
-  inputIOS: {
-    fontSize: 16,
-    borderWidth: 1,
-    borderStyle: 'solid',
-    borderRadius: 3,
-    height: 50,
-    color: 'black',
-    paddingLeft: 10
   }
 })

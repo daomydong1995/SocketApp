@@ -12,10 +12,10 @@ class SmartCartTable extends Component<Props, State> {
   constructor (props) {
     super(props)
     this.state = {
-      flexArrPending: [0.5,1,2,2,1.5,1.5],
-      flexArrHistory: [0.5,1,2,1,2,1.5,2,2.5],
+      flexArrPending: [0.5, 1, 2, 2, 1.5, 1.5],
+      flexArrHistory: [0.5, 1, 2, 1, 2, 1.5, 2, 2.5],
       transactionPending: ['STT', 'Ngày giao dịch', 'Mã giao dịch', 'Mô tả', 'Mã tham chiếu', 'Giá'],
-      transactionHistory:['STT', 'Ngày giao dịch','Mã giao dịch','Trạng thái giao dịch', 'Loại giao dịch','Mã tham chiếu', 'Số tiền', 'Mô tả']
+      transactionHistory: ['STT', 'Ngày giao dịch', 'Mã giao dịch', 'Trạng thái giao dịch', 'Loại giao dịch', 'Mã tham chiếu', 'Số tiền', 'Mô tả']
     }
   }
 
@@ -23,41 +23,58 @@ class SmartCartTable extends Component<Props, State> {
     const attrPending = ['stt', 'created_at', 'id', 'memo', 'ref_id', 'amount']
     const attrHistory = ['stt', 'created_at', 'id', 'status', 'type', 'ref_id', 'amount', 'memo']
     const state = this.state
-    const  dataPending = this.props.pendingTransactions.map(transaction => {
+    const dataPending = this.props.pendingTransactions.map(transaction => {
       return attrPending.map(field => {
         return transaction[field]
       })
     })
-    const dataHistory =  this.props.historyTransactions.map(transaction => {
+    let flexArrHistory = state.flexArrHistory
+    const dataHistory = this.props.historyTransactions.map(transaction => {
       return attrHistory.map(field => {
         return transaction[field]
       })
     })
+    if (dataHistory.length < 1) {
+      dataHistory.push(['Không có dữ liệu'])
+      flexArrHistory = [1]
+    }
     return (
       <View style={styles.container}>
-        <Text style={styles.titleTable}>Giao dịch đang chờ</Text>
-        <View style={styles.tableStyle}>
-          <Table borderStyle={{borderWidth: 1, borderColor: '#000', borderRadius: 5}}>
-            <Row data={state.transactionPending} flexArr={state.flexArrPending} style={styles.head} textStyle={styles.text}/>
-            {
-              dataPending.map((rowData, index) => (
-                <Row data={rowData}
-                     flexArr={state.flexArrPending} style={[styles.row, {backgroundColor: index % 2 === 0 ? '#fff' : '#e0e0e0'}]} textStyle={styles.text}/>
-              ))
-            }
-          </Table>
-        </View>
-        <Text style={styles.titleTable}>Lịch sử giao dịch</Text>
-        <View style={styles.tableStyle}>
-          <Table borderStyle={{borderWidth: 1, borderColor: '#000', borderRadius: 5}}>
-            <Row data={state.transactionHistory} flexArr={state.flexArrHistory} style={styles.head} textStyle={styles.text}/>
-            {
-              dataHistory.map((rowData, index) => (
-                <Row data={rowData}
-                     flexArr={state.flexArrHistory} style={[styles.row, {backgroundColor: index % 2 === 0 ? '#fff' : '#e0e0e0'}]} textStyle={styles.text}/>
-              ))
-            }
-          </Table>
+        {
+          dataPending.length !== 0 && <View>
+            <Text style={styles.titleTable}>Giao dịch đang chờ</Text>
+            <View style={styles.tableStyle}>
+              <Table borderStyle={{borderWidth: 1, borderColor: '#000', borderRadius: 5}}>
+                <Row data={state.transactionPending} flexArr={state.flexArrPending} style={styles.head}
+                     textStyle={styles.text}/>
+                {
+                  dataPending.map((rowData, index) => (
+                    <Row data={rowData}
+                         flexArr={state.flexArrPending}
+                         style={[styles.row, {backgroundColor: index % 2 === 0 ? '#fff' : '#e0e0e0'}]}
+                         textStyle={styles.text}/>
+                  ))
+                }
+              </Table>
+            </View>
+          </View>
+        }
+        <View>
+          <Text style={styles.titleTable}>Lịch sử giao dịch</Text>
+          <View style={styles.tableStyle}>
+            <Table borderStyle={{borderWidth: 1, borderColor: '#000', borderRadius: 5}}>
+              <Row data={state.transactionHistory} flexArr={state.flexArrHistory} style={styles.head}
+                   textStyle={styles.text}/>
+              {
+                dataHistory.map((rowData, index) => (
+                  <Row data={rowData}
+                       flexArr={flexArrHistory}
+                       style={[styles.row, {backgroundColor: index % 2 === 0 ? '#fff' : '#e0e0e0'}]}
+                       textStyle={styles.text}/>
+                ))
+              }
+            </Table>
+          </View>
         </View>
       </View>
     )
@@ -69,8 +86,8 @@ const styles = StyleSheet.create({
   titleTable: {fontSize: 22, fontWeight: 'bold', marginTop: 30, marginBottom: 15},
   tableStyle: {borderWidth: 1, borderRadius: 3},
   head: {backgroundColor: '#a7b6c6'},
-  text: {textAlign: 'center'},
-  row: {flexDirection: 'row', backgroundColor: '#FFF1C1'},
+  text: {textAlign: 'center',paddingTop: 5, paddingBottom: 5},
+  row: {flexDirection: 'row', backgroundColor: '#FFF1C1', width: '100%'},
 })
 
 const mapStateToProps = state => ({

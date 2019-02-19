@@ -43,8 +43,12 @@ class InfoUserWalletPage extends Component<Props, State> {
                         bounces={false}
                         contentContainerStyle={{paddingBottom: 300}}>
               <UserInfoComponent/>
-              <View style={{width: '100%', height: 1, backgroundColor: '#000'}}/>
-              <UserRelativeInfoComponent/>
+              {
+                this.props.rltInfo.rltName !== null && <View style={{width: '100%', height: 1, backgroundColor: '#000'}}/>
+              }
+              {
+                this.props.rltInfo.rltName !== null && <UserRelativeInfoComponent/>
+              }
               <View style={{width: '100%', height: 1,backgroundColor: 'black'}}/>
               <View style={{width: '100%', alignItems: 'center', marginTop: 15}}>
                 <View style={styles.infoSmartCard}>
@@ -67,7 +71,8 @@ class InfoUserWalletPage extends Component<Props, State> {
   }
 }
 const mapStateToProps = state => ({
-  userInfo: state.userInfoReducer
+  userInfo: state.userInfoReducer,
+  rltInfo: state.userRelativeInfoReducer
 })
 
 export default connect(

@@ -29,7 +29,7 @@ type State = {}
 class SocketEmitPage extends Component<Props, State> {
   constructor (props: Props) {
     super(props)
-    const { updateSocketStatus, updateSocketsAddress} = this.props
+    const {updateSocketStatus, updateSocketsAddress} = this.props
     this.onReceivedMessage = this.onReceivedMessage.bind(this)
     DefaultPreference.get('ListAddressConnected').then(function (value) {
       if (value === undefined || value === null) {
@@ -38,7 +38,7 @@ class SocketEmitPage extends Component<Props, State> {
         updateSocketsAddress(list)
       }
     })
-    if(this.props.socket) {
+    if (this.props.socket) {
       const socket = this.props.socket
       socket.on('connect', () => {
         this.props.updateLoadingSpinner(false)
@@ -68,7 +68,7 @@ class SocketEmitPage extends Component<Props, State> {
         })
         if (this.props.messageSocketStatus) {
           this.props.updateMessageSocket(false)
-          setTimeout(()=> {
+          setTimeout(() => {
             Alert.alert(
               'Thông báo',
               'Kết nối thành công',
@@ -107,14 +107,18 @@ class SocketEmitPage extends Component<Props, State> {
   }
 
   onReceivedMessage (state) {
-    const {updateControl, updateScreenApp, syncData, syncRltData,
-      updatePendingTransaction, updateHistoryTransaction,} = this.props
+    const {
+      updateControl, updateScreenApp, syncData, syncRltData,
+      updatePendingTransaction, updateHistoryTransaction, screen
+    } = this.props
     if (state.control) {
       updateControl('none')
       setTimeout(() => {updateControl(state.control)}, 200)
     }
     if (state.screen) {
-      updateScreenApp(state.screen)
+      if (screen !== state.screen) {
+        updateScreenApp(state.screen)
+      }
       updateHistoryTransaction([])
       updatePendingTransaction([])
     }
@@ -127,14 +131,15 @@ class SocketEmitPage extends Component<Props, State> {
       syncRltData(rltInfo)
     }
     if (state.pendingTransactions) {
-      let pendingTransactions = state.pendingTransactions.map((data,index) => this.toPending(data,index))
+      let pendingTransactions = state.pendingTransactions.map((data, index) => this.toPending(data, index))
       updatePendingTransaction(pendingTransactions)
     }
     if (state.historyTransactions) {
-      let historyTransactions = state.historyTransactions.map((data,index) => this.toHistory(data,index))
+      let historyTransactions = state.historyTransactions.map((data, index) => this.toHistory(data, index))
       updateHistoryTransaction(historyTransactions)
     }
   }
+
   toHistory (data, index) {
     const sign = formatTransactionSign(this.props.userWalletId, data)
     return {
@@ -149,7 +154,7 @@ class SocketEmitPage extends Component<Props, State> {
     }
   }
 
-  toPending(data,index) {
+  toPending (data, index) {
     const sign = formatTransactionSign(this.props.userWalletId, data)
     return {
       stt: index + 1,
@@ -160,9 +165,6 @@ class SocketEmitPage extends Component<Props, State> {
       memo: data.memo
     }
   }
-
-
-
 
   render () {
     return (
@@ -185,6 +187,7 @@ class SocketEmitPage extends Component<Props, State> {
 
 const mapStateToProps = state => ({
   socket: state.settingReducer.socket,
+  screen: state.settingReducer.screen,
   loadingSpinner: state.settingReducer.loadingSpinner,
   messageSocketStatus: state.settingReducer.messageSocketStatus,
   userWalletId: state.userInfoReducer.userWalletId,

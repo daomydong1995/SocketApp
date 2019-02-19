@@ -69,7 +69,7 @@
     <div class="d-flex justify-content-center align-items-center container">
         <div class="col-sm-12" id="infoUser">
             <h3>Thông tin bệnh nhân</h3>
-            <button onclick="showInfo();">Info User Screen</button>
+            <button onclick="checkConnect();">Info User Screen</button>
             <button onclick="showSign();">Sign User Screen</button>
             <div class="form-group row">
                 <label>Họ tên</label>
@@ -191,7 +191,7 @@
 <!--<script src="https://cdn.socket.io/socket.io-1.7.3.js"></script>-->
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script>
-  const socket = io.connect('http://localhost:4000/')
+  const socket = io.connect('http://192.168.2.100:4000/')
   const RTCPeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection || window.msRTCPeerConnection
   const RTCSessionDescription = window.RTCSessionDescription || window.mozRTCSessionDescription || window.webkitRTCSessionDescription || window.msRTCSessionDescription
   navigator.getUserMedia = navigator.getUserMedia || navigator.mozGetUserMedia || navigator.webkitGetUserMedia || navigator.msGetUserMedia
@@ -323,9 +323,9 @@
   })
 
   socket.on('connect', function (data) {
-    // getLocalStream();
-    onChangeUserValue()
-    onChangeRltValue()
+    socket.on('sockets_connected', (data) => {
+      console.log('sockets_connected', data)
+    })
   })
 
   function logError (error) {
@@ -367,6 +367,10 @@
 
   function openSignWriting (data) {
     socket.emit('open_sign_writing', data)
+  }
+
+  function checkConnect () {
+    socket.emit('check_sockets_connected')
   }
 
   function onChangeUserValue () {

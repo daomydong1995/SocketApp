@@ -16,8 +16,8 @@ class SmartCardLogoComponent extends Component<Props, State> {
         <Text style={styles.textTileStyle}>Thông tin thẻ SmartCard</Text>
           <ImageBackground style={styles.imageStyle} source={require('../../../../assets/images/smartCard.png')}>
             <View style={{marginBottom: 30,marginRight: 10,alignItems: 'flex-end'}}>
-              <Text style={styles.textNameStyle}>{userName.toUpperCase().trim()}</Text>
-              <Text style={styles.textCodeStyle}>{userCode.toUpperCase().trim()}</Text>
+              <Text style={styles.textNameStyle}>{userName !== null ? userName.toUpperCase().trim() : null}</Text>
+              <Text style={styles.textCodeStyle}>{userCode !== null ? userCode.toUpperCase().trim() : null}</Text>
             </View>
           </ImageBackground>
       </View>

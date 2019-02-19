@@ -44,7 +44,7 @@ class HeaderCustom extends Component<Props, State> {
           </Text>
           {this.renderRightView()}
         </View>
-        {!this.props.connected && <Text style={{color: '#ff2832'}}> Mất kết nối socket ip </Text>}
+        {!this.props.connected && <Text style={{color: 'red'}}>Mất kết nối đến máy chủ, vui lòng xem lại kết nối trong cài đặt</Text>}
       </View>
     )
   }

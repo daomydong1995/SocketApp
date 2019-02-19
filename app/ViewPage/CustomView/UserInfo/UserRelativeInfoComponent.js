@@ -2,12 +2,8 @@ import { Component } from 'react'
 import { connect } from 'react-redux'
 import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import React from 'react'
-import DatePicker from 'react-native-datepicker'
-
 type Props = {}
 type State = {
-  gender: undefined,
-  genderList: Array<any>
 }
 
 class UserRelativeInfoComponent extends Component<Props, State> {

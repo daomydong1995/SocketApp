@@ -6,8 +6,6 @@ import DateTextBox from '../Common/DateTextBox'
 
 type Props = {}
 type State = {
-  gender: undefined,
-  genderList: Array<any>
 }
 
 class UserRelativeSignComponent extends Component<Props, State> {
@@ -181,17 +179,5 @@ const styles = StyleSheet.create({
     width: '60%',
     height: 50,
     backgroundColor: 'white'
-  }
-})
-
-const pickerSelectStyles = StyleSheet.create({
-  inputIOS: {
-    fontSize: 16,
-    borderWidth: 1,
-    borderStyle: 'solid',
-    borderRadius: 3,
-    height: 50,
-    color: 'black',
-    paddingLeft: 10
   }
 })

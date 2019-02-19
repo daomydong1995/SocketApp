@@ -75,56 +75,56 @@ export const SENDER = [
 ]
 
 export const INITIAL_STATE_USER_INFO = {
-  userName: '',
-  userBirth: '',
+  userName: null,
+  userBirth: null,
   //
-  userGender: '',
-  userJob: '',
+  userGender: null,
+  userJob: null,
   //
-  userEmail: '',
-  userPhone: '',
+  userEmail: null,
+  userPhone: null,
   //
-  userCMT: '',
-  userCMTDay: '',
-  userCMTPlace: '',
+  userCMT: null,
+  userCMTDay: null,
+  userCMTPlace: null,
   //
-  userPassport: '',
-  userPassportDate: '',
-  userPassportPlace: '',
+  userPassport: null,
+  userPassportDate: null,
+  userPassportPlace: null,
   //
-  userCountry: '',
-  userNation: '',
-  userTBH: '',
+  userCountry: null,
+  userNation: null,
+  userTBH: null,
   //
-  userAddress: '',
+  userAddress: null,
   //
-  userDistrict: '',
-  userWards: '',
-  userProvince: '',
+  userDistrict: null,
+  userWards: null,
+  userProvince: null,
   //
-  userId: '',
-  userWalletId: '',
-  userCardId: '',
-  userHospital: '',
-  userMoneyTotal: '',
-  userNameCard: '',
-  userCodeCard: '',
+  userId: null,
+  userWalletId: null,
+  userCardId: null,
+  userHospital: null,
+  userMoneyTotal: null,
+  userNameCard: null,
+  userCodeCard: null,
   //
   signatureBase64: '',
   imageAvatarBase64: ''
 }
 
 export const INITIAL_STATE_RELATIVE_INFO = {
-  rltName: '',
-  rltInfo: '',
-  rltEmail: '',
-  rltPhone: '',
-  rltCMT: '',
-  rltCMTDay: '',
-  rltCMTPlace: '',
-  rltPassport: '',
-  rltPassportDate: '',
-  rltPassportPlace: '',
-  rltAddress: '',
+  rltName: null,
+  rltInfo: null,
+  rltEmail: null,
+  rltPhone: null,
+  rltCMT: null,
+  rltCMTDay: null,
+  rltCMTPlace: null,
+  rltPassport: null,
+  rltPassportDate: null,
+  rltPassportPlace: null,
+  rltAddress: null,
   imageRltAvatarBase64: ''
 }
