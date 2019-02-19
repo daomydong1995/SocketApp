@@ -44,6 +44,11 @@ class SocketEmitPage extends Component<Props, State> {
         this.props.updateLoadingSpinner(false)
         const object = {id: socket.id, hostname: socket.io.engine.hostname, port: socket.io.engine.port}
         updateSocketStatus(true)
+        socket.emit('check_sockets_connected', (countIp) => {
+          if (countIp.length > 2) {
+            socket.disconnect()
+          }
+        })
         socket.on('web_wallet_emit', this.onReceivedMessage)
         socket.emit('init', {init: true})
         DefaultPreference.get('ListAddressConnected').then(function (value) {
